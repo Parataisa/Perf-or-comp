@@ -93,7 +93,7 @@ process_config() {
         
         # Parse the configuration
         local config_data=$(parse_config_options "$line")
-        IFS='|' read -r program description depends collect_metrics cleanup params_str <<< "$config_data"
+        IFS='|' read -r program description depends collect_metrics cleanup build build_dir build_command params_str <<< "$config_data"
         
         # Trim whitespace
         program=$(echo "$program" | xargs)
@@ -104,23 +104,33 @@ process_config() {
             log "WARNING" "Skipping invalid config line: $line"
             continue
         fi
-        
-        # Determine program path 
-        local program_path
-        if [ -f "./build/$program" ]; then
-            program_path="./build/$program"
-        else
-            log "WARNING" "Program not found: $program"
-            continue
-        fi
-        
+
         log "INFO" "Processing program: $program"
-        log "DEBUG" "Program path: $program_path"
         log "DEBUG" "Description: $description"
         log "DEBUG" "Depends on: $depends"
         log "DEBUG" "Collect metrics: $collect_metrics"
         log "DEBUG" "Cleanup action: $cleanup"
+        log "DEBUG" "Build program: $build"
+        log "DEBUG" "Build directory: $build_dir"
+        log "DEBUG" "Build command: $build_command"
+        log "DEBUG" "Parameters: $params_str"
         
+        # build the program based on test configuration
+        local program_path
+        if [ "$build" = "true" ]; then
+            program_path=$(build_program "$program" "$build_command" "$build_dir")
+        else 
+            program_path="./build/$program"
+        fi
+
+        log "DEBUG" "Program path: $program_path"
+
+        # Determine program path 
+        if [ ! -f $program_path ]; then
+            log "WARNING" "Program not found: $program"
+            continue
+        fi
+
         # Run dependency if specified
         if [ "$depends" != "none" ]; then
             if ! run_dependency "$depends"; then

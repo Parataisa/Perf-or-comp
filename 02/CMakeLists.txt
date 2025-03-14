@@ -10,7 +10,6 @@ else()
 endif()
 
 add_executable(filegen "${CMAKE_CURRENT_SOURCE_DIR}/small_samples/filegen/filegen.c")
-
 add_executable(filesearch "${CMAKE_CURRENT_SOURCE_DIR}/small_samples/filesearch/filesearch.c")
 
 

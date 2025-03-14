@@ -47,6 +47,9 @@ parse_config_options() {
     local depends="none"
     local collect_metrics=true
     local cleanup="none"
+    local build="true"
+    local build_dir=""
+    local build_command=""
     local params=""
 
     # Helper function to remove surrounding double quotes if present
@@ -84,6 +87,15 @@ parse_config_options() {
         elif [[ "$part" =~ ^cleanup= ]]; then
             cleanup="${part#cleanup=}"
             param_start=$((i+1))
+        elif [[ "$part" =~ ^build= ]]; then
+            build="${part#build=}"
+            param_start=$((i+1))
+        elif [[ "$part" =~ ^build_dir= ]]; then
+            build_dir="${part#build_dir=}"
+            param_start=$((i+1))
+        elif [[ "$part" =~ ^build_command= ]]; then
+            build_command="${part#build_command=}"
+            param_start=$((i+1))
         else
             break
         fi
@@ -100,7 +112,7 @@ parse_config_options() {
     done
 
     # Output as a pipe-separated string for downstream processing
-    echo "$program|$description|$depends|$collect_metrics|$cleanup|$params"
+    echo "$program|$description|$depends|$collect_metrics|$cleanup|$build|$build_dir|$build_command|$params"
 }
 
 # Execute dependency program if needed

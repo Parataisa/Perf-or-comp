@@ -18,7 +18,7 @@ REPETITIONS=4               # Number of test repetitions for statistics
 WARMUP_RUNS=2               # Warmup runs to eliminate cold-start effects
 PAUSE_SECONDS=1             # Time to pause between runs for system stability
 CACHE_CLEARING_ENABLED=true # Enable/disable cache clearing attempts
-DEBUG_LEVEL="INFO"          # Logging level: DEBUG, INFO, WARNING, ERROR
+DEBUG_LEVEL="DEBUG"          # Logging level: DEBUG, INFO, WARNING, ERROR
 
 # High precision mode iterations configuration
 VERY_FAST_ITERATIONS=10000    # Iterations for very fast programs (<10ms)

@@ -6,34 +6,18 @@
 # - depends=program_name args     # Dependency program to run first with its arguments
 # - collect=true/false            # Whether to collect metrics for this run (default: true)
 # - cleanup=command or path       # Cleanup command or path pattern to remove after execution
+# - build=true/false              # Whether to build the program before running (default: true)
+# - build_dir=path                # Build directory for the program
+# - build_command=command         # Build command for the program(The whole command like "gcc -Wall -Wextra -O3 -o" )
 # Examples:
 
-delannoy|Delannoy number calculation|collect=true|5|10|12|15|
+small_samples/filegen/filegen|Small file benchmark|cleanup=rm -rf ./generated|build=true|build_dir=build||5 10 1024 4096|
+#filegen|Medium file benchmark|cleanup=rm -rf ./generated|10 30 4096 16384|
+#filegen|Large file benchmark|cleanup=rm -rf ./generated|20 50 16384 65536|
+#filegen|Mixed size benchmark|cleanup=rm -rf ./generated|15 40 512 1048576|
 
-filegen|Small file benchmark|cleanup=rm -rf ./generated|5 10 1024 4096|
-filegen|Medium file benchmark|cleanup=rm -rf ./generated|10 30 4096 16384|
-filegen|Large file benchmark|cleanup=rm -rf ./generated|20 50 16384 65536|
-filegen|Mixed size benchmark|cleanup=rm -rf ./generated|15 40 512 1048576|
-filesearch|Simple search test|depends=filegen 5 10 1024 4096|cleanup=rm -rf ./generated|
-filesearch|Medium complexity search|depends=filegen 15 25 4096 32768|cleanup=rm -rf ./generated|
-filesearch|Deep directory search|depends=filegen 25 15 8192 16384|cleanup=rm -rf ./generated|
-filesearch|Large file search|depends=filegen 8 10 262144 1048576|cleanup=rm -rf ./generated|
-filesearch|Many small files search|depends=filegen 20 100 512 4096|cleanup=rm -rf ./generated|
-
-mmul200|Matrix multiplication tiny|collect=true|
-mmul500|Matrix multiplication small|collect=true|
-mmul1000|Matrix multiplication medium|collect=true|
-mmul1500|Matrix multiplication large|collect=true|
-mmul2000|Matrix multiplication extra large|collect=true|
-
-nbody500|N-body simulation small|collect=true|
-nbody1000|N-body simulation medium|collect=true|
-nbody2000|N-body simulation large|collect=true|
-nbody1000_200|N-body long simulation|collect=true|
-nbody3000|N-body dense simulation|collect=true|
-
-qap|QAP small problems|collect=true|qap/problems/chr10a.dat|qap/problems/chr12a.dat|qap/problems/chr15a.dat|
-qap|QAP medium problems|collect=true|qap/problems/chr18a.dat|qap/problems/chr18b.dat|
-#qap|QAP large problems|collect=true|qap/problems/chr20a.dat|qap/problems/chr20b.dat|
-#qap|QAP even large problems|collect=true|qap/problems/chr22a.dat|qap/problems/chr22b.dat|
-#qap|QAP largest problems|collect=true|qap/problems/chr25a.dat|
+#filesearch|Simple search test|depends=filegen 5 10 1024 4096|cleanup=rm -rf ./generated|
+#filesearch|Medium complexity search|depends=filegen 15 25 4096 32768|cleanup=rm -rf ./generated|
+#filesearch|Deep directory search|depends=filegen 25 15 8192 16384|cleanup=rm -rf ./generated|
+#filesearch|Large file search|depends=filegen 8 10 262144 1048576|cleanup=rm -rf ./generated|
+#filesearch|Many small files search|depends=filegen 20 100 512 4096|cleanup=rm -rf ./generated|

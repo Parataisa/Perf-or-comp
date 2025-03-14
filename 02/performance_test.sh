@@ -11,6 +11,7 @@ source "${SCRIPT_DIR}/lib/measurement.sh"
 source "${SCRIPT_DIR}/lib/reporting.sh"
 source "${SCRIPT_DIR}/lib/test_runner.sh"
 source "${SCRIPT_DIR}/lib/cluster_functions.sh"
+source "${SCRIPT_DIR}/lib/build_system.sh"
 
 # Process command line arguments
 CONFIG_FILE="test_config.txt"
