@@ -26,6 +26,11 @@ build_program() {
         return
     fi
 
+    if [ -z "$build_dir" ]; then
+        log "INFO" "Build directory not specified. Using ./build as default."
+        build_dir="build"
+    fi
+
     # Check if build directory exists
     if [ ! -d "$build_dir" ]; then
         log "INFO" "Build directory not found. Creating: $build_dir"

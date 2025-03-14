@@ -11,7 +11,7 @@
 # - build_command=command         # Build command for the program(The whole command like "gcc -Wall -Wextra -O3 -o" )
 # Examples:
 
-small_samples/filegen/filegen|Small file benchmark|cleanup=rm -rf ./generated|build=true|build_dir=build||5 10 1024 4096|
+small_samples/filegen/filegen|Small file benchmark|cleanup=rm -rf ./generated|5 10 1024 4096|
 #filegen|Medium file benchmark|cleanup=rm -rf ./generated|10 30 4096 16384|
 #filegen|Large file benchmark|cleanup=rm -rf ./generated|20 50 16384 65536|
 #filegen|Mixed size benchmark|cleanup=rm -rf ./generated|15 40 512 1048576|
