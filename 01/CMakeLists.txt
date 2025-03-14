@@ -9,22 +9,22 @@ else()
   add_compile_options(-Wall -Wextra -Wpedantic -Werror)
 endif()
 
-add_executable(delannoy delannoy/delannoy.c)
+add_executable(delannoy "${CMAKE_CURRENT_SOURCE_DIR}/small_samples/delannoy/delannoy.c")
 
-add_executable(filegen filegen/filegen.c)
+add_executable(filegen "${CMAKE_CURRENT_SOURCE_DIR}/small_samples/filegen/filegen.c")
 
-add_executable(filesearch filesearch/filesearch.c)
+add_executable(filesearch "${CMAKE_CURRENT_SOURCE_DIR}/small_samples/filesearch/filesearch.c")
 
 # For mmul with different sizes
 foreach(SIZE 200 500 1000 1500 2000)
-  add_executable(mmul${SIZE} mmul/mmul.c)
+  add_executable(mmul${SIZE} "${CMAKE_CURRENT_SOURCE_DIR}/small_samples/mmul/mmul.c")
   target_compile_definitions(mmul${SIZE} PRIVATE S=${SIZE})
   set_target_properties(mmul${SIZE} PROPERTIES OUTPUT_NAME "mmul${SIZE}")
 endforeach()
 
 # For nbody with different combinations
 function(add_nbody_executable NAME N M L)
-  add_executable(nbody${NAME} nbody/nbody.c)
+  add_executable(nbody${NAME} "${CMAKE_CURRENT_SOURCE_DIR}/small_samples/nbody/nbody.c")
   target_compile_definitions(nbody${NAME} PRIVATE N=${N} M=${M} L=${L})
   set_target_properties(nbody${NAME} PROPERTIES OUTPUT_NAME "nbody${NAME}")
   target_link_libraries(nbody${NAME} m)
@@ -36,5 +36,4 @@ add_nbody_executable(2000 2000 150 2000)
 add_nbody_executable(1000_200 1000 200 1000)
 add_nbody_executable(3000 3000 75 3000)
 
-add_executable(qap qap/qap.c)
-
+add_executable(qap "${CMAKE_CURRENT_SOURCE_DIR}/small_samples/qap/qap.c")
