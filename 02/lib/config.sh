@@ -15,15 +15,15 @@ NC='\033[0m' # No Color
 OUTPUT_FILE="performance_results.md"
 CSV_FILE="performance_results.csv"  
 REPETITIONS=4               # Number of test repetitions for statistics
-WARMUP_RUNS=2               # Warmup runs to eliminate cold-start effects
+WARMUP_RUNS=1               # Warmup runs to eliminate cold-start effects
 PAUSE_SECONDS=1             # Time to pause between runs for system stability
 CACHE_CLEARING_ENABLED=true # Enable/disable cache clearing attempts
 DEBUG_LEVEL="DEBUG"          # Logging level: DEBUG, INFO, WARNING, ERROR
 
 # High precision mode iterations configuration
-VERY_FAST_ITERATIONS=10000    # Iterations for very fast programs (<10ms)
-FAST_ITERATIONS=100         # Iterations for fast programs (<100ms but >=10ms)
-MODERATELY_FAST_ITERATIONS=50    # Iterations for moderately fast programs (<500ms but >=100ms)
+VERY_FAST_ITERATIONS=500    # Iterations for very fast programs (<10ms)
+FAST_ITERATIONS=250         # Iterations for fast programs (<100ms but >=10ms)
+MODERATELY_FAST_ITERATIONS=100    # Iterations for moderately fast programs (<500ms but >=100ms)
 
 #=====================================================================
 # Helper Functions

@@ -8,6 +8,7 @@
 measure_program() {
     local program_path=$1
     local params=$2
+    local sim_workload=$3
     
     # Check if this is a fast program
     local start_time=$(date +%s.%N)
@@ -42,9 +43,49 @@ measure_program() {
     # Perform measurements
     for ((run=0; run<REPETITIONS; run++)); do
         log "INFO" "Run $((run+1)) of $REPETITIONS"
+
+        trap 'log "WARNING" "Measurement interrupted"; rm -f "$temp_file"; return 1' INT TERM
         
         local temp_file=$(mktemp)
-        /usr/bin/time -f "%e,%U,%S,%M" bash -c "for ((i=0; i<$iterations; i++)); do \"$program_path\" $params > /dev/null 2>&1; done" 2> "$temp_file"
+        if $sim_workload; then
+            # Check if loadgen script exists
+            loadgen_script="$(pwd)/load_generator/exec_with_workstation_heavy.sh"
+            chmod +x "$loadgen_script"
+            if [ ! -x "$loadgen_script" ]; then
+                log "ERROR" "Load generator script not found or not executable: $loadgen_script"
+                rm -f "$temp_file"
+                return 1
+            fi
+            
+            # Simulate workload with error handling
+            if ! /usr/bin/time -f "%e,%U,%S,%M" bash -c "for ((i=0; i<$iterations; i++)); do 
+                \"$loadgen_script\" \"$program_path\" $params > /dev/null 2>&1 
+                exit_code=\$?
+                if [ \$exit_code -ne 0 ]; then
+                    echo \"Program failed with exit code \$exit_code on iteration \$i\" >&2
+                    # Continue anyway rather than exiting
+                    continue
+                fi
+                done" 2> "$temp_file"; then
+                log "WARNING" "Workload simulation failed for run $((run+1))"
+                # Check if we got any metrics
+                if ! grep -q "[0-9]" "$temp_file"; then
+                    # No metrics, use zeros
+                    echo "0.0,0.0,0.0,0" > "$temp_file"
+                fi
+            fi
+            log "DEBUG" "Raw metrics: $(cat "$temp_file")"
+        else
+            # Direct execution with error handling
+            if ! /usr/bin/time -f "%e,%U,%S,%M" bash -c "for ((i=0; i<$iterations; i++)); do \"$program_path\" $params > /dev/null 2>&1; done" 2> "$temp_file"; then
+                log "WARNING" "Program execution failed for run $((run+1))"
+                # Reset the values to avoid calculation errors
+                echo "0.0,0.0,0.0,0" > "$temp_file"
+            fi
+        fi
+        
+        trap - INT TERM
+
         local loop_metrics=$(cat "$temp_file")
         rm "$temp_file"
 

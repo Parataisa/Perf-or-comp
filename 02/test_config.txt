@@ -8,16 +8,19 @@
 # - cleanup=command or path       # Cleanup command or path pattern to remove after execution
 # - build=true/false              # Whether to build the program before running (default: true)
 # - build_dir=path                # Build directory for the program
-# - build_command=command         # Build command for the program(The whole command like "gcc -Wall -Wextra -O3 -o" )
+# - build_command=command         # Build command for the program(The whole command like "gcc -Wall -Wextra -O3 -o")
+# - sim_workload=true/false   # Whether to simulate workload for this run (default: false)
 # Examples:
 
-small_samples/filegen/filegen|Small file benchmark|cleanup=rm -rf ./generated|5 10 1024 4096|
-#filegen|Medium file benchmark|cleanup=rm -rf ./generated|10 30 4096 16384|
-#filegen|Large file benchmark|cleanup=rm -rf ./generated|20 50 16384 65536|
-#filegen|Mixed size benchmark|cleanup=rm -rf ./generated|15 40 512 1048576|
+small_samples/delannoy/delannoy|Delannoy number calculation|collect=true|sim_workload=true|10|12|14|
 
-#filesearch|Simple search test|depends=filegen 5 10 1024 4096|cleanup=rm -rf ./generated|
-#filesearch|Medium complexity search|depends=filegen 15 25 4096 32768|cleanup=rm -rf ./generated|
-#filesearch|Deep directory search|depends=filegen 25 15 8192 16384|cleanup=rm -rf ./generated|
-#filesearch|Large file search|depends=filegen 8 10 262144 1048576|cleanup=rm -rf ./generated|
-#filesearch|Many small files search|depends=filegen 20 100 512 4096|cleanup=rm -rf ./generated|
+#small_samples/filegen/filegen|Small file benchmark|cleanup=rm -rf ./generated|sim_workload=true|5 10 1024 4096|
+#small_samples/filegen/filegen|Medium file benchmark|cleanup=rm -rf ./generated|10 30 4096 16384|
+#small_samples/filegen/filegen|Large file benchmark|cleanup=rm -rf ./generated|20 50 16384 65536|
+#small_samples/filegen/filegen|Mixed size benchmark|cleanup=rm -rf ./generated|15 40 512 1048576|
+
+#small_samples/filesearch/filesearch|Simple search test|depends=filegen 5 10 1024 4096|cleanup=rm -rf ./generated|
+#small_samples/filesearch/filesearch|Medium complexity search|depends=filegen 15 25 4096 32768|cleanup=rm -rf ./generated|
+#small_samples/filesearch/filesearch|Deep directory search|depends=filegen 25 15 8192 16384|cleanup=rm -rf ./generated|
+#small_samples/filesearch/filesearch|Large file search|depends=filegen 8 10 262144 1048576|cleanup=rm -rf ./generated|
+#small_samples/filesearch/filesearch|Many small files search|depends=filegen 20 100 512 4096|cleanup=rm -rf ./generated|

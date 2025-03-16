@@ -10,7 +10,8 @@ run_tests() {
     local program_name=$(basename "$program_path")
     local description=$2
     local depends=$3
-    shift 3
+    local sim_workload=$4
+    shift 4
     local parameter_sets=("$@")
 
     # Clean up parameter sets (remove trailing pipes)
@@ -45,7 +46,7 @@ run_tests() {
             for ((i = 1; i <= WARMUP_RUNS; i++)); do
                 $program_path $params > /dev/null 2>&1
             done
-            metrics=$(measure_program "$program_path" "$params")
+            metrics=$(measure_program "$program_path" "$params" "$sim_workload")
         fi
 
         if [ -z "$metrics" ]; then
@@ -93,7 +94,7 @@ process_config() {
         
         # Parse the configuration
         local config_data=$(parse_config_options "$line")
-        IFS='|' read -r program description depends collect_metrics cleanup build build_dir build_command params_str <<< "$config_data"
+        IFS='|' read -r program description depends collect_metrics cleanup build build_dir build_command sim_workload params_str <<< "$config_data"
         
         # Trim whitespace
         program=$(echo "$program" | xargs)
@@ -114,6 +115,7 @@ process_config() {
         log "DEBUG" "Build directory: $build_dir"
         log "DEBUG" "Build command: $build_command"
         log "DEBUG" "Parameters: $params_str"
+        log "DEBUG" "Simulated workload: $sim_workload"
         
         # build the program based on test configuration
         local program_path
@@ -153,12 +155,12 @@ process_config() {
 
             if [ ${#param_array[@]} -le 1 ]; then
                 log "DEBUG" "Single parameter set: ${param_array[0]:-}"
-                run_tests "$program_path" "$description" "$depends" "${param_array[0]}"
+                run_tests "$program_path" "$description" "$depends" "$sim_workload" "${param_array[0]}"
             else
                 log "DEBUG" "Multiple parameter sets: ${#param_array[@]}"
                 for param_set in "${param_array[@]}"; do
                     log "DEBUG" "Running with parameters: $param_set"
-                    run_tests "$program_path" "$description" "$depends" "$param_set"
+                    run_tests "$program_path" "$description" "$depends" "$sim_workload" "$param_set"
                 done
             fi
         else
