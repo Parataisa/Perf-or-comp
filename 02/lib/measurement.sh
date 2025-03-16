@@ -39,10 +39,14 @@ measure_program() {
     declare -a user_times
     declare -a sys_times
     declare -a memory_values
+
+    local run=0
+    local confidence_reached=false
+    local confidence_note=""
     
     # Perform measurements
-    for ((run=0; run<REPETITIONS; run++)); do
-        log "INFO" "Run $((run+1)) of $REPETITIONS"
+    while [ $run -lt $MAX_REPETITIONS ] && ! $confidence_reached; do
+        log "INFO" "Run $((run+1)) of maximum $MAX_REPETITIONS"
 
         trap 'log "WARNING" "Measurement interrupted"; rm -f "$temp_file"; return 1' INT TERM
         
@@ -63,14 +67,12 @@ measure_program() {
                 exit_code=\$?
                 if [ \$exit_code -ne 0 ]; then
                     echo \"Program failed with exit code \$exit_code on iteration \$i\" >&2
-                    # Continue anyway rather than exiting
                     continue
                 fi
                 done" 2> "$temp_file"; then
                 log "WARNING" "Workload simulation failed for run $((run+1))"
                 # Check if we got any metrics
                 if ! grep -q "[0-9]" "$temp_file"; then
-                    # No metrics, use zeros
                     echo "0.0,0.0,0.0,0" > "$temp_file"
                 fi
             fi
@@ -79,7 +81,6 @@ measure_program() {
             # Direct execution with error handling
             if ! /usr/bin/time -f "%e,%U,%S,%M" bash -c "for ((i=0; i<$iterations; i++)); do \"$program_path\" $params > /dev/null 2>&1; done" 2> "$temp_file"; then
                 log "WARNING" "Program execution failed for run $((run+1))"
-                # Reset the values to avoid calculation errors
                 echo "0.0,0.0,0.0,0" > "$temp_file"
             fi
         fi
@@ -107,6 +108,48 @@ measure_program() {
         memory_values[$run]=$memory
             
         log "INFO" "Real time: ${real_times[$run]}s | User: ${user_times[$run]}s | Sys: ${sys_times[$run]}s | Mem: ${memory_values[$run]}KB"
+        
+        if [ $run -ge $((MIN_REPETITIONS-1)) ]; then
+            # Calculate confidence interval for real time
+            local real_stats=$(calculate_statistics "${real_times[*]}")
+            local mean=$(echo "$real_stats" | awk '{print $1}')
+            local stddev=$(echo "$real_stats" | awk '{print $2}')
+            
+            # t-statistic for 95% confidence with n-1 degrees of freedom
+            local t_value=0
+            case $run in
+                2) t_value=4.303;; # 3 samples
+                3) t_value=3.182;; # 4 samples
+                4) t_value=2.776;; # 5 samples
+                5) t_value=2.571;; # 6 samples
+                6) t_value=2.447;; # 7 samples
+                7) t_value=2.365;; # 8 samples
+                8) t_value=2.306;; # 9 samples
+                9) t_value=2.262;; # 10 samples
+                *) t_value=1.96;;  # large sample approximation
+            esac
+            
+            # Calculate confidence interval half-width
+            local half_width=$(echo "scale=9; $t_value * $stddev / sqrt($run + 1)" | bc -l)
+            
+            # Calculate relative precision
+            local rel_precision=1.0
+            if [ $(echo "$mean > 0" | bc -l) -eq 1 ]; then
+                rel_precision=$(echo "scale=9; $half_width / $mean" | bc -l)
+            fi
+            
+            log "INFO" "Current relative precision: $rel_precision (target: $TARGET_PRECISION)"
+            
+            # Check if we've reached target precision
+            if [ $(echo "$rel_precision <= $TARGET_PRECISION" | bc -l) -eq 1 ]; then
+                confidence_reached=true
+                confidence_note="Confidence interval reached after $((run+1)) repetitions"
+                log "INFO" "$confidence_note"
+            fi
+        fi
+        
+        # Increment run counter
+        run=$((run+1))
         
         # Clear caches and pause between runs
         clear_caches

@@ -1,12 +1,4 @@
 #!/bin/bash
-# Cluster execution configuration
-RUN_ON_CLUSTER=false          # Set to true to run on cluster using SLURM
-CLUSTER_PARTITION="lva"      # SLURM partition to use
-CLUSTER_NTASKS=1             # Number of tasks for SLURM job
-JOB_NAME_PREFIX="perf_test"  # Prefix for SLURM job names
-MAX_WAIT_TIME=600            # Maximum wait time in seconds before canceling job
-CLEANUP_JOB_FILES=false       # Whether to clean up job files after execution
-
 # Create a SLURM job script
 create_job_script() {
     local program_path=$1
