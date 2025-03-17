@@ -54,7 +54,6 @@ run_tests() {
             continue
         fi
 
-        log "DEBUG" "Metrics: $metrics"
         # Parse and compute statistics
         read -r avg_real avg_user avg_sys avg_mem stddev_real min_real max_real variance_real notes <<< "$metrics"
         [ $CACHE_CLEARING_ENABLED ] && notes="${notes:+$notes, }Cache cleared"
