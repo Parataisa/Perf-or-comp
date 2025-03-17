@@ -30,6 +30,7 @@ test: check-config
 
 # IO-loadgen
 loadgen_io: loadgen_io.c
+	@mkdir -p build
 	$(CC) $(CFLAGS) -o build/$@ $^
 
 # Run tests with I/O load simulation

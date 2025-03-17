@@ -8,7 +8,8 @@ READ_PERCENT=30
 DELAY_MS=5
 MIN_FILE_SIZE=1024      
 MAX_FILE_SIZE=10485760  
-IO_LOAD_DIR="./io_load"
+
+IO_LOAD_DIR="/tmp/io_load_$$"
 
 # Ensure the script stops the load generator when exiting
 cleanup() {
@@ -18,11 +19,17 @@ cleanup() {
         kill $LOADGEN_PID 2>/dev/null
         wait $LOADGEN_PID 2>/dev/null
     fi
+    
+    # Always clean up the temp IO directory
+    if [ -d "$IO_LOAD_DIR" ]; then
+        echo "Removing I/O load directory: $IO_LOAD_DIR"
+        rm -rf "$IO_LOAD_DIR"
+    fi
 }
 
 trap cleanup EXIT INT TERM
 
-echo "Starting I/O load generator..."
+echo "Starting I/O load generator with files in $IO_LOAD_DIR..."
 mkdir -p "$IO_LOAD_DIR"
 
 # Start the I/O load generator in the background
@@ -40,5 +47,6 @@ sleep 5
 
 echo "Running performance tests with I/O load..."
 export RUNNING_WITH_IO_LOAD=1
+export IO_LOAD_DIR="$IO_LOAD_DIR"
 
 ./performance_test.sh "$CONFIG_FILE"

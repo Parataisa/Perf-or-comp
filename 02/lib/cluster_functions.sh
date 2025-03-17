@@ -375,6 +375,37 @@ measure_program() {
     echo "$result"
 }
 EOF
+
+cat >> "$script_file" << 'EOF'
+    # Set up local temporary directory
+    LOCAL_TEMP_DIR="/tmp/benchmarks_$$"
+    mkdir -p "$LOCAL_TEMP_DIR"
+
+    # Get the original directory where the job script is running
+    ORIGINAL_DIR="$PWD"
+
+    # Copy the executable to the local directory
+    cp "$ORIGINAL_DIR/build/filegen" "$LOCAL_TEMP_DIR/" || {
+        echo "Error: Failed to copy filegen executable to $LOCAL_TEMP_DIR"
+        echo "Current working directory: $PWD"
+        echo "Listing files in build directory:"
+        ls -la "$ORIGINAL_DIR/build/"
+        exit 1
+    }
+
+    # Then change to the temp directory
+    cd "$LOCAL_TEMP_DIR"
+
+    # Clean up function to run at script exit
+    cleanup_local_temp() {
+    cd /
+    rm -rf "$LOCAL_TEMP_DIR"
+    }
+
+    # Register cleanup to happen at exit
+    trap cleanup_local_temp EXIT
+EOF
+
     
     cat >> "$script_file" << EOF
 
@@ -382,12 +413,12 @@ EOF
 if [ $WARMUP_RUNS -gt 0 ]; then
     echo "Performing $WARMUP_RUNS warmup run(s)..."
     for ((i=1; i<=$WARMUP_RUNS; i++)); do
-        $program_path $params > /dev/null 2>&1
+        ./$(basename "$program_path") $params > /dev/null 2>&1 || true
     done
 fi
 
 echo "Starting performance measurement..."
-measure_program $program_path $params
+measure_program ./$(basename "$program_path") $params
 EOF
     
     chmod +x "$script_file"
