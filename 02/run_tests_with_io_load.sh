@@ -26,7 +26,7 @@ echo "Starting I/O load generator..."
 mkdir -p "$IO_LOAD_DIR"
 
 # Start the I/O load generator in the background
-./loadgen_io $IO_THREADS $READ_PERCENT $DELAY_MS $MIN_FILE_SIZE $MAX_FILE_SIZE 0 "$IO_LOAD_DIR" &
+./build/loadgen_io $IO_THREADS $READ_PERCENT $DELAY_MS $MIN_FILE_SIZE $MAX_FILE_SIZE 0 "$IO_LOAD_DIR" &
 LOADGEN_PID=$!
 
 if [ -z "$LOADGEN_PID" ] || ! kill -0 $LOADGEN_PID 2>/dev/null; then

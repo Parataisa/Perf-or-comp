@@ -199,12 +199,15 @@ calculate_confidence() {
     }')
     
     # Approximate confidence interval half-width as 2*stddev/sqrt(n)
-    local half_width=$(echo "scale=9; 2 * $stddev / sqrt($count)" | bc -l)
+    local stddev_decimal=$(echo "$stddev" | sed 's/[eE]/*10^/g')
+    local half_width=$(echo "scale=9; 2 * $stddev_decimal / sqrt($count)" | bc -l)
     
     # Calculate relative precision
     local rel_precision=1.0
     if (( $(echo "$mean > 0" | bc -l) )); then
-        rel_precision=$(echo "scale=9; $half_width / $mean" | bc -l)
+        local mean_decimal=$(echo "$mean" | sed 's/[eE]/*10^/g')
+        local half_width_decimal=$(echo "$half_width" | sed 's/[eE]/*10^/g')
+        rel_precision=$(echo "scale=9; $half_width_decimal / $mean_decimal" | bc -l)
     fi
     
     local confidence_reached=false

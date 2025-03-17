@@ -30,7 +30,7 @@ test: check-config
 
 # IO-loadgen
 loadgen_io: loadgen_io.c
-	$(CC) $(CFLAGS) -o $@ $^
+	$(CC) $(CFLAGS) -o build/$@ $^
 
 # Run tests with I/O load simulation
 test-with-io-load: loadgen_io check-config
