@@ -18,7 +18,7 @@ create_job_script() {
 #SBATCH --exclusive
 EOF
     
-    # Add module loading
+    # Add module loading and configuration
     cat >> "$script_file" << EOF
 
 # Load modules
@@ -30,7 +30,9 @@ module load ninja/1.11.1-python-3.10.8-gcc-8.5.0-2oc4wj6
 VERY_FAST_ITERATIONS=$VERY_FAST_ITERATIONS
 FAST_ITERATIONS=$FAST_ITERATIONS
 MODERATELY_FAST_ITERATIONS=$MODERATELY_FAST_ITERATIONS
-REPETITIONS=$REPETITIONS
+MAX_REPETITIONS=$MAX_REPETITIONS
+MIN_REPETITIONS=$MIN_REPETITIONS
+TARGET_PRECISION=$TARGET_PRECISION
 PAUSE_SECONDS=$PAUSE_SECONDS
 EOF
 
@@ -95,6 +97,48 @@ calculate_statistics() {
     echo "$mean $stddev $min $max $variance"
 }
 
+# Calculate confidence interval
+calculate_confidence() {
+    local values="$1"
+    local target_precision="$2"
+    
+    local -a value_array=($values)
+    local count=${#value_array[@]}
+    
+    # Need at least 3 measurements
+    if [ $count -lt 3 ]; then
+        echo "0 0 0 false"  # mean, stddev, rel_precision, confidence_reached
+        return
+    fi
+    
+    local mean=$(echo "$values" | awk '{ sum = 0; for (i = 1; i <= NF; i++) sum += $i; print sum / NF }')
+    local stddev=$(echo "$values" | awk -v mean="$mean" '{
+        sum_sq_diff = 0;
+        for (i = 1; i <= NF; i++) {
+            diff = $i - mean;
+            sum_sq_diff += diff * diff;
+        }
+        print sqrt(sum_sq_diff / (NF - 1));
+    }')
+    
+    # Approximate confidence interval half-width as 2*stddev/sqrt(n)
+    local half_width=$(echo "scale=9; 2 * $stddev / sqrt($count)" | bc -l)
+    
+    # Calculate relative precision
+    local rel_precision=1.0
+    if (( $(echo "$mean > 0" | bc -l) )); then
+        rel_precision=$(echo "scale=9; $half_width / $mean" | bc -l)
+    fi
+    
+    # Check if confidence target is met
+    local confidence_reached=false
+    if (( $(echo "$rel_precision <= $target_precision" | bc -l) )); then
+        confidence_reached=true
+    fi
+    
+    echo "$mean $stddev $rel_precision $confidence_reached"
+}
+
 # Main measurement function
 measure_program() {
     local program_path=$1
@@ -120,24 +164,28 @@ measure_program() {
         iterations=$MODERATELY_FAST_ITERATIONS  # Moderately fast program (<500ms but >=100ms)
         high_precision_note="High precision mode ($iterations iterations per measurement)"
     else
-        log "DEBUG" "Standard program detected ($duration s). Using standard measurement."
+        echo "Standard program detected ($duration s). Using standard measurement."
     fi
-    log "INFO" "Using $iterations iterations for measurement"
+    echo "Using $iterations iterations for measurement"
     
     # Arrays to store measurements
     declare -a real_times
     declare -a user_times
     declare -a sys_times
     declare -a memory_values
+
+    local run=0
+    local confidence_reached=false
+    local confidence_note=""
     
-    # Perform measurements
-    for ((run=0; run<REPETITIONS; run++)); do
-        log "INFO" "Run $((run+1)) of $REPETITIONS"
+    # Perform measurements with dynamic repetitions
+    while [ $run -lt $MAX_REPETITIONS ] && ! $confidence_reached; do
+        echo "Run $((run+1)) of maximum $MAX_REPETITIONS"
         
         local temp_file=$(mktemp)
         /usr/bin/time -f "%e,%U,%S,%M" bash -c "for ((i=0; i<$iterations; i++)); do \"$program_path\" $params > /dev/null 2>&1; done" 2> "$temp_file"
         local loop_metrics=$(cat "$temp_file")
-        rm "$temp_file"
+        rm -f "$temp_file"
 
         # Extract and normalize metrics
         local real_total=$(echo "$loop_metrics" | cut -d, -f1)
@@ -156,20 +204,36 @@ measure_program() {
         sys_times[$run]=$sys_time
         memory_values[$run]=$memory
             
-        log "INFO" "Real time: ${real_times[$run]}s | User: ${user_times[$run]}s | Sys: ${sys_times[$run]}s | Mem: ${memory_values[$run]}KB"
+        echo "Real time: ${real_times[$run]}s | User: ${user_times[$run]}s | Sys: ${sys_times[$run]}s | Mem: ${memory_values[$run]}KB"
         
-        # Clear caches and pause between runs
+        # Calculate confidence after minimum repetitions
+        if [ $run -ge $((MIN_REPETITIONS-1)) ]; then
+            local conf_result=$(calculate_confidence "${real_times[*]}" "$TARGET_PRECISION")
+            local mean=$(echo "$conf_result" | cut -d' ' -f1)
+            local stddev=$(echo "$conf_result" | cut -d' ' -f2)
+            local rel_precision=$(echo "$conf_result" | cut -d' ' -f3)
+            local conf_reached=$(echo "$conf_result" | cut -d' ' -f4)
+            
+            echo "After $((run+1)) runs: Mean=$mean, StdDev=$stddev, Precision=$rel_precision"
+            
+            if [ "$conf_reached" = "true" ]; then
+                confidence_reached=true
+                confidence_note="Target precision of $TARGET_PRECISION reached after $((run+1)) runs"
+                echo "$confidence_note"
+            fi
+        fi
+        
+        run=$((run+1))
         clear_caches
         sleep $PAUSE_SECONDS
     done
     
-    # Create the raw data for this run
-    local real_times_str=$(printf "'%s' " "${real_times[@]}")
-    local user_times_str=$(printf "'%s' " "${user_times[@]}")
-    local sys_times_str=$(printf "'%s' " "${sys_times[@]}")
-    local memory_values_str=$(printf "'%s' " "${memory_values[@]}")
+    if ! $confidence_reached; then
+        confidence_note="Max repetitions ($MAX_REPETITIONS) reached without meeting confidence target"
+        echo "$confidence_note"
+    fi
     
-    # Calculate statistics
+    # Calculate final statistics
     local real_stats=$(calculate_statistics "${real_times[*]}")
     local user_stats=$(calculate_statistics "${user_times[*]}")
     local sys_stats=$(calculate_statistics "${sys_times[*]}")
@@ -182,18 +246,6 @@ measure_program() {
     local max_real=$(echo "$real_stats" | awk '{print $4}')
     local variance_real=$(echo "$real_stats" | awk '{print $5}')
     
-    local avg_user=$(echo "$user_stats" | awk '{print $1}')
-    local stddev_user=$(echo "$user_stats" | awk '{print $2}')
-    local variance_user=$(echo "$user_stats" | awk '{print $5}')
-    
-    local avg_sys=$(echo "$sys_stats" | awk '{print $1}')
-    local stddev_sys=$(echo "$sys_stats" | awk '{print $2}')
-    local variance_sys=$(echo "$sys_stats" | awk '{print $5}')
-    
-    local avg_mem=$(echo "$mem_stats" | awk '{print $1}')
-    local stddev_mem=$(echo "$mem_stats" | awk '{print $2}')
-    local variance_mem=$(echo "$mem_stats" | awk '{print $5}')
-    
     # Format values for output
     local formatted_real=$(format_time "$avg_real")
     local formatted_user=$(format_time "$avg_user")
@@ -203,8 +255,8 @@ measure_program() {
     local formatted_max=$(format_time "$max_real")
     local formatted_variance=$(format_time "$variance_real")
     
-    local result="$formatted_real $formatted_user $formatted_sys $avg_mem $formatted_stddev $formatted_min $formatted_max $formatted_variance $high_precision_note"
-    
+    # Final output with confidence note
+    local result="$formatted_real $formatted_user $formatted_sys $avg_mem $formatted_stddev $formatted_min $formatted_max $formatted_variance $high_precision_note $confidence_note"
     echo "$result"
 }
 EOF
@@ -275,8 +327,6 @@ wait_for_job() {
 # Parse job output
 parse_job_output() {
     local output_file=$1
-    local precision_mode="STANDARD"
-    local precision_note=""
     
     # Wait for output file
     local max_wait=30
@@ -291,14 +341,31 @@ parse_job_output() {
         fi
     done
     
-    # Extract precision note
+    # Extract notes (precision + confidence)
+    local notes=""
     if grep -q "High precision mode" "$output_file"; then
-        precision_note=$(grep "High precision mode" "$output_file" | tail -1)
-        log "DEBUG" "Found precision note: $precision_note"
+        local precision_note=$(grep "High precision mode" "$output_file" | tail -1)
+        notes="$precision_note"
     fi
     
-    # Extract the measurement result line 
-    local result_line=$(grep -E "^[0-9]*\.[0-9]+ [0-9]*\.[0-9]+ [0-9]*\.[0-9]+ [0-9]+ [0-9]*\.[0-9]+ [0-9]*\.[0-9]+ [0-9]*\.[0-9]+ [0-9]*\.[0-9]+" "$output_file")
+    if grep -q "Target precision of" "$output_file"; then
+        local confidence_note=$(grep "Target precision of" "$output_file" | tail -1)
+        if [ -n "$notes" ]; then
+            notes="$notes, $confidence_note"
+        else
+            notes="$confidence_note"
+        fi
+    elif grep -q "Max repetitions" "$output_file"; then
+        local max_rep_note=$(grep "Max repetitions" "$output_file" | tail -1)
+        if [ -n "$notes" ]; then
+            notes="$notes, $max_rep_note"
+        else
+            notes="$max_rep_note"
+        fi
+    fi
+    
+    # Extract the measurement result line
+    local result_line=$(grep -E "^[0-9]*\.[0-9]+ [0-9]*\.[0-9]+ [0-9]*\.[0-9]+ [0-9]+ [0-9]*\.[0-9]+ [0-9]*\.[0-9]+ [0-9]*\.[0-9]+ [0-9]*\.[0-9]+" "$output_file" | tail -1)
     
     if [ -z "$result_line" ]; then
         log "ERROR" "Could not find a valid measurement result in the output file"
@@ -306,7 +373,7 @@ parse_job_output() {
     fi
     
     log "DEBUG" "Found measurement result: $result_line"
-    echo "$result_line $precision_note"
+    echo "$result_line $notes"
 }
 
 # Execute performance test on the cluster
@@ -315,7 +382,7 @@ run_on_cluster() {
     local params=$2
     local program_name=$(basename "$program_path")
     
-    log "INFO" "Running on cluster using SLURM..."
+    log "INFO" "Running on cluster using SLURM with dynamic repetitions..."
     
     # Create a unique job name with timestamp
     local job_name="${JOB_NAME_PREFIX}_${program_name}_$(date +%s)"
@@ -324,22 +391,18 @@ run_on_cluster() {
     local job_script=$(create_job_script "$program_path" "$params" "$job_name")
     local output_file="${job_name}_output.log"
     
-    # Submit job
-    for ((i=1; i<=REPETITIONS; i++)); do
-        local job_id=$(submit_job "$job_script")
-        # Wait for job to complete
-        if ! wait_for_job "$job_id"; then
-            log "ERROR" "Job $job_id was cancelled due to timeout."
-            return 1
-        fi
-    done
+    local job_id=$(submit_job "$job_script")
     
     if [ -z "$job_id" ]; then
         log "ERROR" "Failed to submit job. Skipping this parameter set."
         return 1
     fi
     
-    # Parse job output
+    if ! wait_for_job "$job_id"; then
+        log "ERROR" "Job $job_id was cancelled due to timeout."
+        return 1
+    fi
+    
     local result=$(parse_job_output "$output_file")
     
     if [ -z "$result" ]; then
@@ -347,13 +410,11 @@ run_on_cluster() {
         return 1
     fi
     
-    # Clean up job files if enabled
     if [ "$CLEANUP_JOB_FILES" = "true" ]; then
         log "DEBUG" "Cleaning up job files: $job_script $output_file"
         rm -f "$job_script" "$output_file"
     fi
     
-    # Add cluster execution note
     result="$result, Cluster execution"
     
     echo "$result"
