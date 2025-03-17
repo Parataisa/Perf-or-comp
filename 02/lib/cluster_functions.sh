@@ -4,6 +4,7 @@ create_job_script() {
     local program_path=$1
     local params=$2
     local job_name=$3
+    local sim_workload=$4
     local output_file="${job_name}_output.log"
     local script_file="${job_name}_job.sh"
     
@@ -38,6 +39,54 @@ EOF
 
     cat >> "$script_file" << 'EOF'
 
+# Ensure bc command is available
+if ! command -v bc &> /dev/null; then
+    echo "Error: bc command not found. Please load required module." >&2
+    # Try to load a math module if available
+    module load bc 2>/dev/null || true
+fi
+
+# Helper function for safe bc operations
+safe_bc() {
+    local expression="$1"
+    local default_value="${2:-0}"
+    
+    # Sanitize input to avoid syntax errors
+    expression=$(echo "$expression" | tr -d '\r')
+    
+    # Run bc with error handling
+    result=$(echo "$expression" | bc -l 2>/dev/null)
+    if [ $? -ne 0 ] || [ -z "$result" ]; then
+        echo "$default_value"
+    else
+        echo "$result"
+    fi
+}
+
+# Helper function for safe comparisons
+safe_compare() {
+    local left="$1"
+    local op="$2"
+    local right="$3"
+    local default="${4:-false}"
+    
+    # Ensure numeric values
+    if ! [[ "$left" =~ ^[+-]?[0-9]*\.?[0-9]+$ ]] || ! [[ "$right" =~ ^[+-]?[0-9]*\.?[0-9]+$ ]]; then
+        # Not valid numbers, return default
+        [ "$default" = "true" ] && return 0 || return 1
+    fi
+    
+    local result
+    result=$(safe_bc "$left $op $right" 0)
+    
+    # Check result (1 for true, 0 for false in bc)
+    if [ "$result" = "1" ]; then
+        return 0  # Success/true
+    else
+        return 1  # Failure/false
+    fi
+}
+
 clear_caches() {
     if command -v sync &> /dev/null && [ -w /proc/sys/vm/drop_caches ]; then
         sync
@@ -61,13 +110,19 @@ calculate_statistics() {
     local max=""
     
     for value in $values; do
-        sum=$(echo "$sum + $value" | bc -l)
+        # Skip invalid values
+        if ! [[ "$value" =~ ^[+-]?[0-9]*\.?[0-9]+$ ]]; then
+            echo "WARNING: Skipping invalid value: $value" >&2
+            continue
+        fi
         
-        if [ -z "$min" ] || (( $(echo "$value < $min" | bc -l) )); then
+        sum=$(safe_bc "$sum + $value")
+        
+        if [ -z "$min" ] || safe_compare "$value" "<" "$min"; then
             min=$value
         fi
         
-        if [ -z "$max" ] || (( $(echo "$value > $max" | bc -l) )); then
+        if [ -z "$max" ] || safe_compare "$value" ">" "$max"; then
             max=$value
         fi
         
@@ -79,18 +134,23 @@ calculate_statistics() {
     local stddev=0
     
     if [ $count -gt 0 ]; then
-        mean=$(echo "scale=9; $sum / $count" | bc -l)
+        mean=$(safe_bc "scale=9; $sum / $count")
         
         local sum_sq_diff=0
         for value in $values; do
-            local diff=$(echo "$value - $mean" | bc -l)
-            local sq_diff=$(echo "$diff * $diff" | bc -l)
-            sum_sq_diff=$(echo "$sum_sq_diff + $sq_diff" | bc -l)
+            # Skip invalid values
+            if ! [[ "$value" =~ ^[+-]?[0-9]*\.?[0-9]+$ ]]; then
+                continue
+            fi
+            
+            local diff=$(safe_bc "$value - $mean")
+            local sq_diff=$(safe_bc "$diff * $diff")
+            sum_sq_diff=$(safe_bc "$sum_sq_diff + $sq_diff")
         done
         
         if [ $count -gt 1 ]; then
-            variance=$(echo "scale=9; $sum_sq_diff / $count" | bc -l)
-            stddev=$(echo "scale=9; sqrt($variance)" | bc -l)
+            variance=$(safe_bc "scale=9; $sum_sq_diff / $count")
+            stddev=$(safe_bc "scale=9; sqrt($variance)")
         fi
     fi
     
@@ -111,28 +171,40 @@ calculate_confidence() {
         return
     fi
     
-    local mean=$(echo "$values" | awk '{ sum = 0; for (i = 1; i <= NF; i++) sum += $i; print sum / NF }')
-    local stddev=$(echo "$values" | awk -v mean="$mean" '{
-        sum_sq_diff = 0;
-        for (i = 1; i <= NF; i++) {
-            diff = $i - mean;
-            sum_sq_diff += diff * diff;
-        }
-        print sqrt(sum_sq_diff / (NF - 1));
-    }')
+    # Calculate mean
+    local sum=0
+    for val in $values; do
+        sum=$(safe_bc "$sum + $val")
+    done
+    local mean=$(safe_bc "$sum / $count")
     
-    # Approximate confidence interval half-width as 2*stddev/sqrt(n)
-    local half_width=$(echo "scale=9; 2 * $stddev / sqrt($count)" | bc -l)
+    # Calculate standard deviation
+    local sum_sq_diff=0
+    for val in $values; do
+        local diff=$(safe_bc "$val - $mean")
+        local sq_diff=$(safe_bc "$diff * $diff")
+        sum_sq_diff=$(safe_bc "$sum_sq_diff + $sq_diff")
+    done
+    
+    local stddev=0
+    if [ $count -gt 1 ]; then
+        stddev=$(safe_bc "sqrt($sum_sq_diff / ($count - 1))")
+    fi
+    
+    local half_width=0
+    if [ $count -gt 0 ]; then
+        half_width=$(safe_bc "scale=9; 2 * $stddev / sqrt($count)")
+    fi
     
     # Calculate relative precision
     local rel_precision=1.0
-    if (( $(echo "$mean > 0" | bc -l) )); then
-        rel_precision=$(echo "scale=9; $half_width / $mean" | bc -l)
+    if safe_compare "$mean" ">" "0.000001"; then
+        rel_precision=$(safe_bc "scale=9; $half_width / $mean")
     fi
     
     # Check if confidence target is met
     local confidence_reached=false
-    if (( $(echo "$rel_precision <= $target_precision" | bc -l) )); then
+    if safe_compare "$rel_precision" "<=" "$target_precision"; then
         confidence_reached=true
     fi
     
@@ -146,21 +218,21 @@ measure_program() {
     
     # Check if this is a fast program
     local start_time=$(date +%s.%N)
-    $program_path $params > /dev/null 2>&1
+    "$program_path" $params > /dev/null 2>&1 || true
     local end_time=$(date +%s.%N)
-    local duration=$(echo "$end_time - $start_time" | bc -l)
+    local duration=$(safe_bc "$end_time - $start_time")
     
     local iterations=1
     local high_precision_note=""
     
     # Determine if we need high precision mode
-    if (( $(echo "$duration < 0.01" | bc -l) )); then
+    if safe_compare "$duration" "<" "0.01"; then
         iterations=$VERY_FAST_ITERATIONS  # Very fast program (<10ms)
         high_precision_note="High precision mode ($iterations iterations per measurement)"
-    elif (( $(echo "$duration < 0.1" | bc -l) )); then
+    elif safe_compare "$duration" "<" "0.1"; then
         iterations=$FAST_ITERATIONS  # Fast program (<100ms but >=10ms)
         high_precision_note="High precision mode ($iterations iterations per measurement)"
-    elif (( $(echo "$duration < 0.5" | bc -l) )); then
+    elif safe_compare "$duration" "<" "0.5"; then
         iterations=$MODERATELY_FAST_ITERATIONS  # Moderately fast program (<500ms but >=100ms)
         high_precision_note="High precision mode ($iterations iterations per measurement)"
     else
@@ -183,20 +255,52 @@ measure_program() {
         echo "Run $((run+1)) of maximum $MAX_REPETITIONS"
         
         local temp_file=$(mktemp)
-        /usr/bin/time -f "%e,%U,%S,%M" bash -c "for ((i=0; i<$iterations; i++)); do \"$program_path\" $params > /dev/null 2>&1; done" 2> "$temp_file"
+        /usr/bin/time -f "%e,%U,%S,%M" bash -c "for ((i=0; i<$iterations; i++)); do \"$program_path\" $params > /dev/null 2>&1 || true; done" 2> "$temp_file" || true
+        
+        # Check if time command succeeded
+        if [ ! -s "$temp_file" ]; then
+            echo "Warning: time command failed to produce output" >&2
+            rm -f "$temp_file"
+            run=$((run+1))
+            continue
+        fi
+        
         local loop_metrics=$(cat "$temp_file")
         rm -f "$temp_file"
 
         # Extract and normalize metrics
-        local real_total=$(echo "$loop_metrics" | cut -d, -f1)
-        local user_total=$(echo "$loop_metrics" | cut -d, -f2)
-        local sys_total=$(echo "$loop_metrics" | cut -d, -f3)
-        local memory=$(echo "$loop_metrics" | cut -d, -f4)
+        if ! echo "$loop_metrics" | grep -q "," ; then
+            echo "Warning: Invalid time output format: $loop_metrics" >&2
+            continue
+        else
+            local real_total=$(echo "$loop_metrics" | cut -d, -f1)
+            local user_total=$(echo "$loop_metrics" | cut -d, -f2)
+            local sys_total=$(echo "$loop_metrics" | cut -d, -f3)
+            local memory=$(echo "$loop_metrics" | cut -d, -f4)
+            
+            # Validate metrics
+            if ! [[ "$real_total" =~ ^[+-]?[0-9]*\.?[0-9]+$ ]]; then
+                echo "Warning: Invalid real time: $real_total, using default" >&2
+                real_total="0.01"
+            fi
+            if ! [[ "$user_total" =~ ^[+-]?[0-9]*\.?[0-9]+$ ]]; then
+                echo "Warning: Invalid user time: $user_total, using default" >&2
+                user_total="0.005"
+            fi
+            if ! [[ "$sys_total" =~ ^[+-]?[0-9]*\.?[0-9]+$ ]]; then
+                echo "Warning: Invalid sys time: $sys_total, using default" >&2
+                sys_total="0.005"
+            fi
+            if ! [[ "$memory" =~ ^[0-9]+$ ]]; then
+                echo "Warning: Invalid memory value: $memory, using default" >&2
+                memory="1000"
+            fi
+        fi
 
         # Calculate average per iteration
-        local real_time=$(echo "scale=9; $real_total / $iterations" | bc -l)
-        local user_time=$(echo "scale=9; $user_total / $iterations" | bc -l)
-        local sys_time=$(echo "scale=9; $sys_total / $iterations" | bc -l)
+        local real_time=$(safe_bc "scale=9; $real_total / $iterations")
+        local user_time=$(safe_bc "scale=9; $user_total / $iterations")
+        local sys_time=$(safe_bc "scale=9; $sys_total / $iterations")
         
         # Store measurements
         real_times[$run]=$real_time
@@ -208,7 +312,8 @@ measure_program() {
         
         # Calculate confidence after minimum repetitions
         if [ $run -ge $((MIN_REPETITIONS-1)) ]; then
-            local conf_result=$(calculate_confidence "${real_times[*]}" "$TARGET_PRECISION")
+            local real_times_joined="${real_times[*]}"
+            local conf_result=$(calculate_confidence "$real_times_joined" "$TARGET_PRECISION")
             local mean=$(echo "$conf_result" | cut -d' ' -f1)
             local stddev=$(echo "$conf_result" | cut -d' ' -f2)
             local rel_precision=$(echo "$conf_result" | cut -d' ' -f3)
@@ -233,11 +338,17 @@ measure_program() {
         echo "$confidence_note"
     fi
     
+    # Join array elements into space-separated strings for statistics calculation
+    local real_times_joined="${real_times[*]}"
+    local user_times_joined="${user_times[*]}"
+    local sys_times_joined="${sys_times[*]}"
+    local memory_values_joined="${memory_values[*]}"
+    
     # Calculate final statistics
-    local real_stats=$(calculate_statistics "${real_times[*]}")
-    local user_stats=$(calculate_statistics "${user_times[*]}")
-    local sys_stats=$(calculate_statistics "${sys_times[*]}")
-    local mem_stats=$(calculate_statistics "${memory_values[*]}")
+    local real_stats=$(calculate_statistics "$real_times_joined")
+    local user_stats=$(calculate_statistics "$user_times_joined")
+    local sys_stats=$(calculate_statistics "$sys_times_joined")
+    local mem_stats=$(calculate_statistics "$memory_values_joined")
     
     # Extract statistics
     local avg_real=$(echo "$real_stats" | awk '{print $1}')
@@ -245,6 +356,10 @@ measure_program() {
     local min_real=$(echo "$real_stats" | awk '{print $3}')
     local max_real=$(echo "$real_stats" | awk '{print $4}')
     local variance_real=$(echo "$real_stats" | awk '{print $5}')
+    
+    local avg_user=$(echo "$user_stats" | awk '{print $1}')
+    local avg_sys=$(echo "$sys_stats" | awk '{print $1}')
+    local avg_mem=$(echo "$mem_stats" | awk '{print $1}')
     
     # Format values for output
     local formatted_real=$(format_time "$avg_real")
@@ -364,8 +479,11 @@ parse_job_output() {
         fi
     fi
     
-    # Extract the measurement result line
-    local result_line=$(grep -E "^[0-9]*\.[0-9]+ [0-9]*\.[0-9]+ [0-9]*\.[0-9]+ [0-9]+ [0-9]*\.[0-9]+ [0-9]*\.[0-9]+ [0-9]*\.[0-9]+ [0-9]*\.[0-9]+" "$output_file" | tail -1)
+    # Get the last line which should contain the numeric results
+    local last_line=$(tail -1 "$output_file")
+    
+    # Extract just the numeric fields (first 8 fields)
+    local result_line=$(echo "$last_line" | awk '{print $1, $2, $3, $4, $5, $6, $7, $8}')
     
     if [ -z "$result_line" ]; then
         log "ERROR" "Could not find a valid measurement result in the output file"
@@ -403,11 +521,35 @@ run_on_cluster() {
         return 1
     fi
     
-    local result=$(parse_job_output "$output_file")
+    # Get the last line of output which contains our metrics
+    local last_line=$(tail -1 "$output_file")
     
-    if [ -z "$result" ]; then
+    # Extract just the first 8 numeric values for the metrics
+    local metrics=$(echo "$last_line" | awk '{print $1, $2, $3, $4, $5, $6, $7, $8}')
+    
+    if [ -z "$metrics" ]; then
         log "ERROR" "Failed to parse job output. Skipping this parameter set."
         return 1
+    fi
+    
+    # Extract notes separately
+    local notes=""
+    if grep -q "High precision mode" "$output_file"; then
+        notes="High precision mode"
+    fi
+    
+    if grep -q "Target precision of" "$output_file"; then
+        if [ -n "$notes" ]; then
+            notes="$notes, Target precision reached"
+        else
+            notes="Target precision reached" 
+        fi
+    elif grep -q "Max repetitions" "$output_file"; then
+        if [ -n "$notes" ]; then
+            notes="$notes, Max repetitions reached"
+        else
+            notes="Max repetitions reached"
+        fi
     fi
     
     if [ "$CLEANUP_JOB_FILES" = "true" ]; then
@@ -415,11 +557,16 @@ run_on_cluster() {
         rm -f "$job_script" "$output_file"
     fi
     
-    result="$result, Cluster execution"
+    # Combine metrics and notes
+    local result="$metrics"
+    if [ -n "$notes" ]; then
+        result="$result $notes, Cluster execution"
+    else
+        result="$result Cluster execution"
+    fi
     
     echo "$result"
 }
-
 # Export functions and variables for use in the main script
 export -f create_job_script submit_job wait_for_job parse_job_output run_on_cluster
 export RUN_ON_CLUSTER CLUSTER_PARTITION CLUSTER_NTASKS CLUSTER_EXCLUSIVE JOB_NAME_PREFIX MAX_WAIT_TIME
