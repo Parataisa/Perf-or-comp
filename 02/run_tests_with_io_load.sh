@@ -3,8 +3,8 @@
 # Script to run performance tests with I/O load generator in background
 
 CONFIG_FILE=${1:-"test_config.txt"}
-IO_THREADS=4
-READ_PERCENT=30
+IO_THREADS=16
+READ_PERCENT=50
 DELAY_MS=5
 MIN_FILE_SIZE=1024      
 MAX_FILE_SIZE=10485760  

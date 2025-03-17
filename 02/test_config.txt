@@ -9,7 +9,7 @@
 # - build=true/false              # Whether to build the program before running (default: true)
 # - build_dir=path                # Build directory for the program
 # - build_command=command         # Build command for the program(The whole command like "gcc -Wall -Wextra -O3 -o")
-# - sim_workload=true/false   # Whether to simulate workload for this run (default: false)
+# - sim_workload=true/false       # Whether to simulate workload for this run (default: false)
 # Examples:
 
 #small_samples/delannoy/delannoy|Delannoy number calculation|collect=true|sim_workload=true|10|12|14|15|16|

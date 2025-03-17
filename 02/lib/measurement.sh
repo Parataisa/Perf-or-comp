@@ -170,7 +170,7 @@ measure_program() {
     local formatted_max=$(format_time "$max_real")
     local formatted_variance=$(format_time "$variance_real")
     
-    local result="$formatted_real $formatted_user $formatted_sys $avg_mem $formatted_stddev $formatted_min $formatted_max $formatted_variance $high_precision_note"
+    local result="$formatted_real $formatted_user $formatted_sys $avg_mem $formatted_stddev $formatted_min $formatted_max $formatted_variance $high_precision_note $confidence_note"
     
     echo "$result"
 }
