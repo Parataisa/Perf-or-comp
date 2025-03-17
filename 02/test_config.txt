@@ -12,15 +12,15 @@
 # - sim_workload=true/false       # Whether to simulate workload for this run (default: false)
 # Examples:
 
-#small_samples/delannoy/delannoy|Delannoy number calculation|collect=true|sim_workload=true|10|12|14|15|16|
+small_samples/delannoy/delannoy|Delannoy number calculation|collect=true|sim_workload=false|10|12|13|14|15|
 
-small_samples/filegen/filegen|Small file benchmark|cleanup=rm -rf ./generated|5 10 1024 4096|
-small_samples/filegen/filegen|Medium file benchmark|cleanup=rm -rf ./generated|10 30 4096 16384|
-small_samples/filegen/filegen|Large file benchmark|cleanup=rm -rf ./generated|20 50 16384 65536|
-small_samples/filegen/filegen|Mixed size benchmark|cleanup=rm -rf ./generated|30 60 16384 1048576|
-
-small_samples/filesearch/filesearch|Simple search test|depends=filegen 5 10 1024 4096|cleanup=rm -rf ./generated|
-small_samples/filesearch/filesearch|Medium complexity search|depends=filegen 15 45 4096 32768|cleanup=rm -rf ./generated|
-small_samples/filesearch/filesearch|Deep directory search|depends=filegen 25 45 8192 16384|cleanup=rm -rf ./generated|
-small_samples/filesearch/filesearch|Large file search|depends=filegen 20 50 262144 1048576|cleanup=rm -rf ./generated|
-small_samples/filesearch/filesearch|Many small files search|depends=filegen 20 100 512 4096|cleanup=rm -rf ./generated|
+#small_samples/filegen/filegen|Small file benchmark|cleanup=rm -rf ./generated|5 10 1024 4096|
+#small_samples/filegen/filegen|Medium file benchmark|cleanup=rm -rf ./generated|10 30 4096 16384|
+#small_samples/filegen/filegen|Large file benchmark|cleanup=rm -rf ./generated|20 50 16384 65536|
+#small_samples/filegen/filegen|Mixed size benchmark|cleanup=rm -rf ./generated|30 60 16384 1048576|
+#
+#small_samples/filesearch/filesearch|Simple search test|depends=filegen 5 10 1024 4096|cleanup=rm -rf ./generated|
+#small_samples/filesearch/filesearch|Medium complexity search|depends=filegen 15 45 4096 32768|cleanup=rm -rf ./generated|
+#small_samples/filesearch/filesearch|Deep directory search|depends=filegen 25 45 8192 16384|cleanup=rm -rf ./generated|
+#small_samples/filesearch/filesearch|Large file search|depends=filegen 20 50 262144 1048576|cleanup=rm -rf ./generated|
+#small_samples/filesearch/filesearch|Many small files search|depends=filegen 20 100 512 4096|cleanup=rm -rf ./generated|
