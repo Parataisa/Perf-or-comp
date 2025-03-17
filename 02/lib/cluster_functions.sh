@@ -394,14 +394,8 @@ parse_job_output() {
         fi
     done
     
-    log "DEBUG" "Output file found, parsing contents..."
-    
-    # Debug: Print file contents for troubleshooting
-    log "DEBUG" "File contents of $output_file:"
-    log "DEBUG" "$(cat "$output_file" | tail -20)"
-    
     # Extract the measurement result line
-    local result_line=$(grep -E "^[0-9]+\.[0-9]+" "$output_file" | tail -1)
+    local result_line=$(echo "$file_content" | grep -E "^[0-9]+\.[0-9]+" | tail -1)
     
     if [ -z "$result_line" ]; then
         log "ERROR" "Could not find a valid measurement result in the output file"
@@ -410,31 +404,81 @@ parse_job_output() {
     
     log "DEBUG" "Found measurement result: $result_line"
     
-    # Extract just the first 5 numeric values from the result
-    local values=($(echo "$result_line" | awk '{print $1,$2,$3,$4,$5}'))
+    # Extract the measurements from the result line
+    local avg_real=$(echo "$result_line" | awk '{print $1}')
+    local stddev_real=$(echo "$result_line" | awk '{print $2}')
+    local min_real=$(echo "$result_line" | awk '{print $3}')
+    local max_real=$(echo "$result_line" | awk '{print $4}')
+    local variance_real=$(echo "$result_line" | awk '{print $5}')
     
-    if [ ${#values[@]} -lt 5 ]; then
-        log "ERROR" "Measurement result line does not contain enough values"
-        return 1
+    # Find the last timing line to extract CPU and memory info
+    local last_timing=$(echo "$file_content" | grep -E "Real time:.*\| User:.*\| Sys:.*\| Mem:" | tail -1)
+    local user_time="0.000000000"
+    local sys_time="0.000000000"
+    local avg_mem="0"
+    
+    if [ -n "$last_timing" ]; then
+        user_time=$(echo "$last_timing" | sed -n 's/.*User: \([0-9.]*\)s.*/\1/p')
+        if [ -z "$user_time" ]; then
+            user_time=$(echo "$last_timing" | sed -n 's/.*User: \([0-9.]*\).*/\1/p')
+        fi
+        sys_time=$(echo "$last_timing" | sed -n 's/.*Sys: \([0-9.]*\)s.*/\1/p')
+        if [ -z "$sys_time" ]; then
+            sys_time=$(echo "$last_timing" | sed -n 's/.*Sys: \([0-9.]*\).*/\1/p')
+        fi
+        avg_mem=$(echo "$last_timing" | sed -n 's/.*Mem: \([0-9]*\)KB.*/\1/p')
+        if [ -z "$avg_mem" ]; then
+            avg_mem=$(echo "$last_timing" | sed -n 's/.*Mem: \([0-9]*\).*/\1/p')
+        fi
+        
+        # Set defaults if still empty
+        [ -z "$user_time" ] && user_time="0.000000000"
+        [ -z "$sys_time" ] && sys_time="0.000000000"
+        [ -z "$avg_mem" ] && avg_mem="0"
     fi
     
-    local avg_real="${values[0]}"
-    local stddev_real="${values[1]}"
-    local min_real="${values[2]}"
-    local max_real="${values[3]}"
-    local variance_real="${values[4]}"
+    log "DEBUG" "Extracted values - User: $user_time, Sys: $sys_time, Mem: $avg_mem"
     
-    # Extract just the textual notes (everything after the 5th value)
-    local extracted_notes=$(echo "$result_line" | awk '{for(i=6;i<=NF;i++) printf "%s ", $i}' | sed 's/ $//')
+    local notes=""
+    if echo "$result_line" | grep -q "High precision mode"; then
+        notes=$(echo "$result_line" | sed -n 's/.*\(High precision mode.*\)/\1/p')
+    elif echo "$result_line" | grep -q "Target precision of"; then
+        notes=$(echo "$result_line" | sed -n 's/.*\(Target precision of.*\)/\1/p')
+    elif echo "$result_line" | grep -q "Max repetitions"; then
+        notes=$(echo "$result_line" | sed -n 's/.*\(Max repetitions.*\)/\1/p')
+    fi
     
-    # Reconstruct the result for return
-    local basic_result="$avg_real 0.000000000 0.000000000 0 $stddev_real $min_real $max_real $variance_real"
+    if [ -z "$notes" ] && grep -q "High precision mode" "$output_file"; then
+        local high_precision=$(grep "High precision mode" "$output_file" | head -1)
+        notes="$high_precision"
+    fi
+    if [ -z "$notes" ] && grep -q "Target precision of" "$output_file"; then
+        if [ -n "$notes" ]; then
+            notes="$notes, $(grep "Target precision of" "$output_file" | tail -1)"
+        else
+            notes="$(grep "Target precision of" "$output_file" | tail -1)"
+        fi
+    elif [ -z "$notes" ] && grep -q "Max repetitions" "$output_file"; then
+        if [ -n "$notes" ]; then
+            notes="$notes, $(grep "Max repetitions" "$output_file" | tail -1)"
+        else
+            notes="$(grep "Max repetitions" "$output_file" | tail -1)"
+        fi
+    fi
+    if grep -q "Using simulated workload" "$output_file"; then
+        notes="$notes, Simulated workload"
+    fi
+    if [ -n "$notes" ]; then
+        notes="$notes, Cluster execution"
+    fi
     
-    # Build the final notes string
-    local notes="$extracted_notes, Cluster execution"
+    notes=$(echo "$notes" | sed 's/  */ /g' | sed 's/, ,/,/g')
     
-    local result="$basic_result $notes"
-    log "DEBUG" "Parsed result: $result"
+    log "DEBUG" "Extracted notes: $notes"
+    
+    local result="$avg_real $user_time $sys_time $avg_mem $stddev_real $min_real $max_real $variance_real $notes"
+    
+    log "DEBUG" "Final parsed result: $result"
     echo "$result"
 }
 
@@ -480,8 +524,6 @@ run_on_cluster() {
         log "DEBUG" "Cleaning up job files: $job_script $output_file"
         rm -f "$job_script" "$output_file"
     fi
-    
-    result="$result, Cluster execution"
     
     echo "$result"
 }
