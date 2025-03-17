@@ -61,7 +61,7 @@ measure_program() {
                 return 1
             fi
             
-            # Simulate workload with error handling
+            # Simulate workload
             if ! /usr/bin/time -f "%e,%U,%S,%M" bash -c "for ((i=0; i<$iterations; i++)); do 
                 \"$loadgen_script\" \"$program_path\" $params > /dev/null 2>&1 
                 exit_code=\$?
@@ -78,7 +78,7 @@ measure_program() {
             fi
             log "DEBUG" "Raw metrics: $(cat "$temp_file")"
         else
-            # Direct execution with error handling
+            # Direct execution
             if ! /usr/bin/time -f "%e,%U,%S,%M" bash -c "for ((i=0; i<$iterations; i++)); do \"$program_path\" $params > /dev/null 2>&1; done" 2> "$temp_file"; then
                 log "WARNING" "Program execution failed for run $((run+1))"
                 echo "0.0,0.0,0.0,0" > "$temp_file"
@@ -110,48 +110,22 @@ measure_program() {
         log "INFO" "Real time: ${real_times[$run]}s | User: ${user_times[$run]}s | Sys: ${sys_times[$run]}s | Mem: ${memory_values[$run]}KB"
         
         if [ $run -ge $((MIN_REPETITIONS-1)) ]; then
-            # Calculate confidence interval for real time
-            local real_stats=$(calculate_statistics "${real_times[*]}")
-            local mean=$(echo "$real_stats" | awk '{print $1}')
-            local stddev=$(echo "$real_stats" | awk '{print $2}')
+            local conf_result=$(calculate_confidence "${real_times[*]}" "$TARGET_PRECISION")
+            local mean=$(echo "$conf_result" | cut -d' ' -f1)
+            local stddev=$(echo "$conf_result" | cut -d' ' -f2)
+            local rel_precision=$(echo "$conf_result" | cut -d' ' -f3)
+            local conf_reached=$(echo "$conf_result" | cut -d' ' -f4)
             
-            # t-statistic for 95% confidence with n-1 degrees of freedom
-            local t_value=0
-            case $run in
-                2) t_value=4.303;; # 3 samples
-                3) t_value=3.182;; # 4 samples
-                4) t_value=2.776;; # 5 samples
-                5) t_value=2.571;; # 6 samples
-                6) t_value=2.447;; # 7 samples
-                7) t_value=2.365;; # 8 samples
-                8) t_value=2.306;; # 9 samples
-                9) t_value=2.262;; # 10 samples
-                *) t_value=1.96;;  # large sample approximation
-            esac
+            log "INFO" "After $((run+1)) runs: Mean=$mean, StdDev=$stddev, Precision=$rel_precision"
             
-            # Calculate confidence interval half-width
-            local half_width=$(echo "scale=9; $t_value * $stddev / sqrt($run + 1)" | bc -l)
-            
-            # Calculate relative precision
-            local rel_precision=1.0
-            if [ $(echo "$mean > 0" | bc -l) -eq 1 ]; then
-                rel_precision=$(echo "scale=9; $half_width / $mean" | bc -l)
-            fi
-            
-            log "INFO" "Current relative precision: $rel_precision (target: $TARGET_PRECISION)"
-            
-            # Check if we've reached target precision
-            if [ $(echo "$rel_precision <= $TARGET_PRECISION" | bc -l) -eq 1 ]; then
+            if [ "$conf_reached" = "true" ]; then
                 confidence_reached=true
-                confidence_note="Confidence interval reached after $((run+1)) repetitions"
+                confidence_note="Target precision of $TARGET_PRECISION reached after $((run+1)) runs"
                 log "INFO" "$confidence_note"
             fi
         fi
         
-        # Increment run counter
         run=$((run+1))
-        
-        # Clear caches and pause between runs
         clear_caches
         sleep $PAUSE_SECONDS
     done
@@ -199,4 +173,44 @@ measure_program() {
     local result="$formatted_real $formatted_user $formatted_sys $avg_mem $formatted_stddev $formatted_min $formatted_max $formatted_variance $high_precision_note"
     
     echo "$result"
+}
+
+calculate_confidence() {
+    local values="$1"
+    local target_precision="$2"
+    
+    local -a value_array=($values)
+    local count=${#value_array[@]}
+    
+    # Need at least 3 measurements
+    if [ $count -lt 3 ]; then
+        echo "0 0 0 false"  # mean, stddev, rel_precision, confidence_reached
+        return
+    fi
+    
+    local mean=$(echo "$values" | awk '{ sum = 0; for (i = 1; i <= NF; i++) sum += $i; print sum / NF }')
+    local stddev=$(echo "$values" | awk -v mean="$mean" '{
+        sum_sq_diff = 0;
+        for (i = 1; i <= NF; i++) {
+            diff = $i - mean;
+            sum_sq_diff += diff * diff;
+        }
+        print sqrt(sum_sq_diff / (NF - 1));
+    }')
+    
+    # Approximate confidence interval half-width as 2*stddev/sqrt(n)
+    local half_width=$(echo "scale=9; 2 * $stddev / sqrt($count)" | bc -l)
+    
+    # Calculate relative precision
+    local rel_precision=1.0
+    if (( $(echo "$mean > 0" | bc -l) )); then
+        rel_precision=$(echo "scale=9; $half_width / $mean" | bc -l)
+    fi
+    
+    local confidence_reached=false
+    if (( $(echo "$rel_precision <= $target_precision" | bc -l) )); then
+        confidence_reached=true
+    fi
+    
+    echo "$mean $stddev $rel_precision $confidence_reached"
 }

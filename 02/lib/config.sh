@@ -17,10 +17,10 @@ CSV_FILE="performance_results.csv"
 
 WARMUP_RUNS=1               # Warmup runs to eliminate cold-start effects
 PAUSE_SECONDS=1             # Time to pause between runs for system stability
-CONFIDENCE_LEVEL=0.975           # Statistical confidence level (default: 95%)
-MAX_REPETITIONS=20              # Maximum number of repetitions to perform
+CONFIDENCE_LEVEL=0.95           # Statistical confidence level (default: 95%)
+MAX_REPETITIONS=40              # Maximum number of repetitions to perform
 MIN_REPETITIONS=3               # Minimum number of repetitions to perform
-TARGET_PRECISION=0.025           # Target relative precision (5%)
+TARGET_PRECISION=0.05           # Target relative precision (0.05 for 5%)
 
 CACHE_CLEARING_ENABLED=true # Enable/disable cache clearing attempts
 DEBUG_LEVEL="DEBUG"          # Logging level: DEBUG, INFO, WARNING, ERROR
