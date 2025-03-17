@@ -47,11 +47,18 @@ clear_caches() {
 }
 
 format_time() {
-    local time_value="$1"
-    if [[ "$time_value" =~ ^\.[0-9]+ ]]; then
-        time_value="0$time_value"
+    local value=$1
+    
+    # Check if the value is effectively zero (very small number)
+    if (( $(echo "$value < 0.0000000001" | bc -l) )); then
+        echo "1.000e-10"
+    elif (( $(echo "$value < 0.001" | bc -l) )); then
+        printf "%.3e" "$value"
+    elif (( $(echo "$value < 0.1" | bc -l) )); then
+        printf "%.7f" "$value"
+    else
+        printf "%.6f" "$value"
     fi
-    echo "$time_value"
 }
 
 calculate_statistics() {
@@ -292,6 +299,18 @@ measure_program() {
     local min_real=$(echo "$real_stats" | awk '{print $3}')
     local max_real=$(echo "$real_stats" | awk '{print $4}')
     local variance_real=$(echo "$real_stats" | awk '{print $5}')
+
+    local avg_user=$(echo "$user_stats" | awk '{print $1}')
+    local stddev_user=$(echo "$user_stats" | awk '{print $2}')
+    local min_user=$(echo "$user_stats" | awk '{print $3}')
+    local max_user=$(echo "$user_stats" | awk '{print $4}')
+
+    local avg_sys=$(echo "$sys_stats" | awk '{print $1}')
+    local stddev_sys=$(echo "$sys_stats" | awk '{print $2}')
+    local min_sys=$(echo "$sys_stats" | awk '{print $3}')
+    local max_sys=$(echo "$sys_stats" | awk '{print $4}')
+
+    local avg_mem=$(echo "$mem_stats" | awk '{print $1}')
     
     # Format values for output
     local formatted_real=$(format_time "$avg_real")
