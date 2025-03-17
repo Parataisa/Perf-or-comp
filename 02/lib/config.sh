@@ -15,11 +15,11 @@ NC='\033[0m' # No Color
 OUTPUT_FILE="performance_results.md"
 CSV_FILE="performance_results.csv"  
 
-WARMUP_RUNS=1               # Warmup runs to eliminate cold-start effects
+WARMUP_RUNS=2               # Warmup runs to eliminate cold-start effects
 PAUSE_SECONDS=1             # Time to pause between runs for system stability
 MAX_REPETITIONS=40              # Maximum number of repetitions to perform
-MIN_REPETITIONS=3               # Minimum number of repetitions to perform
-TARGET_PRECISION=0.05           # Target relative precision (0.05 for 5%)
+MIN_REPETITIONS=5               # Minimum number of repetitions to perform
+TARGET_PRECISION=0.10           # Target relative precision (0.05 for 5%)
 
 CACHE_CLEARING_ENABLED=true # Enable/disable cache clearing attempts
 DEBUG_LEVEL="DEBUG"          # Logging level: DEBUG, INFO, WARNING, ERROR

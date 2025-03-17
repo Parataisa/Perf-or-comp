@@ -122,13 +122,12 @@ parse_config_options() {
 # Execute dependency program if needed
 run_dependency() {
     local dependency=$1
+    local in_cluster=$2 
     
     # Skip if no dependency defined
     if [ "$dependency" = "none" ]; then
         return 0
     fi
-    
-    log "INFO" "Running dependency: $dependency"
     
     # Parse program name and arguments
     read -r dep_program dep_args <<< "$dependency"
@@ -148,12 +147,23 @@ run_dependency() {
     if [[ "$dep_args" =~ ^\"(.*)\"$ ]]; then
         dep_args="${BASH_REMATCH[1]}"
     fi
-    $program_path $dep_args
-    local status=$?
     
-    if [ $status -ne 0 ]; then
-        log "ERROR" "Dependency execution failed with status: $status"
-        return $status
+    # If running on cluster, let the cluster job script handle dependencies
+    if [ "$in_cluster" = "true" ]; then
+        # Store dependency info for cluster job script
+        export DEPENDENCY_PROGRAM="$dep_program"
+        export DEPENDENCY_ARGS="$dep_args"
+        log "INFO" "Dependency info stored for cluster job"
+        return 0
+    else
+        # Run directly if not on cluster
+        $program_path $dep_args
+        local status=$?
+        
+        if [ $status -ne 0 ]; then
+            log "ERROR" "Dependency execution failed with status: $status"
+            return $status
+        fi
     fi
     
     log "INFO" "Dependency successfully executed"

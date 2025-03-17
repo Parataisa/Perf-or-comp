@@ -40,7 +40,7 @@ run_tests() {
                 log "ERROR" "Cluster functions not loaded. Cannot run on cluster."
                 continue
             fi
-            metrics=$(run_on_cluster "$program_path" "$params" "$sim_workload")
+            metrics=$(run_on_cluster "$program_path" "$params" "$sim_workload" "$DEPENDENCY_PROGRAM" "$DEPENDENCY_ARGS")
         else
             [ $WARMUP_RUNS -gt 0 ] && log "DEBUG" "Performing $WARMUP_RUNS warmup run(s)..."
             for ((i = 1; i <= WARMUP_RUNS; i++)); do

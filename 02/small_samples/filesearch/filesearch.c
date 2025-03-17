@@ -5,12 +5,16 @@
 
 void find_largest_file(char *dir_path, long long *max_size, char *max_file);
 
-int main() {
+int main(int argc, char** argv) {
+    if(argc != 2) {
+        fprintf(stderr, "Usage: %s <directory>\n", argv[0]);
+        return 1;
+    }
     long long max_size = 0;
     char max_file[256] = "";
 
     // Start the search in the current directory
-    find_largest_file(".", &max_size, max_file);
+    find_largest_file(argv[1], &max_size, max_file);
 
     // Print the name of the largest file
     printf("The largest file is %s with size %lld bytes\n", max_file, max_size);
