@@ -337,39 +337,38 @@ measure_program() {
 EOF
 
 cat >> "$script_file" << EOF
-    # Get the original directory where the job script is running
-    ORIGINAL_DIR="\$PWD"
+# Get the original directory where the job script is running
+ORIGINAL_DIR="\$PWD"
+# Set up local temporary directory
+LOCAL_TEMP_DIR="/tmp/benchmarks/"
+mkdir -p "\$LOCAL_TEMP_DIR"
+echo "Created temporary directory: \$LOCAL_TEMP_DIR"
+chmod 755 "\$LOCAL_TEMP_DIR"
+cd "\$LOCAL_TEMP_DIR"
 
-    # Set up local temporary directory
-    LOCAL_TEMP_DIR="/tmp/benchmarks/"
-    mkdir -p "\$LOCAL_TEMP_DIR"
-    echo "Created temporary directory: \$LOCAL_TEMP_DIR"
-    chmod 755 "\$LOCAL_TEMP_DIR"
-    cd "\$LOCAL_TEMP_DIR"
-    
-    # Copy the executable to the local directory
-    executable="${program_path##*/}"
-    cp -r "\$ORIGINAL_DIR/build" "\$LOCAL_TEMP_DIR/"
-    cp -r "\$ORIGINAL_DIR/load_generator" "\$LOCAL_TEMP_DIR/" 2>/dev/null || true
-    
-    # Find the actual executable in the build directory
-    if [ ! -f "\$LOCAL_TEMP_DIR/build/\$executable" ]; then
-        echo "WARNING: Executable not found at \$LOCAL_TEMP_DIR/build/\$executable"
-        echo "Searching for executable in build directory..."
-        FOUND_EXECUTABLE=\$(find "\$LOCAL_TEMP_DIR/build" -type f -perm -111 | head -1)
-        if [ -n "\$FOUND_EXECUTABLE" ]; then
-            echo "Found executable at \$FOUND_EXECUTABLE"
-            executable=\$(basename "\$FOUND_EXECUTABLE")
-            program_path="\$LOCAL_TEMP_DIR/build/\$executable"
-            chmod +x "\$program_path"
-        else
-            echo "ERROR: No executable found in build directory!"
-            ls -la "\$LOCAL_TEMP_DIR/build"
-        fi
-    else
+# Copy the executable to the local directory
+executable="${program_path##*/}"
+cp -r "\$ORIGINAL_DIR/build" "\$LOCAL_TEMP_DIR/"
+cp -r "\$ORIGINAL_DIR/load_generator" "\$LOCAL_TEMP_DIR/" 2>/dev/null || true
+
+# Find the actual executable in the build directory
+if [ ! -f "\$LOCAL_TEMP_DIR/build/\$executable" ]; then
+    echo "WARNING: Executable not found at \$LOCAL_TEMP_DIR/build/\$executable"
+    echo "Searching for executable in build directory..."
+    FOUND_EXECUTABLE=\$(find "\$LOCAL_TEMP_DIR/build" -type f -perm -111 | head -1)
+    if [ -n "\$FOUND_EXECUTABLE" ]; then
+        echo "Found executable at \$FOUND_EXECUTABLE"
+        executable=\$(basename "\$FOUND_EXECUTABLE")
         program_path="\$LOCAL_TEMP_DIR/build/\$executable"
         chmod +x "\$program_path"
+    else
+        echo "ERROR: No executable found in build directory!"
+        ls -la "\$LOCAL_TEMP_DIR/build"
     fi
+else
+    program_path="\$LOCAL_TEMP_DIR/build/\$executable"
+    chmod +x "\$program_path"
+fi
 EOF
 
 cat >> "$script_file" << EOF
@@ -413,6 +412,17 @@ if [ $WARMUP_RUNS -gt 0 ]; then
     for ((i=1; i<=$WARMUP_RUNS; i++)); do
         ./$(basename "$program_path") $params > /dev/null 2>&1 || true
     done
+fi
+
+echo "About to execute program at path: $program_path"
+echo "Checking if executable exists and is executable:"
+if [ -x "$program_path" ]; then
+    echo "✓ Executable exists and has proper permissions"
+    echo "Test run of program:"
+    "$program_path" "$params"|| echo "Error: Program test run failed with exit code $?"
+else
+    echo "✗ Program not found or not executable at $program_path"
+    ls -la $(dirname "$program_path")
 fi
 
 echo "Starting performance measurement..."

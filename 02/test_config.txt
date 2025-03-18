@@ -12,12 +12,9 @@
 # - sim_workload=true/false       # Whether to simulate workload for this run (default: false)
 # Examples:
 
-#small_samples/delannoy/delannoy|Delannoy number calculation|collect=true|sim_workload=true|10|11|12|13|14|
+small_samples/delannoy/delannoy|Delannoy number calculation|collect=true|sim_workload=false|10|11|12|13|14|
 
-small_samples/filegen/filegen|Small file benchmark|cleanup=rm -rf ./generated|5 10 1024 4096|
-#small_samples/filegen/filegen|Medium file benchmark|cleanup=rm -rf ./generated|10 30 4096 16384|
-#small_samples/filegen/filegen|Large file benchmark|cleanup=rm -rf ./generated|20 50 16384 65536|
-#small_samples/filegen/filegen|Mixed size benchmark|cleanup=rm -rf ./generated|30 100 16384 1048576|
+small_samples/filegen/filegen|Small file benchmark|cleanup=rm -rf ./generated|5 10 1024 4096|10 30 4096 16384|20 50 16384 65536|30 100 16384 1048576|
 
 #small_samples/filesearch/filesearch|Simple search test|depends=filegen 5 10 1024 4096|cleanup=rm -rf ./generated|/tmp/benchmarks/generated/|
 #small_samples/filesearch/filesearch|Medium complexity search|depends=filegen 15 45 4096 32768|cleanup=rm -rf ./generated|/tmp/benchmarks/generated/|
