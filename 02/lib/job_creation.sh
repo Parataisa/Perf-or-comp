@@ -5,10 +5,8 @@ create_job_script() {
     local program_path=$1
     local params=$2
     local job_name=$3
-    local sim_workload=$4
-    local dependency_program=$5
-    local dependency_args=$6
-    local use_io_load=${7:-false} 
+    local dependency_program=$4
+    local dependency_args=$5
     local output_file="${job_name}_output.log"
     local script_file="${job_name}_job.sh"
     
@@ -37,7 +35,8 @@ MAX_REPETITIONS=$MAX_REPETITIONS
 MIN_REPETITIONS=$MIN_REPETITIONS
 TARGET_PRECISION=$TARGET_PRECISION
 PAUSE_SECONDS=$PAUSE_SECONDS
-SIM_WORKLOAD=$sim_workload
+USING_CPU_LOAD=$USING_CPU_LOAD
+USING_IO_LOAD=$USING_IO_LOAD
 EOF
 
     cat >> "$script_file" << 'EOF'
@@ -165,7 +164,6 @@ calculate_confidence() {
 measure_program() {
     local program_path=$1
     local params=$2
-    local sim_workload=$3
     
     # Check if this is a fast program
     local start_time=$(date +%s.%N)
@@ -210,7 +208,7 @@ measure_program() {
         
         local temp_file=$(mktemp)
         
-        if $sim_workload; then
+        if $USING_CPU_LOAD; then
             # Check if loadgen script exists
             loadgen_script="$(pwd)/load_generator/exec_with_workstation_heavy.sh"
             chmod +x "$loadgen_script"
@@ -331,7 +329,7 @@ measure_program() {
     
     # Final output with confidence note
     local workload_note=""
-    if $sim_workload; then
+    if $USING_CPU_LOAD; then
         workload_note="Simulated workload"
     fi
     
@@ -413,7 +411,7 @@ EOF
 cat >> "$script_file" << EOF
 
 # Configure IO load generator if requested
-if $use_io_load; then
+if $USING_IO_LOAD; then
     IO_THREADS=16
     READ_PERCENT=50
     DELAY_MS=5
@@ -484,7 +482,7 @@ else
 fi
 
 echo "Starting performance measurement..."
-measure_program "$program_path" "$params" "$sim_workload"
+measure_program "$program_path" "$params"
 EOF
     
     chmod +x "$script_file"

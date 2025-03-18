@@ -62,7 +62,7 @@ run_on_cluster() {
     local job_name="${JOB_NAME_PREFIX}_${program_name}_$(date +%s)"
     
     # Create job script
-    local job_script=$(create_job_script "$program_path" "$params" "$job_name" "$sim_workload" "$dependency_program" "$dependency_args" true)
+    local job_script=$(create_job_script "$program_path" "$params" "$job_name" "$sim_workload" "$dependency_program" "$dependency_args")
     local output_file="${job_name}_output.log"
     
     local job_id=$(submit_job "$job_script")
