@@ -6,6 +6,8 @@ create_job_script() {
     local params=$2
     local job_name=$3
     local sim_workload=$4
+    local dependency_program=$5
+    local dependency_args=$6
     local output_file="${job_name}_output.log"
     local script_file="${job_name}_job.sh"
     
@@ -292,7 +294,7 @@ measure_program() {
     local user_stats=$(calculate_statistics "${user_times[*]}")
     local sys_stats=$(calculate_statistics "${sys_times[*]}")
     local mem_stats=$(calculate_statistics "${memory_values[*]}")
-    
+
     # Extract statistics
     local avg_real=$(echo "$real_stats" | awk '{print $1}')
     local stddev_real=$(echo "$real_stats" | awk '{print $2}')
@@ -311,7 +313,7 @@ measure_program() {
     local max_sys=$(echo "$sys_stats" | awk '{print $4}')
 
     local avg_mem=$(echo "$mem_stats" | awk '{print $1}')
-    
+
     # Format values for output
     local formatted_real=$(format_time "$avg_real")
     local formatted_user=$(format_time "$avg_user")
@@ -331,19 +333,75 @@ measure_program() {
     echo "$result"
 }
 EOF
+
+cat >> "$script_file" << EOF
+    # Set up local temporary directory
+    LOCAL_TEMP_DIR="/tmp/benchmarks/"
+    mkdir -p "\$LOCAL_TEMP_DIR"
+
+    # Get the original directory where the job script is running
+    ORIGINAL_DIR="\$PWD"
     
+    # Copy the executable to the local directory
+    executable="${program_path##*/}"
+    if [ -f "\$ORIGINAL_DIR/build/\$executable" ]; then
+        cp "\$ORIGINAL_DIR/build/\$executable" "\$LOCAL_TEMP_DIR/"
+    else
+        echo "Error: Executable \$executable not found in \$ORIGINAL_DIR/build/"
+        exit 1
+    fi
+
+    # Then change to the temp directory
+    cd "\$LOCAL_TEMP_DIR"
+
+    # Clean up function to run at script exit
+    trap 'cd /; rm -rf "\$LOCAL_TEMP_DIR"' EXIT
+EOF
+
+cat >> "$script_file" << EOF
+
+# Handle dependency programs if specified
+if [ -n "$dependency_program" ]; then
+    echo "Running dependency program: $dependency_program $dependency_args"
+    
+    # Copy dependency executable to temp directory
+    dep_executable="$dependency_program"
+    if [ -f "\$ORIGINAL_DIR/build/\$dep_executable" ]; then
+        cp "\$ORIGINAL_DIR/build/\$dep_executable" "\$LOCAL_TEMP_DIR/"
+        
+        # Make sure we're in the temp directory
+        cd "\$LOCAL_TEMP_DIR"
+        
+        # Make temp directory writable for dependency program
+        chmod -R 755 "\$LOCAL_TEMP_DIR"
+        
+        # Run the dependency
+        echo "Executing dependency: ./\$dep_executable $dependency_args"
+        ./\$dep_executable $dependency_args
+        
+        # Show generated files for debugging
+        echo "Files generated after dependency execution:"
+        find "\$LOCAL_TEMP_DIR" -type d | head -5
+        find "\$LOCAL_TEMP_DIR/generated" -type f | head -5 2>/dev/null || echo "No generated files found"
+    else
+        echo "Error: Dependency \$dep_executable not found"
+        exit 1
+    fi
+fi
+EOF
+
     cat >> "$script_file" << EOF
 
 # Perform warmup runs
 if [ $WARMUP_RUNS -gt 0 ]; then
     echo "Performing $WARMUP_RUNS warmup run(s)..."
     for ((i=1; i<=$WARMUP_RUNS; i++)); do
-        $program_path $params > /dev/null 2>&1
+        ./$(basename "$program_path") $params > /dev/null 2>&1 || true
     done
 fi
 
 echo "Starting performance measurement..."
-measure_program "$program_path" "$params" $sim_workload
+measure_program "./$(basename "$program_path")" "$params" "$sim_workload"
 EOF
     
     chmod +x "$script_file"
