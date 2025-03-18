@@ -10,8 +10,10 @@ source "${SCRIPT_DIR}/lib/parsing.sh"
 source "${SCRIPT_DIR}/lib/measurement.sh"
 source "${SCRIPT_DIR}/lib/reporting.sh"
 source "${SCRIPT_DIR}/lib/test_runner.sh"
-source "${SCRIPT_DIR}/lib/cluster_functions.sh"
 source "${SCRIPT_DIR}/lib/build_system.sh"
+source "${SCRIPT_DIR}/lib/job_creation.sh"
+source "${SCRIPT_DIR}/lib/job_management.sh"
+source "${SCRIPT_DIR}/lib/result_processing.sh"
 
 # Process command line arguments
 CONFIG_FILE="test_config.txt"

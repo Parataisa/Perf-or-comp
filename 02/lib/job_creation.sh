@@ -1,5 +1,6 @@
 #!/bin/bash
-# Create a SLURM job script
+#Functions for creating SLURM job scripts
+
 create_job_script() {
     local program_path=$1
     local params=$2
@@ -8,7 +9,6 @@ create_job_script() {
     local output_file="${job_name}_output.log"
     local script_file="${job_name}_job.sh"
     
-    # Create basic SLURM header
     cat > "$script_file" << EOF
 #!/bin/bash
 #SBATCH --partition=$CLUSTER_PARTITION
@@ -19,7 +19,6 @@ create_job_script() {
 #SBATCH --exclusive
 EOF
     
-    # Add module loading and configuration
     cat >> "$script_file" << EOF
 
 # Load modules
@@ -332,203 +331,4 @@ EOF
     echo "$script_file"
 }
 
-# Submit job to SLURM
-submit_job() {
-    local job_script=$1
-    local job_id
-    
-    log "INFO" "Submitting job: $job_script"
-    job_id=$(sbatch "$job_script" | awk '{print $4}')
-    
-    if [ -z "$job_id" ]; then
-        log "ERROR" "Failed to submit job: $job_script"
-        return 1
-    fi
-    
-    log "INFO" "Job submitted with ID: $job_id"
-    echo "$job_id"
-}
-
-# Wait for a job to complete with timeout and cancellation
-wait_for_job() {
-    local job_id=$1
-    local job_state
-    local waited=0
-    
-    while true; do
-        job_state=$(squeue -j "$job_id" -h -o %t 2>/dev/null)
-        
-        if [ -z "$job_state" ]; then
-            # Job not found in queue, assume it has completed
-            log "INFO" "Job $job_id has completed."
-            return 0
-        fi
-        
-        log "DEBUG" "Job $job_id state: $job_state"
-        sleep 5
-        waited=$((waited + 5))
-        
-        # Check for timeout and cancel job if needed
-        if [ $waited -ge $MAX_WAIT_TIME ]; then
-            log "WARNING" "Job $job_id has exceeded maximum wait time of $MAX_WAIT_TIME seconds. Cancelling job."
-            scancel $job_id
-            return 1
-        fi
-    done
-}
-
-# Parse job output
-parse_job_output() {
-    local output_file=$1
-    
-    # Wait for output file
-    local max_wait=30
-    local waited=0
-    while [ ! -f "$output_file" ]; do
-        log "DEBUG" "Waiting for job output file: $output_file"
-        sleep 1
-        waited=$((waited + 1))
-        if [ $waited -ge $max_wait ]; then
-            log "ERROR" "Timeout waiting for output file: $output_file"
-            return 1
-        fi
-    done
-    
-    # Extract the measurement result line
-    local result_line=$(echo "$file_content" | grep -E "^[0-9]+\.[0-9]+" | tail -1)
-    
-    if [ -z "$result_line" ]; then
-        log "ERROR" "Could not find a valid measurement result in the output file"
-        return 1
-    fi
-    
-    log "DEBUG" "Found measurement result: $result_line"
-    
-    # Extract the measurements from the result line
-    local avg_real=$(echo "$result_line" | awk '{print $1}')
-    local stddev_real=$(echo "$result_line" | awk '{print $2}')
-    local min_real=$(echo "$result_line" | awk '{print $3}')
-    local max_real=$(echo "$result_line" | awk '{print $4}')
-    local variance_real=$(echo "$result_line" | awk '{print $5}')
-    
-    # Find the last timing line to extract CPU and memory info
-    local last_timing=$(echo "$file_content" | grep -E "Real time:.*\| User:.*\| Sys:.*\| Mem:" | tail -1)
-    local user_time="0.000000000"
-    local sys_time="0.000000000"
-    local avg_mem="0"
-    
-    if [ -n "$last_timing" ]; then
-        user_time=$(echo "$last_timing" | sed -n 's/.*User: \([0-9.]*\)s.*/\1/p')
-        if [ -z "$user_time" ]; then
-            user_time=$(echo "$last_timing" | sed -n 's/.*User: \([0-9.]*\).*/\1/p')
-        fi
-        sys_time=$(echo "$last_timing" | sed -n 's/.*Sys: \([0-9.]*\)s.*/\1/p')
-        if [ -z "$sys_time" ]; then
-            sys_time=$(echo "$last_timing" | sed -n 's/.*Sys: \([0-9.]*\).*/\1/p')
-        fi
-        avg_mem=$(echo "$last_timing" | sed -n 's/.*Mem: \([0-9]*\)KB.*/\1/p')
-        if [ -z "$avg_mem" ]; then
-            avg_mem=$(echo "$last_timing" | sed -n 's/.*Mem: \([0-9]*\).*/\1/p')
-        fi
-        
-        # Set defaults if still empty
-        [ -z "$user_time" ] && user_time="0.000000000"
-        [ -z "$sys_time" ] && sys_time="0.000000000"
-        [ -z "$avg_mem" ] && avg_mem="0"
-    fi
-    
-    log "DEBUG" "Extracted values - User: $user_time, Sys: $sys_time, Mem: $avg_mem"
-    
-    local notes=""
-    if echo "$result_line" | grep -q "High precision mode"; then
-        notes=$(echo "$result_line" | sed -n 's/.*\(High precision mode.*\)/\1/p')
-    elif echo "$result_line" | grep -q "Target precision of"; then
-        notes=$(echo "$result_line" | sed -n 's/.*\(Target precision of.*\)/\1/p')
-    elif echo "$result_line" | grep -q "Max repetitions"; then
-        notes=$(echo "$result_line" | sed -n 's/.*\(Max repetitions.*\)/\1/p')
-    fi
-    
-    if [ -z "$notes" ] && grep -q "High precision mode" "$output_file"; then
-        local high_precision=$(grep "High precision mode" "$output_file" | head -1)
-        notes="$high_precision"
-    fi
-    if [ -z "$notes" ] && grep -q "Target precision of" "$output_file"; then
-        if [ -n "$notes" ]; then
-            notes="$notes, $(grep "Target precision of" "$output_file" | tail -1)"
-        else
-            notes="$(grep "Target precision of" "$output_file" | tail -1)"
-        fi
-    elif [ -z "$notes" ] && grep -q "Max repetitions" "$output_file"; then
-        if [ -n "$notes" ]; then
-            notes="$notes, $(grep "Max repetitions" "$output_file" | tail -1)"
-        else
-            notes="$(grep "Max repetitions" "$output_file" | tail -1)"
-        fi
-    fi
-    if grep -q "Using simulated workload" "$output_file"; then
-        notes="$notes, Simulated workload"
-    fi
-    if [ -n "$notes" ]; then
-        notes="$notes, Cluster execution"
-    fi
-    
-    notes=$(echo "$notes" | sed 's/  */ /g' | sed 's/, ,/,/g')
-    
-    log "DEBUG" "Extracted notes: $notes"
-    
-    local result="$avg_real $user_time $sys_time $avg_mem $stddev_real $min_real $max_real $variance_real $notes"
-    
-    log "DEBUG" "Final parsed result: $result"
-    echo "$result"
-}
-
-# Execute performance test on the cluster
-run_on_cluster() {
-    local program_path=$1
-    local params=$2
-    local sim_workload=$3
-    local program_name=$(basename "$program_path")
-    
-    log "INFO" "Running on cluster using SLURM with dynamic repetitions..."
-    if $sim_workload; then
-        log "INFO" "Using simulated workload"
-    fi
-    
-    # Create a unique job name with timestamp
-    local job_name="${JOB_NAME_PREFIX}_${program_name}_$(date +%s)"
-    
-    # Create job script
-    local job_script=$(create_job_script "$program_path" "$params" "$job_name" "$sim_workload")
-    local output_file="${job_name}_output.log"
-    
-    local job_id=$(submit_job "$job_script")
-    
-    if [ -z "$job_id" ]; then
-        log "ERROR" "Failed to submit job. Skipping this parameter set."
-        return 1
-    fi
-    
-    if ! wait_for_job "$job_id"; then
-        log "ERROR" "Job $job_id was cancelled due to timeout."
-        return 1
-    fi
-    
-    local result=$(parse_job_output "$output_file")
-    
-    if [ -z "$result" ]; then
-        log "ERROR" "Failed to parse job output. Skipping this parameter set."
-        return 1
-    fi
-    
-    if [ "$CLEANUP_JOB_FILES" = "true" ]; then
-        log "DEBUG" "Cleaning up job files: $job_script $output_file"
-        rm -f "$job_script" "$output_file"
-    fi
-    
-    echo "$result"
-}
-
-# Export functions and variables for use in the main script
-export -f create_job_script submit_job wait_for_job parse_job_output run_on_cluster
-export RUN_ON_CLUSTER CLUSTER_PARTITION CLUSTER_NTASKS CLUSTER_EXCLUSIVE JOB_NAME_PREFIX MAX_WAIT_TIME
-export CLEANUP_JOB_FILES
+export -f create_job_script
