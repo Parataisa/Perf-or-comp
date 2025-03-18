@@ -210,6 +210,10 @@ measure_program() {
             # Check if loadgen script exists
             loadgen_script="$(pwd)/load_generator/exec_with_workstation_heavy.sh"
             chmod +x "$loadgen_script"
+
+            echo "Load generator directory contents:"
+            #ls -la "$(pwd)/load_generator/"
+
             if [ ! -x "$loadgen_script" ]; then
                 echo "ERROR: Load generator script not found or not executable: $loadgen_script"
                 rm -f "$temp_file"
@@ -217,20 +221,18 @@ measure_program() {
             fi
             
             # Simulate workload
-            /usr/bin/time -f "%e,%U,%S,%M" bash -c "for ((i=0; i<$iterations; i++)); do 
-                \"$loadgen_script\" \"$program_path\" $params > /dev/null 2>&1 
-                exit_code=\$?
-                if [ \$exit_code -ne 0 ]; then
-                    echo \"Program failed with exit code \$exit_code on iteration \$i\" >&2
-                    continue
-                fi
-                done" 2> "$temp_file" || {
-                echo "WARNING: Workload simulation failed for run $((run+1))"
-                # Check if we got any metrics
-                if ! grep -q "[0-9]" "$temp_file"; then
-                    echo "0.0,0.0,0.0,0" > "$temp_file"
-                fi
-            }
+            PATH="$(pwd):$(pwd)/load_generator:$PATH" /usr/bin/time -f "%e,%U,%S,%M" bash -c "for ((i=0; i<$iterations; i++)); do 
+            \"$program_path\" $params > /dev/null 2>&1 
+            exit_code=\$?
+            if [ \$exit_code -ne 0 ]; then
+                echo \"Program failed with exit code \$exit_code on iteration \$i\" >&2
+                continue
+            fi
+            done" 2> "$temp_file"
+            # Check if we got any metrics
+            if ! grep -q "[0-9]" "$temp_file"; then
+                echo "0.0,0.0,0.0,0" > "$temp_file"
+            fi
             echo "Using simulated workload"
         else
             # Direct execution
@@ -329,36 +331,49 @@ measure_program() {
         workload_note="Simulated workload"
     fi
     
-    local result="$formatted_real $formatted_user $formatted_sys $avg_mem $formatted_stddev $formatted_min $formatted_max $formatted_variance $high_precision_note $confidence_note $workload_note"
+    local result="$formatted_real $formatted_user $formatted_sys $formatted_stddev $formatted_min $formatted_max $formatted_variance $avg_mem $high_precision_note $confidence_note $workload_note"
     echo "$result"
 }
 EOF
 
 cat >> "$script_file" << EOF
+    # Get the original directory where the job script is running
+    ORIGINAL_DIR="\$PWD"
+
     # Set up local temporary directory
     LOCAL_TEMP_DIR="/tmp/benchmarks/"
     mkdir -p "\$LOCAL_TEMP_DIR"
-
-    # Get the original directory where the job script is running
-    ORIGINAL_DIR="\$PWD"
+    echo "Created temporary directory: \$LOCAL_TEMP_DIR"
+    chmod 755 "\$LOCAL_TEMP_DIR"
+    cd "\$LOCAL_TEMP_DIR"
     
     # Copy the executable to the local directory
     executable="${program_path##*/}"
-    if [ -f "\$ORIGINAL_DIR/build/\$executable" ]; then
-        cp "\$ORIGINAL_DIR/build/\$executable" "\$LOCAL_TEMP_DIR/"
+    cp -r "\$ORIGINAL_DIR/build" "\$LOCAL_TEMP_DIR/"
+    cp -r "\$ORIGINAL_DIR/load_generator" "\$LOCAL_TEMP_DIR/" 2>/dev/null || true
+    
+    # Find the actual executable in the build directory
+    if [ ! -f "\$LOCAL_TEMP_DIR/build/\$executable" ]; then
+        echo "WARNING: Executable not found at \$LOCAL_TEMP_DIR/build/\$executable"
+        echo "Searching for executable in build directory..."
+        FOUND_EXECUTABLE=\$(find "\$LOCAL_TEMP_DIR/build" -type f -perm -111 | head -1)
+        if [ -n "\$FOUND_EXECUTABLE" ]; then
+            echo "Found executable at \$FOUND_EXECUTABLE"
+            executable=\$(basename "\$FOUND_EXECUTABLE")
+            program_path="\$LOCAL_TEMP_DIR/build/\$executable"
+            chmod +x "\$program_path"
+        else
+            echo "ERROR: No executable found in build directory!"
+            ls -la "\$LOCAL_TEMP_DIR/build"
+        fi
     else
-        echo "Error: Executable \$executable not found in \$ORIGINAL_DIR/build/"
-        exit 1
+        program_path="\$LOCAL_TEMP_DIR/build/\$executable"
+        chmod +x "\$program_path"
     fi
-
-    # Then change to the temp directory
-    cd "\$LOCAL_TEMP_DIR"
-
-    # Clean up function to run at script exit
-    trap 'cd /; rm -rf "\$LOCAL_TEMP_DIR"' EXIT
 EOF
 
 cat >> "$script_file" << EOF
+
 
 # Handle dependency programs if specified
 if [ -n "$dependency_program" ]; then
@@ -401,7 +416,7 @@ if [ $WARMUP_RUNS -gt 0 ]; then
 fi
 
 echo "Starting performance measurement..."
-measure_program "./$(basename "$program_path")" "$params" "$sim_workload"
+measure_program "$program_path" "$params" "$sim_workload"
 EOF
     
     chmod +x "$script_file"
