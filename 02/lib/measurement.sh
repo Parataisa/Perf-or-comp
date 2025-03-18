@@ -8,7 +8,6 @@
 measure_program() {
     local program_path=$1
     local params=$2
-    local sim_workload=$3
     
     # Check if this is a fast program
     local start_time=$(date +%s.%N)
@@ -51,7 +50,7 @@ measure_program() {
         trap 'log "WARNING" "Measurement interrupted"; rm -f "$temp_file"; return 1' INT TERM
         
         local temp_file=$(mktemp)
-        if $sim_workload; then
+        if $USING_CPU_LOAD; then
             # Check if loadgen script exists
             loadgen_script="$(pwd)/load_generator/exec_with_workstation_heavy.sh"
             chmod +x "$loadgen_script"
@@ -121,6 +120,9 @@ measure_program() {
             if [ "$conf_reached" = "true" ]; then
                 confidence_reached=true
                 confidence_note="Target precision of $TARGET_PRECISION reached after $((run+1)) runs"
+                log "INFO" "$confidence_note"
+            else
+                confidence_note="Target precision of $TARGET_PRECISION not reached after $((run+1)) runs"
                 log "INFO" "$confidence_note"
             fi
         fi

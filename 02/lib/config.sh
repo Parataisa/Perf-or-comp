@@ -27,12 +27,12 @@ CACHE_CLEARING_ENABLED=true # Enable/disable cache clearing attempts
 DEBUG_LEVEL="DEBUG"          # Logging level: DEBUG, INFO, WARNING, ERROR
 
 # High precision mode iterations configuration
-VERY_FAST_ITERATIONS=500    # Iterations for very fast programs (<10ms)
-FAST_ITERATIONS=250         # Iterations for fast programs (<100ms but >=10ms)
-MODERATELY_FAST_ITERATIONS=100    # Iterations for moderately fast programs (<500ms but >=100ms)
+VERY_FAST_ITERATIONS=100    # Iterations for very fast programs (<10ms)
+FAST_ITERATIONS=50         # Iterations for fast programs (<100ms but >=10ms)
+MODERATELY_FAST_ITERATIONS=10    # Iterations for moderately fast programs (<500ms but >=100ms)
 
 # Cluster execution configuration
-RUN_ON_CLUSTER=true          # Set to true to run on cluster using SLURM
+RUN_ON_CLUSTER=false          # Set to true to run on cluster using SLURM
 CLUSTER_PARTITION="lva"      # SLURM partition to use
 CLUSTER_NTASKS=1             # Number of tasks for SLURM job
 JOB_NAME_PREFIX="perf_test"  # Prefix for SLURM job names

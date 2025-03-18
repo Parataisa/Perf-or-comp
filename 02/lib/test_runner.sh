@@ -10,7 +10,6 @@ run_tests() {
     local program_name=$(basename "$program_path")
     local description=$2
     local depends=$3
-    local sim_workload=$4
     shift 4
     local parameter_sets=("$@")
 
@@ -48,13 +47,13 @@ run_tests() {
                 dep_program=""
                 dep_args=""
             fi
-            metrics=$(run_on_cluster "$program_path" "$params" "$sim_workload" "$dep_program" "$dep_args")
+            metrics=$(run_on_cluster "$program_path" "$params" "$USING_CPU_LOAD" "$dep_program" "$dep_args")
         else
             [ $WARMUP_RUNS -gt 0 ] && log "DEBUG" "Performing $WARMUP_RUNS warmup run(s)..."
             for ((i = 1; i <= WARMUP_RUNS; i++)); do
                 $program_path $params > /dev/null 2>&1
             done
-            metrics=$(measure_program "$program_path" "$params" "$sim_workload")
+            metrics=$(measure_program "$program_path" "$params" "$USING_CPU_LOAD")
         fi
 
         if [ -z "$metrics" ]; then
@@ -163,12 +162,12 @@ process_config() {
 
             if [ ${#param_array[@]} -le 1 ]; then
                 log "DEBUG" "Single parameter set: ${param_array[0]:-}"
-                run_tests "$program_path" "$description" "$depends" "$sim_workload" "${param_array[0]}"
+                run_tests "$program_path" "$description" "$depends" "$USING_CPU_LOAD" "${param_array[0]}"
             else
                 log "DEBUG" "Multiple parameter sets: ${#param_array[@]}"
                 for param_set in "${param_array[@]}"; do
                     log "DEBUG" "Running with parameters: $param_set"
-                    run_tests "$program_path" "$description" "$depends" "$sim_workload" "$param_set"
+                    run_tests "$program_path" "$description" "$depends" "$USING_CPU_LOAD" "$param_set"
                 done
             fi
         else
