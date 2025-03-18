@@ -7,6 +7,8 @@ create_job_script() {
     local job_name=$3
     local dependency_program=$4
     local dependency_args=$5
+    local sim_cpu_load=$6
+    local sim_io_load=$7
     local output_file="${job_name}_output.log"
     local script_file="${job_name}_job.sh"
     
@@ -35,8 +37,18 @@ MAX_REPETITIONS=$MAX_REPETITIONS
 MIN_REPETITIONS=$MIN_REPETITIONS
 TARGET_PRECISION=$TARGET_PRECISION
 PAUSE_SECONDS=$PAUSE_SECONDS
-USING_CPU_LOAD=$USING_CPU_LOAD
-USING_IO_LOAD=$USING_IO_LOAD
+USING_CPU_LOAD=$sim_cpu_load
+USING_IO_LOAD=$sim_io_load
+
+# I/O load generator configuration
+IO_THREADS=$IO_THREADS
+READ_PERCENT=$READ_PERCENT
+DELAY_MS=$DELAY_MS
+MIN_FILE_SIZE=$MIN_FILE_SIZE
+MAX_FILE_SIZE=$MAX_FILE_SIZE
+RUN_DURATION=$RUN_DURATION
+IO_LOAD_DIR="$IO_LOAD_DIR"
+
 EOF
 
     cat >> "$script_file" << 'EOF'
@@ -412,14 +424,7 @@ cat >> "$script_file" << EOF
 
 # Configure IO load generator if requested
 if $USING_IO_LOAD; then
-    IO_THREADS=16
-    READ_PERCENT=50
-    DELAY_MS=5
-    MIN_FILE_SIZE=1024
-    MAX_FILE_SIZE=10485760
-    
-    IO_LOAD_DIR="\$LOCAL_TEMP_DIR/io_load"
-    
+
     # Cleanup function for IO load generator
     io_cleanup() {
         echo "Cleaning up IO load generator..."
@@ -441,7 +446,7 @@ if $USING_IO_LOAD; then
     echo "Starting I/O load generator with files in \$IO_LOAD_DIR..."
     
     # Start the I/O load generator in the background
-    "\$LOCAL_TEMP_DIR/build/loadgen_io" \$IO_THREADS \$READ_PERCENT \$DELAY_MS \$MIN_FILE_SIZE \$MAX_FILE_SIZE 0 "\$IO_LOAD_DIR" &
+    "\$LOCAL_TEMP_DIR/build/loadgen_io" \$IO_THREADS \$READ_PERCENT \$DELAY_MS \$MIN_FILE_SIZE \$MAX_FILE_SIZE \$RUN_DURATION "\$IO_LOAD_DIR" &
     LOADGEN_PID=\$!
     
     if [ -z "\$LOADGEN_PID" ] || ! kill -0 \$LOADGEN_PID 2>/dev/null; then

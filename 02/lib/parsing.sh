@@ -50,7 +50,8 @@ parse_config_options() {
     local build="true"
     local build_dir=""
     local build_command=""
-    local sim_workload="false"
+    local sim_cpu_load="false"
+    local sim_io_load="false"
     local params=""
 
     # Helper function to remove surrounding double quotes if present
@@ -94,8 +95,11 @@ parse_config_options() {
         elif [[ "$part" =~ ^build_dir= ]]; then
             build_dir="${part#build_dir=}"
             param_start=$((i+1))
-        elif [[ "$part" =~ ^sim_workload= ]]; then
-            sim_workload="${part#sim_workload=}"
+        elif [[ "$part" =~ ^sim_cpu_load= ]]; then
+            sim_cpu_load="${part#sim_cpu_load=}"
+            param_start=$((i+1))
+        elif [[ "$part" =~ ^sim_io_load= ]]; then
+            sim_io_load="${part#sim_io_load=}"
             param_start=$((i+1))
         elif [[ "$part" =~ ^build_command= ]]; then
             build_command="${part#build_command=}"
@@ -116,7 +120,7 @@ parse_config_options() {
     done
 
     # Output as a pipe-separated string for downstream processing
-    echo "$program|$description|$depends|$collect_metrics|$cleanup|$build|$build_dir|$build_command|$sim_workload|$params"
+    echo "$program|$description|$depends|$collect_metrics|$cleanup|$build|$build_dir|$build_command|$sim_cpu_load|$sim_io_load|$params"
 }
 
 # Execute dependency program if needed

@@ -18,10 +18,17 @@ CSV_FILE="performance_results.csv"
 WARMUP_RUNS=2               # Warmup runs to eliminate cold-start effects
 PAUSE_SECONDS=1             # Time to pause between runs for system stability
 MAX_REPETITIONS=40              # Maximum number of repetitions to perform
-MIN_REPETITIONS=5               # Minimum number of repetitions to perform
-TARGET_PRECISION=0.05           # Target relative precision (0.05 for 5%)
-USING_IO_LOAD=false             # Set to true if the program uses I/O operations
-USING_CPU_LOAD=true             # Set to true if the program uses CPU operations
+MIN_REPETITIONS=3               # Minimum number of repetitions to perform
+TARGET_PRECISION=0.10           # Target relative precision (0.05 for 5%)
+
+# I/O load generator configuration
+IO_THREADS=16
+READ_PERCENT=50
+DELAY_MS=5
+MIN_FILE_SIZE=1024      
+MAX_FILE_SIZE=10485760
+RUN_DURATION=0              # Duration to run I/O load generator (0 for indefinite)  
+IO_LOAD_DIR="/tmp/io_load"          
 
 CACHE_CLEARING_ENABLED=true # Enable/disable cache clearing attempts
 DEBUG_LEVEL="DEBUG"          # Logging level: DEBUG, INFO, WARNING, ERROR

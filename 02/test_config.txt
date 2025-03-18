@@ -9,15 +9,27 @@
 # - build=true/false              # Whether to build the program before running (default: true)
 # - build_dir=path                # Build directory for the program
 # - build_command=command         # Build command for the program(The whole command like "gcc -Wall -Wextra -O3 -o")
-# - sim_workload=true/false       # Whether to simulate workload for this run (default: false)!Old use option in config
+# - sim_io_load=true/false        # Whether to simulate the I/O load (default: false)
+# - sim_cpu_load=true/false       # Whether to simulate the CPU load (default: false)
 # Examples:
 
-#small_samples/delannoy/delannoy|Delannoy number calculation|collect=true|10|11|12|13|14|
+small_samples/delannoy/delannoy|Delannoy number calculation|collect=true|10|11|12|13|14|15|
 
 small_samples/filegen/filegen|Small file benchmark|cleanup=rm -rf ./generated|5 10 1024 4096|10 30 4096 16384|20 50 16384 65536|30 100 16384 1048576|
 
-#small_samples/filesearch/filesearch|Simple search test|depends=filegen 5 10 1024 4096|cleanup=rm -rf ./generated|/tmp/benchmarks/generated/|
-#small_samples/filesearch/filesearch|Medium complexity search|depends=filegen 15 45 4096 32768|cleanup=rm -rf ./generated|/tmp/benchmarks/generated/|
-#small_samples/filesearch/filesearch|Deep directory search|depends=filegen 25 45 8192 16384|cleanup=rm -rf ./generated|/tmp/benchmarks/generated/|
-#small_samples/filesearch/filesearch|Large file search|depends=filegen 20 100 262144 1048576|cleanup=rm -rf ./generated|/tmp/benchmarks/generated/|
-#small_samples/filesearch/filesearch|Many small files search|depends=filegen 20 100 512 4096|cleanup=rm -rf ./generated|/tmp/benchmarks/generated/|
+small_samples/filesearch/filesearch|Simple search test|depends=filegen 5 10 1024 4096|cleanup=rm -rf ./generated|/tmp/benchmarks/generated/|
+small_samples/filesearch/filesearch|Medium complexity search|depends=filegen 15 45 4096 32768|cleanup=rm -rf ./generated|/tmp/benchmarks/generated/|
+small_samples/filesearch/filesearch|Deep directory search|depends=filegen 25 45 8192 16384|cleanup=rm -rf ./generated|/tmp/benchmarks/generated/|
+small_samples/filesearch/filesearch|Large file search|depends=filegen 20 100 262144 1048576|cleanup=rm -rf ./generated|/tmp/benchmarks/generated/|
+small_samples/filesearch/filesearch|Many small files search|depends=filegen 20 100 512 4096|cleanup=rm -rf ./generated|/tmp/benchmarks/generated/|
+
+# Workload Tests
+small_samples/delannoy/delannoy|Delannoy number calculation|collect=true|sim_cpu_load=true|10|11|12|13|14|15|
+
+small_samples/filegen/filegen|Small file benchmark|cleanup=rm -rf ./generated|sim_io_load=true|5 10 1024 4096|10 30 4096 16384|20 50 16384 65536|30 100 16384 1048576|
+
+small_samples/filesearch/filesearch|Simple search test|depends=filegen 5 10 1024 4096|cleanup=rm -rf ./generated|sim_io_load=true|/tmp/benchmarks/generated/|
+small_samples/filesearch/filesearch|Medium complexity search|depends=filegen 15 45 4096 32768|cleanup=rm -rf ./generated|sim_io_load=true|/tmp/benchmarks/generated/|
+small_samples/filesearch/filesearch|Deep directory search|depends=filegen 25 45 8192 16384|cleanup=rm -rf ./generated|sim_io_load=true|/tmp/benchmarks/generated/|
+small_samples/filesearch/filesearch|Large file search|depends=filegen 20 100 262144 1048576|cleanup=rm -rf ./generated|sim_io_load=true|/tmp/benchmarks/generated/|
+small_samples/filesearch/filesearch|Many small files search|depends=filegen 20 100 512 4096|cleanup=rm -rf ./generated|sim_io_load=true|/tmp/benchmarks/generated/|

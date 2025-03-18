@@ -23,20 +23,15 @@ sample-config:
 	@./performance_test.sh
 
 # Run the tests
-test: check-config
+test: check-config loadgen_io
 	@echo "Running performance tests..."
 	@./performance_test.sh $(CONFIG_FILE)
-
 
 # IO-loadgen
 loadgen_io: loadgen_io.c
 	@mkdir -p build
 	$(CC) $(CFLAGS) -o build/$@ $^
 
-# Run tests with I/O load simulation
-test-with-io-load: loadgen_io check-config
-	@echo "Running performance tests with IO load simulation..."
-	@./run_tests_with_io_load.sh $(CONFIG_FILE)
 
 # Clean up
 clean:

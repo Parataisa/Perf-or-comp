@@ -50,6 +50,10 @@ wait_for_job() {
 run_on_cluster() {
     local program_path=$1
     local params=$2
+    local dependency_program=$3
+    local dependency_args=$4
+    local sim_cpu_load=$5
+    local sim_io_load=$6
     local program_name=$(basename "$program_path")
     
     log "INFO" "Running on cluster using SLURM with dynamic repetitions..."
@@ -61,7 +65,7 @@ run_on_cluster() {
     local job_name="${JOB_NAME_PREFIX}_${program_name}_$(date +%s)"
     
     # Create job script
-    local job_script=$(create_job_script "$program_path" "$params" "$job_name"  "$dependency_program" "$dependency_args")
+    local job_script=$(create_job_script "$program_path" "$params" "$job_name"  "$dependency_program" "$dependency_args" "$sim_cpu_load" "$sim_io_load")
     local output_file="${job_name}_output.log"
     
     local job_id=$(submit_job "$job_script")

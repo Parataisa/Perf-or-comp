@@ -7,12 +7,17 @@
 # Run tests for a specific program with given parameters
 run_tests() {
     local program_path=$1
-    local program_name=$(basename "$program_path")
     local description=$2
     local depends=$3
-    shift 4
+    local sim_cpu_load=$4
+    local sim_io_load=$5
+    shift 5
     local parameter_sets=("$@")
 
+    log "DEBUG" "Simulated CPU load: $sim_cpu_load"
+    log "DEBUG" "Simulated I/O load: $sim_io_load"
+
+    local program_name=$(basename "$program_path")
     # Clean up parameter sets (remove trailing pipes)
     for i in "${!parameter_sets[@]}"; do
         parameter_sets[$i]="${parameter_sets[$i]%|}"
@@ -26,6 +31,30 @@ run_tests() {
     # If no parameters, run once with no parameters
     if [ ${#parameter_sets[@]} -eq 0 ] || [[ -z "${parameter_sets[*]// }" ]]; then
         parameter_sets=("")
+    fi
+
+    local io_load_active=false
+    local io_load_pid=""
+    local io_load_dir=""
+    
+    # Start I/O load if needed
+    if $sim_io_load; then
+        log "INFO" "Starting I/O load generator for tests..."
+        mkdir -p "$IO_LOAD_DIR"
+        log "DEBUG" "I/O load directory: $IO_LOAD_DIR"
+        log "DEBUG" "I/O load parameters: threads=$IO_THREADS, read_percent=$READ_PERCENT, delay=$DELAY_MS, min_size=$MIN_FILE_SIZE, max_size=$MAX_FILE_SIZE, duration=$RUN_DURATION"
+        
+        # Start the I/O load generator in background the 
+        ./build/loadgen_io $IO_THREADS $READ_PERCENT $DELAY_MS $MIN_FILE_SIZE $MAX_FILE_SIZE $RUN_DURATION "$IO_LOAD_DIR" &
+        io_load_pid=$!
+        
+        if [ -n "$io_load_pid" ] && kill -0 $io_load_pid 2>/dev/null; then
+            io_load_active=true
+            log "INFO" "I/O load generator started with PID: $io_load_pid"
+            sleep 1  # Wait for I/O load to stabilize
+        else
+            log "WARNING" "Failed to start I/O load generator"
+        fi
     fi
 
     for params in "${parameter_sets[@]}"; do
@@ -47,13 +76,13 @@ run_tests() {
                 dep_program=""
                 dep_args=""
             fi
-            metrics=$(run_on_cluster "$program_path" "$params" "$USING_CPU_LOAD" "$dep_program" "$dep_args")
+            metrics=$(run_on_cluster "$program_path" "$params" "$dep_program" "$dep_args" "$sim_cpu_load" "$sim_io_load")
         else
             [ $WARMUP_RUNS -gt 0 ] && log "DEBUG" "Performing $WARMUP_RUNS warmup run(s)..."
             for ((i = 1; i <= WARMUP_RUNS; i++)); do
                 $program_path $params > /dev/null 2>&1
             done
-            metrics=$(measure_program "$program_path" "$params" "$USING_CPU_LOAD")
+            metrics=$(measure_program "$program_path" "$params" "$sim_cpu_load" "$sim_io_load")
         fi
 
         if [ -z "$metrics" ]; then
@@ -65,6 +94,7 @@ run_tests() {
         read -r avg_real avg_user avg_sys avg_mem stddev_real min_real max_real variance_real notes <<< "$metrics"
         [ $CACHE_CLEARING_ENABLED ] && notes="${notes:+$notes, }Cache cleared"
         [ -n "$dependency_note" ] && notes="${notes:+$notes, }$dependency_note"
+        [ "$io_load_active" = true ] && notes="${notes:+$notes, }With I/O load"
 
         # Log and save results
         printf "| \`%s\` | %s | %s | %s | %.0f | %s | %s | %s | %s | %s |\n" \
@@ -74,6 +104,18 @@ run_tests() {
         append_to_csv "$program_name" "$description" "$params" "$avg_real" "$avg_user" \
             "$avg_sys" "$avg_mem" "$stddev_real" "$min_real" "$max_real" "$variance_real" "$notes"
     done
+
+    # Clean up I/O load generator if it was started
+    if [ "$io_load_active" = true ] && [ -n "$io_load_pid" ]; then
+        log "INFO" "Stopping I/O load generator (PID: $io_load_pid)"
+        kill $io_load_pid 2>/dev/null
+        wait $io_load_pid 2>/dev/null
+        
+        if [ -d "$io_load_dir" ]; then
+            log "DEBUG" "Removing I/O load directory: $io_load_dir"
+            rm -rf "$io_load_dir"
+        fi
+    fi
 }
 
 # Process each program defined in the config file with options
@@ -101,7 +143,7 @@ process_config() {
         
         # Parse the configuration
         local config_data=$(parse_config_options "$line")
-        IFS='|' read -r program description depends collect_metrics cleanup build build_dir build_command sim_workload params_str <<< "$config_data"
+        IFS='|' read -r program description depends collect_metrics cleanup build build_dir build_command sim_cpu_load sim_io_load params_str <<< "$config_data"
         
         # Trim whitespace
         program=$(echo "$program" | xargs)
@@ -122,7 +164,8 @@ process_config() {
         log "DEBUG" "Build directory: $build_dir"
         log "DEBUG" "Build command: $build_command"
         log "DEBUG" "Parameters: $params_str"
-        log "DEBUG" "Simulated workload: $sim_workload"
+        log "DEBUG" "Simulated workload: $sim_cpu_load"
+        log "DEBUG" "Simulated I/O load: $sim_io_load"
         
         # build the program based on test configuration
         local program_path
@@ -162,12 +205,12 @@ process_config() {
 
             if [ ${#param_array[@]} -le 1 ]; then
                 log "DEBUG" "Single parameter set: ${param_array[0]:-}"
-                run_tests "$program_path" "$description" "$depends" "$USING_CPU_LOAD" "${param_array[0]}"
+                run_tests "$program_path" "$description" "$depends" "$sim_cpu_load" "$sim_io_load" "${param_array[0]}"
             else
                 log "DEBUG" "Multiple parameter sets: ${#param_array[@]}"
                 for param_set in "${param_array[@]}"; do
                     log "DEBUG" "Running with parameters: $param_set"
-                    run_tests "$program_path" "$description" "$depends" "$USING_CPU_LOAD" "$param_set"
+                    run_tests "$program_path" "$description" "$depends" "$sim_cpu_load" "$sim_io_load" "$param_set"
                 done
             fi
         else
