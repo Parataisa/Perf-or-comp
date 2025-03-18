@@ -2,7 +2,6 @@ small_samples/
 ├── performance_test.sh
 ├── test_config.txt
 ├── loadgen_io.c
-├── run_tests_with_io_load.sh
 ├── Makefile
 ├── lib/
 │   ├── config.sh
@@ -10,7 +9,7 @@ small_samples/
 │   ├── measurement.sh
 │   ├── reporting.sh
 │   ├── test_runner.sh
-│   └── cluster_functions.sh
+│   └── ...
 ├── load_generator/
 │   └── exec_wit_workstation_heavy.sh
 └─── build/
