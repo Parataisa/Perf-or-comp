@@ -8,6 +8,7 @@ create_job_script() {
     local sim_workload=$4
     local dependency_program=$5
     local dependency_args=$6
+    local use_io_load=${7:-false} 
     local output_file="${job_name}_output.log"
     local script_file="${job_name}_job.sh"
     
@@ -409,6 +410,58 @@ if [ -n "$dependency_program" ]; then
 fi
 EOF
 
+cat >> "$script_file" << EOF
+
+# Configure IO load generator if requested
+if $use_io_load; then
+    IO_THREADS=16
+    READ_PERCENT=50
+    DELAY_MS=5
+    MIN_FILE_SIZE=1024
+    MAX_FILE_SIZE=10485760
+    
+    IO_LOAD_DIR="\$LOCAL_TEMP_DIR/io_load"
+    
+    # Cleanup function for IO load generator
+    io_cleanup() {
+        echo "Cleaning up IO load generator..."
+        if [ ! -z "\$LOADGEN_PID" ]; then
+            echo "Stopping I/O load generator (PID: \$LOADGEN_PID)"
+            kill \$LOADGEN_PID 2>/dev/null
+            wait \$LOADGEN_PID 2>/dev/null
+        fi
+        
+        # Clean up the temp IO directory
+        if [ -d "\$IO_LOAD_DIR" ]; then
+            echo "Removing I/O load directory: \$IO_LOAD_DIR"
+            rm -rf "\$IO_LOAD_DIR"
+        fi
+    }
+    
+    # Create IO load directory
+    mkdir -p "\$IO_LOAD_DIR"
+    echo "Starting I/O load generator with files in \$IO_LOAD_DIR..."
+    
+    # Start the I/O load generator in the background
+    "\$LOCAL_TEMP_DIR/build/loadgen_io" \$IO_THREADS \$READ_PERCENT \$DELAY_MS \$MIN_FILE_SIZE \$MAX_FILE_SIZE 0 "\$IO_LOAD_DIR" &
+    LOADGEN_PID=\$!
+    
+    if [ -z "\$LOADGEN_PID" ] || ! kill -0 \$LOADGEN_PID 2>/dev/null; then
+        echo "Failed to start I/O load generator"
+        exit 1
+    fi
+    
+    echo "I/O load generator started with PID: \$LOADGEN_PID"
+    echo "Waiting for I/O load to stabilize..."
+    sleep 5
+    
+    # Extend the trap to include our IO cleanup
+    trap 'io_cleanup; cd /; rm -rf "\$LOCAL_TEMP_DIR"' EXIT
+else
+    echo "Running without IO load generator"
+fi
+EOF
+
     cat >> "$script_file" << EOF
 
 # Perform warmup runs
@@ -423,8 +476,8 @@ echo "About to execute program at path: $program_path"
 echo "Checking if executable exists and is executable:"
 if [ -x "$program_path" ]; then
     echo "✓ Executable exists and has proper permissions"
-    echo "Test run of program:"
-    "$program_path" "$params"|| echo "Error: Program test run failed with exit code $?"
+    echo "Test run of program: $program_path $params"
+    $program_path $params || echo "Error: Program test run failed with exit code $?"
 else
     echo "✗ Program not found or not executable at $program_path"
     ls -la $(dirname "$program_path")
