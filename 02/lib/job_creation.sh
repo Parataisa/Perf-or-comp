@@ -177,12 +177,15 @@ measure_program() {
     
     # Determine if we need high precision mode
     if (( $(echo "$duration < 0.01" | bc -l) )); then
+        echo "Very fast program detected ($duration s). Using very fast measurement."
         iterations=$VERY_FAST_ITERATIONS  # Very fast program (<10ms)
         high_precision_note="High precision mode ($iterations iterations per measurement)"
     elif (( $(echo "$duration < 0.1" | bc -l) )); then
+        echo "Fast program detected ($duration s). Using fast measurement."
         iterations=$FAST_ITERATIONS  # Fast program (<100ms but >=10ms)
         high_precision_note="High precision mode ($iterations iterations per measurement)"
     elif (( $(echo "$duration < 0.5" | bc -l) )); then
+        echo "Moderately fast program detected ($duration s). Using moderately fast measurement."
         iterations=$MODERATELY_FAST_ITERATIONS  # Moderately fast program (<500ms but >=100ms)
         high_precision_note="High precision mode ($iterations iterations per measurement)"
     else
