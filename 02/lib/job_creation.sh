@@ -378,27 +378,29 @@ cat >> "$script_file" << EOF
 if [ -n "$dependency_program" ]; then
     echo "Running dependency program: $dependency_program $dependency_args"
     
-    # Copy dependency executable to temp directory
-    dep_executable="$dependency_program"
-    if [ -f "\$ORIGINAL_DIR/build/\$dep_executable" ]; then
-        cp "\$ORIGINAL_DIR/build/\$dep_executable" "\$LOCAL_TEMP_DIR/"
-        
-        # Make sure we're in the temp directory
-        cd "\$LOCAL_TEMP_DIR"
+    # Process dependency executable path
+    dep_executable="${dependency_program##*/}"
+    
+    # Check if dependency exists in the build directory
+    if [ -f "\$LOCAL_TEMP_DIR/build/\$dep_executable" ]; then
+        # Make sure it's executable
+        chmod +x "\$LOCAL_TEMP_DIR/build/\$dep_executable"
         
         # Make temp directory writable for dependency program
         chmod -R 755 "\$LOCAL_TEMP_DIR"
         
-        # Run the dependency
-        echo "Executing dependency: ./\$dep_executable $dependency_args"
-        ./\$dep_executable $dependency_args
+        # Run the dependency from the build directory
+        echo "Executing dependency: \$LOCAL_TEMP_DIR/build/\$dep_executable $dependency_args"
+        cd "\$LOCAL_TEMP_DIR"
+        "\$LOCAL_TEMP_DIR/build/\$dep_executable" $dependency_args
         
         # Show generated files for debugging
         echo "Files generated after dependency execution:"
         find "\$LOCAL_TEMP_DIR" -type d | head -5
         find "\$LOCAL_TEMP_DIR/generated" -type f | head -5 2>/dev/null || echo "No generated files found"
     else
-        echo "Error: Dependency \$dep_executable not found"
+        echo "Error: Dependency \$dep_executable not found in \$LOCAL_TEMP_DIR/build/"
+        ls -la "\$LOCAL_TEMP_DIR/build/"
         exit 1
     fi
 fi
@@ -410,7 +412,7 @@ EOF
 if [ $WARMUP_RUNS -gt 0 ]; then
     echo "Performing $WARMUP_RUNS warmup run(s)..."
     for ((i=1; i<=$WARMUP_RUNS; i++)); do
-        ./$(basename "$program_path") $params > /dev/null 2>&1 || true
+        "$program_path" "$params" > /dev/null 2>&1 || true
     done
 fi
 

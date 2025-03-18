@@ -13,7 +13,7 @@ B) External I/O load
 --------------------
 
 - For the implementation see loadgen_io.c and run_tests_with_io_load.sh
-- To run the tests, ´´´make test-with-io-load´´´ is used, for cache cleaning sudo is requiert.(see Makefile)
+- To run the tests, `make test-with-io-load` is used, for cache cleaning sudo is requiert.(see Makefile)
 - To config the I/O load, the following parameters can be set in the run_tests_with_io_load.sh script:
     - `IO_THREADS` number of threads to use for I/O load
     - `READ_PERCENT` percentage of read operations
