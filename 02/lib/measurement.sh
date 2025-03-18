@@ -24,12 +24,15 @@ measure_program() {
     if (( $(echo "$duration < 0.01" | bc -l) )); then
         iterations=$VERY_FAST_ITERATIONS  # Very fast program (<10ms)
         high_precision_note="High precision mode ($iterations iterations per measurement)"
+        log "INFO" "$duration s: $high_precision_note"
     elif (( $(echo "$duration < 0.1" | bc -l) )); then
         iterations=$FAST_ITERATIONS  # Fast program (<100ms but >=10ms)
         high_precision_note="High precision mode ($iterations iterations per measurement)"
+        log "INFO" "$duration s: $high_precision_note"
     elif (( $(echo "$duration < 0.5" | bc -l) )); then
         iterations=$MODERATELY_FAST_ITERATIONS  # Moderately fast program (<500ms but >=100ms)
         high_precision_note="High precision mode ($iterations iterations per measurement)"
+        log "INFO" "$duration s: $high_precision_note"
     else
         log "DEBUG" "Standard program detected ($duration s). Using standard measurement."
     fi
