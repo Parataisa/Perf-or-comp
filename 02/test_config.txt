@@ -13,7 +13,7 @@
 # - sim_cpu_load=true/false       # Whether to simulate the CPU load (default: false)
 # Examples:
 
-small_samples/delannoy/delannoy|Delannoy number calculation|collect=true|10|11|12|13|14|15|
+small_samples/delannoy/delannoy|Delannoy number calculation|collect=true|10|11|12|13|14|
 
 small_samples/filegen/filegen|Small file benchmark|cleanup=rm -rf ./generated|5 10 1024 4096|10 30 4096 16384|20 50 16384 65536|30 100 16384 1048576|
 
@@ -24,7 +24,7 @@ small_samples/filesearch/filesearch|Large file search|depends=filegen 20 100 262
 small_samples/filesearch/filesearch|Many small files search|depends=filegen 20 100 512 4096|cleanup=rm -rf ./generated|/tmp/benchmarks/generated/|
 
 # Workload Tests
-small_samples/delannoy/delannoy|Delannoy number calculation|collect=true|sim_cpu_load=true|10|11|12|13|14|15|
+small_samples/delannoy/delannoy|Delannoy number calculation|collect=true|sim_cpu_load=true|10|11|12|13|14|
 
 small_samples/filegen/filegen|Small file benchmark|cleanup=rm -rf ./generated|sim_io_load=true|5 10 1024 4096|10 30 4096 16384|20 50 16384 65536|30 100 16384 1048576|
 

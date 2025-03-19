@@ -226,7 +226,7 @@ measure_program() {
             chmod +x "$loadgen_script"
 
             echo "Load generator directory contents:"
-            #ls -la "$(pwd)/load_generator/"
+            ls -la "$(pwd)/load_generator/"
 
             if [ ! -x "$loadgen_script" ]; then
                 echo "ERROR: Load generator script not found or not executable: $loadgen_script"
@@ -235,8 +235,8 @@ measure_program() {
             fi
             
             # Simulate workload
-            PATH="$(pwd):$(pwd)/load_generator:$PATH" /usr/bin/time -f "%e,%U,%S,%M" bash -c "for ((i=0; i<$iterations; i++)); do 
-            \"$program_path\" $params > /dev/null 2>&1 
+            /usr/bin/time -f "%e,%U,%S,%M" bash -c "for ((i=0; i<$iterations; i++)); do 
+            \"$loadgen_script\" \"$program_path\" $params > /dev/null 2>&1 
             exit_code=\$?
             if [ \$exit_code -ne 0 ]; then
                 echo \"Program failed with exit code \$exit_code on iteration \$i\" >&2
@@ -418,12 +418,9 @@ if [ -n "$dependency_program" ]; then
         exit 1
     fi
 fi
-EOF
-
-cat >> "$script_file" << EOF
 
 # Configure IO load generator if requested
-if $USING_IO_LOAD; then
+if $sim_io_load; then
 
     # Cleanup function for IO load generator
     io_cleanup() {
@@ -446,6 +443,7 @@ if $USING_IO_LOAD; then
     echo "Starting I/O load generator with files in \$IO_LOAD_DIR..."
     
     # Start the I/O load generator in the background
+    echo "Running I/O Load generator: \$LOCAL_TEMP_DIR/build/loadgen_io"
     "\$LOCAL_TEMP_DIR/build/loadgen_io" \$IO_THREADS \$READ_PERCENT \$DELAY_MS \$MIN_FILE_SIZE \$MAX_FILE_SIZE \$RUN_DURATION "\$IO_LOAD_DIR" &
     LOADGEN_PID=\$!
     
