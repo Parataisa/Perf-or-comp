@@ -23,7 +23,8 @@ B) External I/O load
     - `RUN_DURATION` duration of the I/O load in seconds(0 means infinite)
     - `IO_LOAD_DIR` directory to use for I/O load
 - On my local machine, the I/O load was not very high, most of the time the CPU was the bottleneck.(NVMe SSD Samsung 980 Pro)
-- Also increases in the execution time was observed. Again,see .csv/.md files for more details.
+- Also increases in the execution time was observed. Again, see .csv/.md files for more details.
 
   
-  
+- Note: For figures look at the `figures` and `figures_cluster` directories.
+- Also to run the performance tests, `make test` can be used.
