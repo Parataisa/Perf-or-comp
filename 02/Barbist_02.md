@@ -28,3 +28,4 @@ B) External I/O load
   
 - Note: For figures look at the `figures` and `figures_cluster` directories.
 - Also to run the performance tests, `make test` can be used.
+- I had to remove the `workstation` in the `load_generator` because of its size, it needs to be added back in. 
