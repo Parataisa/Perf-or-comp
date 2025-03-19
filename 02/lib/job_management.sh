@@ -57,7 +57,7 @@ run_on_cluster() {
     local program_name=$(basename "$program_path")
     
     log "INFO" "Running on cluster using SLURM with dynamic repetitions..."
-    if $USING_CPU_LOAD; then
+    if $sim_cpu_load; then
         log "INFO" "Using simulated workload"
     fi
     

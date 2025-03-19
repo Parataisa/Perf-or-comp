@@ -1,0 +1,225 @@
+# Performance Test Results
+
+## System Information
+
+- *Date:* 2025-03-19 12:43:20
+- *OS:*Rocky Linux 8.10 (Green Obsidian) on 4.18.0-477.21.1.el8_8.x86_64
+- *CPU:*Intel(R) Xeon(R) CPU           X5650  @ 2.67GHz
+- *RAM:*46Gi total, 40Gi available
+- *Execution Mode:* Cluster (SLURM)
+
+## Notes on Methodology
+- Each test performed  runs with statistical analysis
+- Results available in CSV format at performance_results_cluster.csv 
+- Cache clearing attempted between test runs for consistent measurements
+
+## small_samples/delannoy/delannoy
+
+Delannoy number calculation
+
+### small_samples/delannoy/delannoy parameters justification
+- Delannoy number calculation
+- Selected parameters for this benchmark:
+- `10`
+- `11`
+- `12`
+- `13`
+- `14`
+
+
+| Parameters | Avg Time (s) | User CPU (s) | System CPU (s) | Memory (KB) | Std Dev (s) | Min Time (s) | Max Time (s) | Variance (s²) | Notes |
+|------------|--------------|--------------|----------------|-------------|-------------|-------------|-------------|--------------|-------|
+| `10` | 0.0256667 | .024600000 | .000800000 | 3496 | 0.0247333 | 7.333e-04 | 8.944e-05 | 0.0256000 | High precision mode (50 iterations per measurement) Target precision of 0.05 reached after 3 runs , Cluster execution, Cache cleared |
+| `11` | 0.138000 | .137000000 | 0 | 3468 | 0.136667 | 3.333e-04 | 1.000e-10 | 0.138000 | High precision mode (10 iterations per measurement) Target precision of 0.05 reached after 3 runs , Cluster execution, Cache cleared |
+| `12` | 0.770000 | .770000000 | 0 | 3452 | 0.763333 | 1.000e-10 | 1.000e-10 | 0.770000 | Target precision of 0.05 reached after 3 runs , Cluster execution, Cache cleared |
+| `13` | 4.306667 | 4.270000000 | 0 | 3432 | 4.296667 | 1.000e-10 | 0.0205480 | 4.280000 | Target precision of 0.05 reached after 3 runs , Cluster execution, Cache cleared |
+| `14` | 24.256667 | 24.300000000 | 0 | 3440 | 24.220000 | 1.000e-10 | 0.0524934 | 24.210000 | Target precision of 0.05 reached after 3 runs , Cluster execution, Cache cleared |
+## small_samples/filegen/filegen
+
+Small file benchmark
+
+### small_samples/filegen/filegen parameters justification
+- Small file benchmark
+- Selected parameters for this benchmark:
+- `5 10 1024 4096`
+- `10 30 4096 16384`
+- `20 50 16384 65536`
+- `30 100 16384 1048576`
+
+
+| Parameters | Avg Time (s) | User CPU (s) | System CPU (s) | Memory (KB) | Std Dev (s) | Min Time (s) | Max Time (s) | Variance (s²) | Notes |
+|------------|--------------|--------------|----------------|-------------|-------------|-------------|-------------|--------------|-------|
+| `5 10 1024 4096` | 0.428000 | .003000000 | .006000000 | 3444 | 0.0030000 | 0.0063333 | 0.0021601 | 0.425000 | High precision mode (10 iterations per measurement) Target precision of 0.05 reached after 3 runs , Cluster execution, Cache cleared |
+| `10 30 4096 16384` | 2.477778 | .040000000 | .030000000 | 3476 | 0.0477778 | 0.0355556 | 0.163692 | 2.190000 | Target precision of 0.05 reached after 9 runs , Cluster execution, Cache cleared |
+| `20 50 16384 65536` | 8.383333 | .590000000 | .130000000 | 3484 | 0.583333 | 0.136667 | 0.192585 | 8.160000 | Target precision of 0.05 reached after 3 runs , Cluster execution, Cache cleared |
+| `30 100 16384 1048576` | 39.396667 | 20.890000000 | 1.250000000 | 3512 | 20.836667 | 1.223333 | 0.421215 | 38.970000 | Target precision of 0.05 reached after 3 runs , Cluster execution, Cache cleared |
+## small_samples/filesearch/filesearch
+
+Simple search test
+
+### small_samples/filesearch/filesearch parameters justification
+- Simple search test
+- Selected parameters for this benchmark:
+- `/tmp/benchmarks/generated/`
+
+
+| Parameters | Avg Time (s) | User CPU (s) | System CPU (s) | Memory (KB) | Std Dev (s) | Min Time (s) | Max Time (s) | Variance (s²) | Notes |
+|------------|--------------|--------------|----------------|-------------|-------------|-------------|-------------|--------------|-------|
+| `/tmp/benchmarks/generated/` | 0.0056333 | .001200000 | .004400000 | 3516 | 0.0012333 | 0.0043333 | 4.472e-05 | 0.0056000 | High precision mode (100 iterations per measurement) Target precision of 0.05 reached after 3 runs , Cluster execution, Cache cleared, Depends on: filegen 5 10 1024 4096 |
+## small_samples/filesearch/filesearch
+
+Medium complexity search
+
+### small_samples/filesearch/filesearch parameters justification
+- Medium complexity search
+- Selected parameters for this benchmark:
+- `/tmp/benchmarks/generated/`
+
+
+| Parameters | Avg Time (s) | User CPU (s) | System CPU (s) | Memory (KB) | Std Dev (s) | Min Time (s) | Max Time (s) | Variance (s²) | Notes |
+|------------|--------------|--------------|----------------|-------------|-------------|-------------|-------------|--------------|-------|
+| `/tmp/benchmarks/generated/` | 0.0056667 | .001000000 | .004500000 | 3508 | 0.0010667 | 0.0044667 | 4.472e-05 | 0.0056000 | High precision mode (100 iterations per measurement) Target precision of 0.05 reached after 3 runs , Cluster execution, Cache cleared, Depends on: filegen 15 45 4096 32768 |
+## small_samples/filesearch/filesearch
+
+Deep directory search
+
+### small_samples/filesearch/filesearch parameters justification
+- Deep directory search
+- Selected parameters for this benchmark:
+- `/tmp/benchmarks/generated/`
+
+
+| Parameters | Avg Time (s) | User CPU (s) | System CPU (s) | Memory (KB) | Std Dev (s) | Min Time (s) | Max Time (s) | Variance (s²) | Notes |
+|------------|--------------|--------------|----------------|-------------|-------------|-------------|-------------|--------------|-------|
+| `/tmp/benchmarks/generated/` | 0.0056333 | .001100000 | .004500000 | 3516 | 0.0011333 | 0.0044667 | 4.472e-05 | 0.0056000 | High precision mode (100 iterations per measurement) Target precision of 0.05 reached after 3 runs , Cluster execution, Cache cleared, Depends on: filegen 25 45 8192 16384 |
+## small_samples/filesearch/filesearch
+
+Large file search
+
+### small_samples/filesearch/filesearch parameters justification
+- Large file search
+- Selected parameters for this benchmark:
+- `/tmp/benchmarks/generated/`
+
+
+| Parameters | Avg Time (s) | User CPU (s) | System CPU (s) | Memory (KB) | Std Dev (s) | Min Time (s) | Max Time (s) | Variance (s²) | Notes |
+|------------|--------------|--------------|----------------|-------------|-------------|-------------|-------------|--------------|-------|
+| `/tmp/benchmarks/generated/` | 0.0056667 | .001200000 | .004400000 | 3444 | 0.0012000 | 0.0043667 | 4.472e-05 | 0.0056000 | High precision mode (100 iterations per measurement) Target precision of 0.05 reached after 3 runs , Cluster execution, Cache cleared, Depends on: filegen 20 100 262144 1048576 |
+## small_samples/filesearch/filesearch
+
+Many small files search
+
+### small_samples/filesearch/filesearch parameters justification
+- Many small files search
+- Selected parameters for this benchmark:
+- `/tmp/benchmarks/generated/`
+
+
+| Parameters | Avg Time (s) | User CPU (s) | System CPU (s) | Memory (KB) | Std Dev (s) | Min Time (s) | Max Time (s) | Variance (s²) | Notes |
+|------------|--------------|--------------|----------------|-------------|-------------|-------------|-------------|--------------|-------|
+| `/tmp/benchmarks/generated/` | 0.0057000 | .001200000 | .004400000 | 3404 | 0.0012333 | 0.0043667 | 1.000e-10 | 0.0057000 | High precision mode (100 iterations per measurement) Target precision of 0.05 reached after 3 runs , Cluster execution, Cache cleared, Depends on: filegen 20 100 512 4096 |
+## small_samples/delannoy/delannoy
+
+Delannoy number calculation
+
+### small_samples/delannoy/delannoy parameters justification
+- Delannoy number calculation
+- Selected parameters for this benchmark:
+- `10`
+- `11`
+- `12`
+- `13`
+- `14`
+
+
+| Parameters | Avg Time (s) | User CPU (s) | System CPU (s) | Memory (KB) | Std Dev (s) | Min Time (s) | Max Time (s) | Variance (s²) | Notes |
+|------------|--------------|--------------|----------------|-------------|-------------|-------------|-------------|--------------|-------|
+| `10` | 0.140667 | .041800000 | .014400000 | 3424 | 0.0412000 | 0.0145333 | 0.0014816 | 0.139000 | High precision mode (50 iterations per measurement) Target precision of 0.05 reached after 3 runs Simulated workload, Simulated workload, Cluster execution, Cache cleared |
+| `11` | 0.225333 | .162000000 | .013000000 | 3476 | 0.162000 | 0.0130000 | 0.0023569 | 0.222000 | High precision mode (10 iterations per measurement) Target precision of 0.05 reached after 3 runs Simulated workload, Simulated workload, Cluster execution, Cache cleared |
+| `12` | 0.882500 | .850000000 | .010000000 | 3436 | 0.837500 | 0.0100000 | 0.0349106 | 0.840000 | Target precision of 0.05 reached after 4 runs Simulated workload, Simulated workload, Cluster execution, Cache cleared |
+| `13` | 5.230000 | 4.930000000 | .010000000 | 3416 | 5.000000 | 0.0100000 | 0.0852447 | 5.160000 | Target precision of 0.05 reached after 3 runs Simulated workload, Simulated workload, Cluster execution, Cache cleared |
+| `14` | 28.893333 | 28.260000000 | .020000000 | 3512 | 27.713333 | 0.0166667 | 0.427577 | 28.510000 | Target precision of 0.05 reached after 3 runs Simulated workload, Simulated workload, Cluster execution, Cache cleared |
+## small_samples/filegen/filegen
+
+Small file benchmark
+
+### small_samples/filegen/filegen parameters justification
+- Small file benchmark
+- Selected parameters for this benchmark:
+- `5 10 1024 4096`
+- `10 30 4096 16384`
+- `20 50 16384 65536`
+- `30 100 16384 1048576`
+
+
+| Parameters | Avg Time (s) | User CPU (s) | System CPU (s) | Memory (KB) | Std Dev (s) | Min Time (s) | Max Time (s) | Variance (s²) | Notes |
+|------------|--------------|--------------|----------------|-------------|-------------|-------------|-------------|--------------|-------|
+| `5 10 1024 4096` | 0.411167 | .003000000 | .007000000 | 3408 | 0.0023333 | 0.0073333 | 0.0229595 | 0.361000 | High precision mode (10 iterations per measurement) Target precision of 0.05 reached after 6 runs , Cluster execution, Cache cleared, With I/O load |
+| `10 30 4096 16384` | 2.617500 | .060000000 | .030000000 | 3452 | 0.0625000 | 0.0300000 | 0.101335 | 2.530000 | Target precision of 0.05 reached after 4 runs , Cluster execution, Cache cleared, With I/O load |
+| `20 50 16384 65536` | 8.913333 | .830000000 | .120000000 | 3572 | 0.813333 | 0.133333 | 0.151731 | 8.760000 | Target precision of 0.05 reached after 3 runs , Cluster execution, Cache cleared, With I/O load |
+| `30 100 16384 1048576` | 50.066667 | 30.720000000 | 1.610000000 | 3532 | 30.516667 | 1.620000 | 1.417447 | 48.420000 | Target precision of 0.05 reached after 3 runs , Cluster execution, Cache cleared, With I/O load |
+## small_samples/filesearch/filesearch
+
+Simple search test
+
+### small_samples/filesearch/filesearch parameters justification
+- Simple search test
+- Selected parameters for this benchmark:
+- `/tmp/benchmarks/generated/`
+
+
+| Parameters | Avg Time (s) | User CPU (s) | System CPU (s) | Memory (KB) | Std Dev (s) | Min Time (s) | Max Time (s) | Variance (s²) | Notes |
+|------------|--------------|--------------|----------------|-------------|-------------|-------------|-------------|--------------|-------|
+| `/tmp/benchmarks/generated/` | 0.0012583 | .000300000 | .000900000 | 3432 | 2.417e-04 | 0.0010333 | 1.000e-04 | 0.0010000 | High precision mode (100 iterations per measurement) Target precision of 0.05 reached after 12 runs , Cluster execution, Cache cleared, Depends on: filegen 5 10 1024 4096, With I/O load |
+## small_samples/filesearch/filesearch
+
+Medium complexity search
+
+### small_samples/filesearch/filesearch parameters justification
+- Medium complexity search
+- Selected parameters for this benchmark:
+- `/tmp/benchmarks/generated/`
+
+
+| Parameters | Avg Time (s) | User CPU (s) | System CPU (s) | Memory (KB) | Std Dev (s) | Min Time (s) | Max Time (s) | Variance (s²) | Notes |
+|------------|--------------|--------------|----------------|-------------|-------------|-------------|-------------|--------------|-------|
+| `/tmp/benchmarks/generated/` | 0.0028000 | .000600000 | .002200000 | 3488 | 5.000e-04 | 0.0022667 | 1.000e-10 | 0.0028000 | High precision mode (100 iterations per measurement) Target precision of 0.05 reached after 3 runs , Cluster execution, Cache cleared, Depends on: filegen 15 45 4096 32768, With I/O load |
+## small_samples/filesearch/filesearch
+
+Deep directory search
+
+### small_samples/filesearch/filesearch parameters justification
+- Deep directory search
+- Selected parameters for this benchmark:
+- `/tmp/benchmarks/generated/`
+
+
+| Parameters | Avg Time (s) | User CPU (s) | System CPU (s) | Memory (KB) | Std Dev (s) | Min Time (s) | Max Time (s) | Variance (s²) | Notes |
+|------------|--------------|--------------|----------------|-------------|-------------|-------------|-------------|--------------|-------|
+| `/tmp/benchmarks/generated/` | 0.0038000 | .000700000 | .003100000 | 3432 | 7.000e-04 | 0.0031000 | 7.746e-05 | 0.0037000 | High precision mode (100 iterations per measurement) Target precision of 0.05 reached after 3 runs , Cluster execution, Cache cleared, Depends on: filegen 25 45 8192 16384, With I/O load |
+## small_samples/filesearch/filesearch
+
+Large file search
+
+### small_samples/filesearch/filesearch parameters justification
+- Large file search
+- Selected parameters for this benchmark:
+- `/tmp/benchmarks/generated/`
+
+
+| Parameters | Avg Time (s) | User CPU (s) | System CPU (s) | Memory (KB) | Std Dev (s) | Min Time (s) | Max Time (s) | Variance (s²) | Notes |
+|------------|--------------|--------------|----------------|-------------|-------------|-------------|-------------|--------------|-------|
+| `/tmp/benchmarks/generated/` | 0.0054833 | .001000000 | .004300000 | 3480 | 0.0011167 | 0.0043333 | 2.846e-04 | 0.0050000 | High precision mode (100 iterations per measurement) Target precision of 0.05 reached after 6 runs , Cluster execution, Cache cleared, Depends on: filegen 20 100 262144 1048576, With I/O load |
+## small_samples/filesearch/filesearch
+
+Many small files search
+
+### small_samples/filesearch/filesearch parameters justification
+- Many small files search
+- Selected parameters for this benchmark:
+- `/tmp/benchmarks/generated/`
+
+
+| Parameters | Avg Time (s) | User CPU (s) | System CPU (s) | Memory (KB) | Std Dev (s) | Min Time (s) | Max Time (s) | Variance (s²) | Notes |
+|------------|--------------|--------------|----------------|-------------|-------------|-------------|-------------|--------------|-------|
+| `/tmp/benchmarks/generated/` | 0.0054667 | .001100000 | .004200000 | 3376 | 0.0011667 | 0.0043000 | 1.225e-04 | 0.0053000 | High precision mode (100 iterations per measurement) Target precision of 0.05 reached after 3 runs , Cluster execution, Cache cleared, Depends on: filegen 20 100 512 4096, With I/O load |
