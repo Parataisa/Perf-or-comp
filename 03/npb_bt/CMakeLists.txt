@@ -7,6 +7,7 @@ if(MSVC)
   add_compile_options(/W4)
 else()
   add_compile_options(-Wall -Wextra -Wno-unknown-pragmas -Wno-unused-parameter)
+  add_link_options(-pg)
 endif()
 
 file(GLOB_RECURSE SOURCE_FILES CONFIGURE_DEPENDS src/*.c src/*.h)
