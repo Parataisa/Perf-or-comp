@@ -1,6 +1,6 @@
 # Makefile for NPB BT programs - Run-only version
 
-.PHONY: all run-* gprof-* tracy-run
+.PHONY: all run-* gprof-* tracy-run tracy-*
 
 # Configuration
 PROGRAMS := npb_bt_w npb_bt_s npb_bt_a npb_bt_b npb_bt_c
@@ -10,28 +10,31 @@ all:
 	@echo "Available targets:"
 	@echo "  run-*      - Run program (e.g., run-w, run-a)"
 	@echo "  gprof-*    - Run and profile with gprof (e.g., gprof-w)"
-	@echo "  tracy-run  - Note that programs must be built with Tracy"
+	@echo "  tracy-*  - Note that programs must be built with Tracy(e.g., tracy-w)"
+
+run: run-w run-s run-a run-b run-c
+	@echo "All programs run."
 
 # Run targets (use standard build)
 run-w:
 	@echo "Running NPB BT W class..."
-	@cd build && ./npb_bt_w
+	@cd build && /usr/bin/time ./npb_bt_w
 
 run-s:
 	@echo "Running NPB BT S class..."
-	@cd build && ./npb_bt_s
+	@cd build && /usr/bin/time ./npb_bt_s
 
 run-a:
 	@echo "Running NPB BT A class..."
-	@cd build && ./npb_bt_a
+	@cd build && /usr/bin/time ./npb_bt_a
 
 run-b:
 	@echo "Running NPB BT B class..."
-	@cd build && ./npb_bt_b
+	@cd build && /usr/bin/time ./npb_bt_b
 
 run-c:
 	@echo "Running NPB BT C class..."
-	@cd build && ./npb_bt_c
+	@cd build && /usr/bin/time ./npb_bt_c
 
 
 gprof-all: gprof-w gprof-s gprof-a gprof-b gprof-c
@@ -89,7 +92,27 @@ gprof-c:
 	fi
 
 # Tracy target (note: requires manual connection)
-tracy-run:
+tracy-run: 
 	@echo "Programs built with Tracy are in the build-tracy directory."
 	@echo "Start the Tracy profiler and then run the program you want to profile."
 	@echo "Available programs in build-tracy/: $(PROGRAMS)"
+
+tracy-w:
+	@echo "Running NPB BT W class with Tracy..."
+	@cd build-tracy && ./npb_bt_w
+
+tracy-s:
+	@echo "Running NPB BT S class with Tracy..."
+	@cd build-tracy && ./npb_bt_s
+
+tracy-a:
+	@echo "Running NPB BT A class with Tracy..."
+	@cd build-tracy && ./npb_bt_a	
+
+tracy-b:
+	@echo "Running NPB BT B class with Tracy..."
+	@cd build-tracy && ./npb_bt_b
+
+tracy-c:
+	@echo "Running NPB BT C class with Tracy..."
+	@cd build-tracy && ./npb_bt_c
