@@ -4,10 +4,7 @@ project(perf_prog_npb_bt)
 set_property(GLOBAL PROPERTY C_STANDARD 11)
 
 # Define profiling options
-set(ENABLE_TRACY OFF CACHE BOOL "Enable Tracy profiler" FORCE)
 option(ENABLE_TRACY "Enable Tracy profiler" OFF)
-
-set(ENABLE_GPROF OFF CACHE BOOL "Enable gprof profiler" FORCE)
 option(ENABLE_GPROF "Enable gprof profiler" OFF)
 
 # Base compiler options

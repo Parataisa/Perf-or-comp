@@ -2,27 +2,44 @@
 # build.sh
 
 MODE=$1
-BUILD_DIR="build"
-
-mkdir -p $BUILD_DIR
-cd $BUILD_DIR
 
 case $MODE in
   tracy)
-    cmake .. -DENABLE_TRACY=ON -DENABLE_GPROF=OFF
+    BUILD_DIR="build-tracy"
+    CMAKE_OPTIONS="-DENABLE_TRACY=ON -DENABLE_GPROF=OFF"
     ;;
   gprof)
-    cmake .. -DENABLE_TRACY=OFF -DENABLE_GPROF=ON
+    BUILD_DIR="build-gprof"
+    CMAKE_OPTIONS="-DENABLE_TRACY=OFF -DENABLE_GPROF=ON"
     ;;
   both)
-    cmake .. -DENABLE_TRACY=ON -DENABLE_GPROF=ON
+    BUILD_DIR="build-both"
+    CMAKE_OPTIONS="-DENABLE_TRACY=ON -DENABLE_GPROF=ON"
     ;;
   *)
-    cmake .. -DENABLE_TRACY=OFF -DENABLE_GPROF=OFF
+    BUILD_DIR="build"
+    CMAKE_OPTIONS="-DENABLE_TRACY=OFF -DENABLE_GPROF=OFF"
     ;;
 esac
+
+# Make sure build directory exists
+mkdir -p $BUILD_DIR
+cd $BUILD_DIR
+
+# Configure with the right options
+cmake .. -G Ninja $CMAKE_OPTIONS
+
+# Check if build.ninja exists
+if [ ! -f "build.ninja" ]; then
+  echo "Error: build.ninja file not found. CMake configuration may have failed."
+  exit 1
+fi
 
 # Force a rebuild by touching the source files
 find ../src -name "*.c" -exec touch {} \;
 
-cmake --build .
+# Build the project
+ninja
+
+echo "Build completed in $BUILD_DIR directory"
+echo "Use make to run and analyze programs"

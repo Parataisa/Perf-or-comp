@@ -13,3 +13,5 @@ build
 generated
 io_load
 tracy
+build-gprof
+build-tracy
