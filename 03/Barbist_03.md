@@ -4,7 +4,6 @@ Exercise Sheet 3
 A) Traditional profiling
 ------------------------
 #### Note
-- add_link_options(-pg) needed to be added to the CMakeLists.txt file to enable profiling
 - ip addr show eth0 | grep 'inet ' | awk '{print $2}' | cut -d/ -f1(for geting the ip address)
 - The runtimes for npb_bt_s and npb_bt_w were way to short to get any meaningful profiling data.
 - 
@@ -121,77 +120,83 @@ A) Traditional profiling
 ### Local
 
 #### npb_bt_s
-  %   cumulative   self               
- time   seconds   seconds   name      
- 40.00      0.02     0.02   binvcrhs  
- 20.00      0.03     0.01   binvrhs  
- 20.00      0.04     0.01   matmul_sub  
- 20.00      0.05     0.01   z_solve  
+  %   cumulative   self              self     total           
+ time   seconds   seconds    calls  ms/call  ms/call  name    
+ 40.00      0.06     0.06       61     0.98     1.09  z_solve
+ 33.33      0.11     0.05       62     0.81     0.81  compute_rhs
+ 13.33      0.13     0.02   201300     0.00     0.00  binvcrhs
+ 13.33      0.15     0.02       61     0.33     0.33  add
+  0.00      0.15     0.00   201300     0.00     0.00  matmul_sub
+  0.00      0.15     0.00   201300     0.00     0.00  matvec_sub
+  0.00      0.15     0.00    27792     0.00     0.00  exact_solution
+  0.00      0.15     0.00    18300     0.00     0.00  binvrhs
+  0.00      0.15     0.00    18300     0.00     0.00  lhsinit
 
 #### npb_bt_w
-  %   cumulative   self               
- time   seconds   seconds   name      
- 36.55      0.53     0.53   binvcrhs  
- 15.86      0.76     0.23   x_solve  
- 13.10      0.95     0.19   matmul_sub  
- 11.03      1.11     0.16   y_solve  
-  9.66      1.25     0.14   compute_rhs  
-  9.66      1.39     0.14   z_solve  
-  2.76      1.43     0.04   matvec_sub  
-  0.69      1.44     0.01   binvrhs  
-  0.69      1.45     0.01   lhsinit  
+  %   cumulative   self              self     total             
+ time   seconds   seconds    calls  ms/call  ms/call  name      
+ 20.40      1.01     1.01  6712596     0.00     0.00  binvcrhs  
+ 15.96      1.80     0.79      201     3.93     7.08  x_solve  
+ 14.95      2.54     0.74      202     3.66     3.66  compute_rhs  
+ 14.34      3.25     0.71      201     3.53     6.68  y_solve  
+ 13.74      3.93     0.68      201     3.38     6.53  z_solve  
+ 13.33      4.59     0.66  6712596     0.00     0.00  matmul_sub  
+  2.42      4.71     0.12      201     0.60     0.60  add  
+  2.22      4.82     0.11  6712596     0.00     0.00  matvec_sub  
+  1.62      4.90     0.08   291852     0.00     0.00  lhsinit  
+  0.81      4.94     0.04   291852     0.00     0.00  binvrhs  
+  0.20      4.95     0.01   221472     0.00     0.00  exact_solution  
 
 #### npb_bt_a
-  %   cumulative   self               
- time   seconds   seconds   name      
- 32.11      9.68     9.68   binvcrhs  
- 14.59     14.08     4.40   matmul_sub  
- 13.73     18.22     4.14   z_solve  
- 12.70     22.05     3.83   x_solve  
- 12.54     25.83     3.78   y_solve  
-  9.45     28.68     2.85   compute_rhs  
-  3.48     29.73     1.05   matvec_sub  
-  0.46     29.87     0.14   add  
-  0.36     29.98     0.11   binvrhs  
-  0.33     30.08     0.10   lhsinit  
-  0.17     30.13     0.05   exact_solution  
-  0.07     30.15     0.02   exact_rhs  
+  %   cumulative   self              self     total             
+ time   seconds   seconds    calls  ms/call  ms/call  name      
+ 21.20     22.89    22.89 146029716     0.00     0.00  binvcrhs  
+ 17.35     41.62    18.73      202    92.72    92.72  compute_rhs  
+ 15.41     58.25    16.63      201    82.74   148.81  y_solve  
+ 14.93     74.37    16.12      201    80.20   146.27  z_solve  
+ 14.20     89.70    15.33      201    76.27   142.34  x_solve  
+ 12.67    103.38    13.68 146029716     0.00     0.00  matmul_sub  
+  2.45    106.03     2.65 146029716     0.00     0.00  matvec_sub  
+  0.92    107.02     0.99      201     4.93     4.93  add  
+  0.44    107.50     0.48  2317932     0.00     0.00  lhsinit  
+  0.19    107.70     0.20  4195072     0.00     0.00  exact_solution  
+  0.13    107.84     0.14  2317932     0.00     0.00  binvrhs  
+  0.08    107.93     0.09        1    90.00   125.19  exact_rhs  
+  0.02    107.95     0.02        2    10.00    86.16  initialize  
 
 #### npb_bt_b
-  %   cumulative   self               
- time   seconds   seconds   name      
- 32.51     39.94    39.94   binvcrhs  
- 14.34     57.56    17.62   matmul_sub  
- 13.36     73.97    16.41   y_solve  
- 12.68     89.55    15.58   z_solve  
- 12.43    104.82    15.27   x_solve  
-  9.17    116.09    11.27   compute_rhs  
-  4.11    121.14     5.05   matvec_sub  
-  0.72    122.02     0.88   add  
-  0.24    122.31     0.29   lhsinit  
-  0.18    122.53     0.22   binvrhs  
-  0.16    122.73     0.20   exact_solution  
-  0.09    122.84     0.11   exact_rhs  
-  0.02    122.86     0.02   initialize  
+  %   cumulative   self              self     total             
+ time   seconds   seconds    calls   s/call   s/call  name      
+ 20.95     93.23    93.23 609030000     0.00     0.00  binvcrhs  
+ 17.17    169.62    76.39      202     0.38     0.38  compute_rhs  
+ 15.40    238.13    68.51      201     0.34     0.61  y_solve  
+ 14.90    304.42    66.29      201     0.33     0.60  z_solve  
+ 14.25    367.83    63.41      201     0.32     0.59  x_solve  
+ 13.31    427.04    59.21 609030000     0.00     0.00  matmul_sub  
+  2.47    438.02    10.98 609030000     0.00     0.00  matvec_sub  
+  0.93    442.18     4.15      201     0.02     0.02  add  
+  0.22    443.15     0.97  6030000     0.00     0.00  lhsinit  
+  0.21    444.09     0.94 16980552     0.00     0.00  exact_solution  
+  0.10    444.56     0.47  6030000     0.00     0.00  binvrhs  
+  0.07    444.88     0.32        1     0.32     0.49  exact_rhs  
+  0.01    444.94     0.06        2     0.03     0.39  initialize  
   
 #### npb_bt_c
-  %   cumulative   self               
- time   seconds   seconds   name      
- 31.34    159.08   159.08   binvcrhs  
- 15.07    235.59    76.51   matmul_sub  
- 14.29    308.11    72.52   z_solve  
- 13.03    374.25    66.14   y_solve  
- 12.56    438.02    63.77   x_solve  
-  8.91    483.23    45.21   compute_rhs  
-  3.58    501.39    18.16   matvec_sub  
-  0.67    504.77     3.38   add  
-  0.15    505.55     0.78   lhsinit  
-  0.14    506.25     0.70   exact_solution  
-  0.12    506.86     0.61   binvrhs  
-  0.11    507.40     0.54   exact_rhs  
-  0.02    507.49     0.09   initialize  
-  0.01    507.52     0.03   error_norm  
-  0.00    507.54     0.02   rhs_norm  
+  %   cumulative   self              self     total             
+ time   seconds   seconds    calls   s/call   s/call  name      
+ 21.32    379.83   379.83 2485324800     0.00     0.00  binvcrhs  
+ 17.55    692.47   312.64      202     1.55     1.55  compute_rhs  
+ 14.97    959.20   266.73      201     1.33     2.43  z_solve  
+ 14.90   1224.71   265.51      201     1.32     2.43  y_solve  
+ 14.03   1474.69   249.98      201     1.24     2.35  x_solve  
+ 13.38   1713.04   238.35 2485324800     0.00     0.00  matmul_sub  
+  2.49   1757.40    44.36 2485324800     0.00     0.00  matvec_sub  
+  0.82   1772.09    14.69      201     0.07     0.07  add  
+  0.20   1775.70     3.61 68026392     0.00     0.00  exact_solution  
+  0.16   1778.58     2.88 15436800     0.00     0.00  lhsinit  
+  0.07   1779.78     1.20 15436800     0.00     0.00  binvrhs  
+  0.06   1780.92     1.14        1     1.14     1.80  exact_rhs  
+  0.02   1781.27     0.35        2     0.17     1.54  initialize  
 
 B) Hybrid trace profiling
 -------------------------
