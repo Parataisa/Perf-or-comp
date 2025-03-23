@@ -35,8 +35,15 @@
 //---------------------------------------------------------------------
 // subtracts bvec=bvec - ablock*avec
 //---------------------------------------------------------------------
+#ifdef TRACY_ENABLE
+  #include "tracy/TracyC.h"
+#endif
+
 void matvec_sub(double ablock[5][5], double avec[5], double bvec[5])
 {
+  #ifdef TRACY_ENABLE
+    TracyCZoneN(ctx, "matvec_sub", 1);
+  #endif
   //---------------------------------------------------------------------
   // rhs[kc][jc][ic][i] = rhs[kc][jc][ic][i] 
   // $                  - lhs[ia][ablock][0][i]*
@@ -66,6 +73,9 @@ void matvec_sub(double ablock[5][5], double avec[5], double bvec[5])
                     - ablock[2][4]*avec[2]
                     - ablock[3][4]*avec[3]
                     - ablock[4][4]*avec[4];
+  #ifdef TRACY_ENABLE
+    TracyCZoneEnd(ctx);
+  #endif
 }
 
 
@@ -74,6 +84,9 @@ void matvec_sub(double ablock[5][5], double avec[5], double bvec[5])
 //---------------------------------------------------------------------
 void matmul_sub(double ablock[5][5], double bblock[5][5], double cblock[5][5])
 {
+  #ifdef TRACY_ENABLE
+    TracyCZoneN(ctx, "matmul_sub", 1);
+  #endif
   cblock[0][0] = cblock[0][0] - ablock[0][0]*bblock[0][0]
                               - ablock[1][0]*bblock[0][1]
                               - ablock[2][0]*bblock[0][2]
@@ -199,11 +212,17 @@ void matmul_sub(double ablock[5][5], double bblock[5][5], double cblock[5][5])
                               - ablock[2][4]*bblock[4][2]
                               - ablock[3][4]*bblock[4][3]
                               - ablock[4][4]*bblock[4][4];
+  #ifdef TRACY_ENABLE
+    TracyCZoneEnd(ctx);
+  #endif
 }
 
 
 void binvcrhs(double lhs[5][5], double c[5][5], double r[5])
 {
+  #ifdef TRACY_ENABLE
+    TracyCZoneN(ctx, "binvcrhs", 1);
+  #endif
   double pivot, coeff;
 
   pivot = 1.00/lhs[0][0];
@@ -459,6 +478,9 @@ void binvcrhs(double lhs[5][5], double c[5][5], double r[5])
   c[3][3] = c[3][3] - coeff*c[3][4];
   c[4][3] = c[4][3] - coeff*c[4][4];
   r[3]   = r[3]   - coeff*r[4];
+  #ifdef TRACY_ENABLE
+    TracyCZoneEnd(ctx);
+  #endif
 }
 
 

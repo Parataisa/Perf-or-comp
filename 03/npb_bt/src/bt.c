@@ -45,6 +45,9 @@
 #include "header.h"
 #include "timers.h"
 #include "print_results.h"
+#ifdef TRACY_ENABLE
+  #include "tracy/TracyC.h"
+#endif
 
 /* common /global/ */
 double elapsed_time;
@@ -97,6 +100,9 @@ double tmp1, tmp2, tmp3;
 
 int main(int argc, char *argv[])
 {
+#ifdef TRACY_ENABLE
+  TracyCSetThreadName("Main Thread");
+#endif
   int i, niter, step;
   double navg, mflops, n3;
 
@@ -223,6 +229,9 @@ int main(int argc, char *argv[])
 
     printf("  SECTION   Time (secs)\n");
     for (i = 1; i <= t_last; i++) {
+      #ifdef TRACY_ENABLE
+        TracyCFrameMark;
+      #endif
       printf("  %-8s:%9.3f  (%6.2f%%)\n", 
           t_names[i], trecs[i], trecs[i]*100./tmax);
       if (i == t_rhs) {
@@ -239,6 +248,5 @@ int main(int argc, char *argv[])
       }
     }
   }
-
   return 0;
 }

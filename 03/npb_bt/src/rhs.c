@@ -37,6 +37,9 @@
 
 void compute_rhs()
 {
+  #ifdef TRACY_ENABLE
+    TracyCZoneN(ctx, "compute_rhs", 1);
+  #endif
   int i, j, k, m;
   double rho_inv, uijk, up1, um1, vijk, vp1, vm1, wijk, wp1, wm1;
 
@@ -440,4 +443,7 @@ void compute_rhs()
   }
   } //end parallel
   if (timeron) timer_stop(t_rhs);
+  #ifdef TRACY_ENABLE
+    TracyCZoneEnd(ctx);
+  #endif
 }

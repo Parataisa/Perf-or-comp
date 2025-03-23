@@ -12,3 +12,4 @@ CMakeUserPresets.json
 build
 generated
 io_load
+tracy

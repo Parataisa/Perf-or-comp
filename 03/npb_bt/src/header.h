@@ -52,6 +52,9 @@
 
 #include "npbparams.h"
 #include "type.h"
+#ifdef TRACY_ENABLE
+  #include "tracy/TracyC.h"
+#endif
 
 #define AA            0
 #define BB            1

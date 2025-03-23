@@ -47,6 +47,9 @@
 //---------------------------------------------------------------------
 void z_solve()
 {
+  #ifdef TRACY_ENABLE
+    TracyCZoneN(ctx, "z_solve", 1);
+  #endif
   int i, j, k, m, n, ksize;
 
   //---------------------------------------------------------------------
@@ -405,4 +408,7 @@ void z_solve()
     }
   }
   if (timeron) timer_stop(t_zsolve);
+  #ifdef TRACY_ENABLE
+    TracyCZoneEnd(ctx);
+  #endif
 }

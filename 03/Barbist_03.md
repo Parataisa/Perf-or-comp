@@ -5,6 +5,9 @@ A) Traditional profiling
 ------------------------
 #### Note
 - add_link_options(-pg) needed to be added to the CMakeLists.txt file to enable profiling
+- ip addr show eth0 | grep 'inet ' | awk '{print $2}' | cut -d/ -f1(for geting the ip address)
+- The runtimes for npb_bt_s and npb_bt_w were way to short to get any meaningful profiling data.
+- 
 
 ### Program Parameter
 - npb_bt_s
