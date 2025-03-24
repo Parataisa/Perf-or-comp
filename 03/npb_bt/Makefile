@@ -18,23 +18,23 @@ run: run-w run-s run-a run-b run-c
 # Run targets (use standard build)
 run-w:
 	@echo "Running NPB BT W class..."
-	@cd build && /usr/bin/time ./npb_bt_w
+	@cd build && ./npb_bt_w
 
 run-s:
 	@echo "Running NPB BT S class..."
-	@cd build && /usr/bin/time ./npb_bt_s
+	@cd build && ./npb_bt_s
 
 run-a:
 	@echo "Running NPB BT A class..."
-	@cd build && /usr/bin/time ./npb_bt_a
+	@cd build && ./npb_bt_a
 
 run-b:
 	@echo "Running NPB BT B class..."
-	@cd build && /usr/bin/time ./npb_bt_b
+	@cd build && ./npb_bt_b
 
 run-c:
 	@echo "Running NPB BT C class..."
-	@cd build && /usr/bin/time ./npb_bt_c
+	@cd build && ./npb_bt_c
 
 
 gprof-all: gprof-w gprof-s gprof-a gprof-b gprof-c
@@ -116,3 +116,41 @@ tracy-b:
 tracy-c:
 	@echo "Running NPB BT C class with Tracy..."
 	@cd build-tracy && ./npb_bt_c
+
+# Time benchmarks
+
+run-time-benchmarks:
+	@echo "Running time benchmarks..."
+	@echo "-----------------------------------"
+	@echo "Running time npb_bt_w..."
+	@echo "-----------------------------------"
+	@cd build && /usr/bin/time ./npb_bt_w
+	@echo "-----------------------------------"
+	@echo "Running time npb_bt_a..."
+	@echo "-----------------------------------"
+	@cd build && /usr/bin/time ./npb_bt_a
+
+gprof-time-benchmarks: 
+	@echo "Running time benchmarks with gprof..."
+	@echo "-----------------------------------"
+	@echo "Running time npb_bt_w with gprof..."
+	@echo "-----------------------------------"
+	@cd build-gprof && /usr/bin/time ./npb_bt_w
+	@echo "-----------------------------------"
+	@echo "Running time npb_bt_a with gprof..."
+	@echo "-----------------------------------"
+	@cd build-gprof && /usr/bin/time ./npb_bt_a
+
+tracy-time-benchmarks:
+	@echo "Running time benchmarks with Tracy..."
+	@echo "-----------------------------------"
+	@echo "Running time npb_bt_w with Tracy..."
+	@echo "-----------------------------------"
+	@cd build-tracy && /usr/bin/time ./npb_bt_w
+	@echo "-----------------------------------"
+	@echo "Running time npb_bt_a with Tracy..."
+	@echo "-----------------------------------"
+	@cd build-tracy && /usr/bin/time ./npb_bt_a
+
+time-benchmarks: run-time-benchmarks gprof-time-benchmarks tracy-time-benchmarks
+	@echo "Time benchmarks complete."

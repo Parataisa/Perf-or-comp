@@ -42,7 +42,7 @@
 void matvec_sub(double ablock[5][5], double avec[5], double bvec[5])
 {
   #ifdef TRACY_ENABLE
-    TracyCZoneN(ctx, "matvec_sub", 1);
+    // TracyCZoneN(ctx, "matvec_sub", 1);
   #endif
   //---------------------------------------------------------------------
   // rhs[kc][jc][ic][i] = rhs[kc][jc][ic][i] 
@@ -74,7 +74,7 @@ void matvec_sub(double ablock[5][5], double avec[5], double bvec[5])
                     - ablock[3][4]*avec[3]
                     - ablock[4][4]*avec[4];
   #ifdef TRACY_ENABLE
-    TracyCZoneEnd(ctx);
+    // TracyCZoneEnd(ctx);
   #endif
 }
 
@@ -85,7 +85,7 @@ void matvec_sub(double ablock[5][5], double avec[5], double bvec[5])
 void matmul_sub(double ablock[5][5], double bblock[5][5], double cblock[5][5])
 {
   #ifdef TRACY_ENABLE
-    TracyCZoneN(ctx, "matmul_sub", 1);
+    // TracyCZoneN(ctx, "matmul_sub", 1);
   #endif
   cblock[0][0] = cblock[0][0] - ablock[0][0]*bblock[0][0]
                               - ablock[1][0]*bblock[0][1]
@@ -213,7 +213,7 @@ void matmul_sub(double ablock[5][5], double bblock[5][5], double cblock[5][5])
                               - ablock[3][4]*bblock[4][3]
                               - ablock[4][4]*bblock[4][4];
   #ifdef TRACY_ENABLE
-    TracyCZoneEnd(ctx);
+    // TracyCZoneEnd(ctx);
   #endif
 }
 
@@ -221,7 +221,7 @@ void matmul_sub(double ablock[5][5], double bblock[5][5], double cblock[5][5])
 void binvcrhs(double lhs[5][5], double c[5][5], double r[5])
 {
   #ifdef TRACY_ENABLE
-    TracyCZoneN(ctx, "binvcrhs", 1);
+    // TracyCZoneN(ctx, "binvcrhs", 1);
   #endif
   double pivot, coeff;
 
@@ -479,7 +479,7 @@ void binvcrhs(double lhs[5][5], double c[5][5], double r[5])
   c[4][3] = c[4][3] - coeff*c[4][4];
   r[3]   = r[3]   - coeff*r[4];
   #ifdef TRACY_ENABLE
-    TracyCZoneEnd(ctx);
+    // TracyCZoneEnd(ctx);
   #endif
 }
 

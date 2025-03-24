@@ -6,6 +6,7 @@ A) Traditional profiling
 #### Note
 - ip addr show eth0 | grep 'inet ' | awk '{print $2}' | cut -d/ -f1(for geting the ip address)
 - build.sg can be used to build the different versions of profiling(build.sh gprof/tracy/both) if no argument is passed it builds the default version
+- Each profiling type will be build in there own folder(build, build_gprof, build_tracy)
 - Not the full flat profile is shown here, some functions are omitted for better readability
 
 ### Program Parameter
@@ -191,3 +192,31 @@ A) Traditional profiling
 
 B) Hybrid trace profiling
 -------------------------
+#### Note
+- Was only run on Local
+- npb_bt_w and npb_bt_a were profiled(the Memory usage in Tracy was too high for longer runs)
+
+### Modified Files
+- `bt.c` 
+  - Entry point and main time step(frame)
+- `rhs.c`   
+  - `compute_rhs` function was annotated
+- `solve_subs.c` 
+  - Were annotated but were commented out due to high call count(binvcrhs, matmul_sub, matvec_sub)
+- `x_solve.c`, `y_solve.c`, `z_solve.c` 
+  - Those functions were annotated as they are called a moderate number of times and have a high runtime
+
+### Runtime Overhead
+- npb_bt_w   
+  - No Tools: 5.55user 0.00system 0:05.09elapsed 109%CPU
+  - GProf: 5.55user 0.01system 0:05.10elapsed 109%CPU
+  - Tracy: 9.42user 0.36system 0:07.47elapsed 130%CPU
+- npb_bt_a
+  - No Tools: 120.20user 0.02system 2:01.94elapsed 98%CPU
+  - GProf: 121.09user 0.03system 1:59.86elapsed 101%CPU 
+  - Tracy: 185.20user 5.68system 2:49.01elapsed 112%CPU 
+
+
+### Observations
+- Tracy has a higher overhead than gprof also it uses a lot of memory when using a lot of annotations(also if they are called a lot)
+- The overhead of gprof is negligible
