@@ -28,7 +28,21 @@ for program in "${PROGRAMS[@]}"; do
   instr_output=$(perf stat -e instructions $program 2>&1 >/dev/null)
   instr_count=$(echo "$instr_output" | grep instructions | awk '{print $1}' | tr -d ',')
   
-  for event in $CACHE_EVENTS; do
+  echo "  Instruction count: $instr_count"
+  
+  FILTERED_EVENTS=$(echo "$CACHE_EVENTS" | tr ' ' '\n' | grep -v "^instructions$" | tr '\n' ' ')
+  
+  echo "  Measuring instructions event"
+  output=$(perf stat -e instructions $program 2>&1 >/dev/null)
+  
+  count=$(echo "$output" | grep instructions | awk '{print $1}' | tr -d ',')
+  perf_time=$(echo "$output" | grep "seconds time elapsed" | awk '{print $1}')
+  
+  overhead=$(echo "scale=2; 100 * ($perf_time - $baseline) / $baseline" | bc)
+  echo "instructions,$count,100,$overhead" >> $event_file
+  echo "  Result: $count events, 100% relative, ${overhead}% overhead"
+  
+  for event in $FILTERED_EVENTS; do
     echo "  Measuring $event"
     output=$(perf stat -e $event $program 2>&1 >/dev/null)
     
@@ -56,7 +70,7 @@ all_events=$(echo "$all_events" | tr ' ' '\n' | sort | uniq)
 header="Event"
 for program in "${PROGRAMS[@]}"; do
   prog_name=$(basename $program | cut -d' ' -f1)
-  header="$header,${prog_name}\(%\)"
+  header="$header,${prog_name}(%)"
 done
 echo "$header" > "$comparison_file"
 
@@ -73,19 +87,16 @@ for event in $all_events; do
   echo "$line" >> "$comparison_file"
 done
 
-echo "Program,Average_Overhead(%)" > results_b/overhead_summary.csv
 for program in "${PROGRAMS[@]}"; do
   prog_name=$(basename $program | cut -d' ' -f1)
   
   # Check if file has data beyond header
   if [ $(wc -l < results_b/${prog_name}_events.csv) -gt 1 ]; then
-    avg_overhead=$(awk -F, 'NR>1 && $4 != "" {sum+=$4; count++} END {if(count>0) print sum/count; else print "0"}' results_b/${prog_name}_events.csv)
+    avg_overhead=$(awk -F, 'NR>1 && $1 != "instructions" && $4 != "" {sum+=$4; count++} END {if(count>0) print sum/count; else print "0"}' results_b/${prog_name}_events.csv)
   else
     avg_overhead="0"
   fi
-  
-  echo "$program,$avg_overhead" >> results_b/overhead_summary.csv
-  echo "Average overhead for $program: ${avg_overhead}%"
+
 done
 
 echo "Done! Results saved as CSV files in results_b/ directory"
