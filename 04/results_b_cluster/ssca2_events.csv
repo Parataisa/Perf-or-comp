@@ -1,13 +1,7 @@
 Event,Count,Relative(%),Overhead(%)
-cache-misses,334942408,.969643,-.10
-cache-references,3390851670,9.816363,-.27
-cpu-cycles,97624066279,282.617304,-1.02
 instructions,34542848072,100,-.14
-ref-cycles,85057161420,246.236676,-.72
 branch-instructions,5715236283,16.545353,1.14
-stalled-cycles-backend,51147031375,148.068367,-1.25
 branch-misses,730670051,2.115257,-3.15
-stalled-cycles-frontend,73916044921,213.983643,-.34
 cache-misses,326650595,.945638,-2.72
 cache-references,3385411362,9.800614,-2.37
 cpu-cycles,97225036769,281.462132,-1.31
