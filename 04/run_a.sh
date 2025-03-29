@@ -33,7 +33,7 @@ for program in "${TARGET_PROGRAMS[@]}"; do
     read -r cmd args <<< "$program"
     program_name=$(basename "$cmd")
     
-    time_output=$(TIMEFORMAT='%3R'; { time valgrind --tool=massif --detailed-freq=1 --massif-out-file="results_a/massif.${program_name}.out" $cmd $args > /dev/null 2>&1; } 2>&1)
+    time_output=$(TIMEFORMAT='%3R'; { time valgrind --tool=massif --massif-out-file="results_a/massif.${program_name}.out" $cmd $args > /dev/null 2>&1; } 2>&1)
     times_with_valgrind["$program"]=$time_output
     
     echo "Completed $program with Valgrind (${time_output}s)"
