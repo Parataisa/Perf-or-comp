@@ -1,0 +1,10 @@
+Event,Count,Relative(%),Overhead(%)
+instructions,17626023935,100,-.77
+branch-instructions,88330018,.501134,-.71
+branch-misses,583670,.003311,-.51
+cache-misses,1028,.000005,-.59
+cache-references,15217381,.086334,-.26
+cpu-cycles,9206380814,52.231749,-.58
+ref-cycles,8014540480,45.469928,-.44
+stalled-cycles-backend,504012892,2.859481,-.72
+stalled-cycles-frontend,3777079724,21.428994,-.28
