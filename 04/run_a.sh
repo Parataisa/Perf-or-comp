@@ -33,7 +33,6 @@ for program in "${TARGET_PROGRAMS[@]}"; do
     read -r cmd args <<< "$program"
     program_name=$(basename "$cmd")
     
-    # Added --detailed-freq=1 for detailed heap analysis
     time_output=$(TIMEFORMAT='%3R'; { time valgrind --tool=massif --detailed-freq=1 --massif-out-file="results_a/massif.${program_name}.out" $cmd $args > /dev/null 2>&1; } 2>&1)
     times_with_valgrind["$program"]=$time_output
     

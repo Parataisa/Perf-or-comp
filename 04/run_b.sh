@@ -11,21 +11,8 @@ bash ./build.sh
 
 mkdir -p results_b
 
-# Save all available events for reference
-perf list > results_b/available_events.txt
-echo "Full event list saved to results_b/available_events.txt"
-
-# Get hardware cache events
 CACHE_EVENTS=$(perf list | grep "Hardware event" | awk '{print $1}')
-
-# Check if we have any cache events
-if [ -z "$CACHE_EVENTS" ]; then
-  echo "Warning: No hardware cache events found!"
-  CACHE_EVENTS="cache-misses cache-references"
-  echo "Using fallback events: $CACHE_EVENTS"
-else
-  echo "Found cache events: $CACHE_EVENTS"
-fi
+echo "Found cache events: $CACHE_EVENTS"
 
 for program in "${PROGRAMS[@]}"; do
   echo "Testing $program"
@@ -37,33 +24,17 @@ for program in "${PROGRAMS[@]}"; do
   baseline=$(TIMEFORMAT='%3R'; { time $program >/dev/null 2>&1; } 2>&1)
   echo "Baseline time: ${baseline}s"
   
-  # Get instruction count for normalization
   echo "  Measuring instruction count"
   instr_output=$(perf stat -e instructions $program 2>&1 >/dev/null)
   instr_count=$(echo "$instr_output" | grep instructions | awk '{print $1}' | tr -d ',')
   
-  if [ -z "$instr_count" ]; then
-    echo "  Warning: Could not get instruction count. Using 1 as default."
-    instr_count=1
-  else
-    echo "  Instruction count: $instr_count"
-  fi
-  
-  # Measure each cache event
   for event in $CACHE_EVENTS; do
     echo "  Measuring $event"
     output=$(perf stat -e $event $program 2>&1 >/dev/null)
     
-    # Extract count and time
     count=$(echo "$output" | grep "$event" | awk '{print $1}' | tr -d ',')
     perf_time=$(echo "$output" | grep "seconds time elapsed" | awk '{print $1}')
     
-    if [ -z "$count" ]; then
-      echo "  Warning: No data for $event"
-      continue
-    fi
-    
-    # Calculate metrics
     relative=$(echo "scale=6; 100 * $count / $instr_count" | bc)
     overhead=$(echo "scale=2; 100 * ($perf_time - $baseline) / $baseline" | bc)
     
@@ -72,27 +43,36 @@ for program in "${PROGRAMS[@]}"; do
   done
 done
 
-# Create comparison between first two programs
-echo "Creating comparison..."
-echo "Event,${PROGRAMS[0]}(%),${PROGRAMS[1]}(%),Ratio" > results_b/comparison.csv
+echo "Creating comparison table for all programs..."
+comparison_file="results_b/all_programs_comparison.csv"
 
-prog1=$(basename ${PROGRAMS[0]} | cut -d' ' -f1)
-prog2=$(basename ${PROGRAMS[1]} | cut -d' ' -f1)
+all_events=""
+for program in "${PROGRAMS[@]}"; do
+  prog_name=$(basename $program | cut -d' ' -f1)
+  all_events="$all_events $(grep -v "Event" "results_b/${prog_name}_events.csv" | cut -d, -f1)"
+done
+all_events=$(echo "$all_events" | tr ' ' '\n' | sort | uniq)
 
-# Get all events that were measured
-all_events=$(cat results_b/${prog1}_events.csv results_b/${prog2}_events.csv | grep -v "Event" | cut -d, -f1 | sort | uniq)
+header="Event"
+for program in "${PROGRAMS[@]}"; do
+  prog_name=$(basename $program | cut -d' ' -f1)
+  header="$header,${prog_name}\(%\)"
+done
+echo "$header" > "$comparison_file"
 
 for event in $all_events; do
-  val1=$(grep "^$event," results_b/${prog1}_events.csv | cut -d, -f3)
-  val2=$(grep "^$event," results_b/${prog2}_events.csv | cut -d, -f3)
-  
-  if [ -n "$val1" ] && [ -n "$val2" ] && [ "$val1" != "0" ]; then
-    ratio=$(echo "scale=2; $val2 / $val1" | bc)
-    echo "$event,$val1,$val2,$ratio" >> results_b/comparison.csv
-  fi
+  line="$event"
+  for program in "${PROGRAMS[@]}"; do
+    prog_name=$(basename $program | cut -d' ' -f1)
+    val=$(grep "^$event," "results_b/${prog_name}_events.csv" | cut -d, -f3)
+    if [ -z "$val" ]; then
+      val="N/A"
+    fi
+    line="$line,$val"
+  done
+  echo "$line" >> "$comparison_file"
 done
 
-# Create overhead summary
 echo "Program,Average_Overhead(%)" > results_b/overhead_summary.csv
 for program in "${PROGRAMS[@]}"; do
   prog_name=$(basename $program | cut -d' ' -f1)
