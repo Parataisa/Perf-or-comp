@@ -57,22 +57,12 @@ for program in "${PROGRAMS[@]}"; do
   done
 done
 
-echo "Creating comparison table for all programs..."
-comparison_file="results_b/all_programs_comparison.csv"
-
 all_events=""
 for program in "${PROGRAMS[@]}"; do
   prog_name=$(basename $program | cut -d' ' -f1)
   all_events="$all_events $(grep -v "Event" "results_b/${prog_name}_events.csv" | cut -d, -f1)"
 done
 all_events=$(echo "$all_events" | tr ' ' '\n' | sort | uniq)
-
-header="Event"
-for program in "${PROGRAMS[@]}"; do
-  prog_name=$(basename $program | cut -d' ' -f1)
-  header="$header,${prog_name}(%)"
-done
-echo "$header" > "$comparison_file"
 
 for event in $all_events; do
   line="$event"
@@ -84,19 +74,11 @@ for event in $all_events; do
     fi
     line="$line,$val"
   done
-  echo "$line" >> "$comparison_file"
 done
 
 for program in "${PROGRAMS[@]}"; do
   prog_name=$(basename $program | cut -d' ' -f1)
-  
-  # Check if file has data beyond header
-  if [ $(wc -l < results_b/${prog_name}_events.csv) -gt 1 ]; then
-    avg_overhead=$(awk -F, 'NR>1 && $1 != "instructions" && $4 != "" {sum+=$4; count++} END {if(count>0) print sum/count; else print "0"}' results_b/${prog_name}_events.csv)
-  else
-    avg_overhead="0"
-  fi
-
+  avg_overhead=$(awk -F, 'NR>1 && $1 != "instructions" && $4 != "" {sum+=$4; count++} END {if(count>0) print sum/count; else print "0"}' results_b/${prog_name}_events.csv)
 done
 
 echo "Done! Results saved as CSV files in results_b/ directory"

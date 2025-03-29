@@ -1,0 +1,91 @@
+desc: --massif-out-file=results_a/massif.npb_bt_w.out
+cmd: build_npb/npb_bt_w
+time_unit: i
+#-----------
+snapshot=0
+#-----------
+time=0
+mem_heap_B=0
+mem_heap_extra_B=0
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=1
+#-----------
+time=189716
+mem_heap_B=472
+mem_heap_extra_B=16
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=2
+#-----------
+time=190163
+mem_heap_B=472
+mem_heap_extra_B=16
+mem_stacks_B=0
+heap_tree=detailed
+n1: 472 (heap allocation functions) malloc/new/new[], --alloc-fns, etc.
+ n1: 472 0x49C7E7E: __fopen_internal (iofopen.c:65)
+  n1: 472 0x49C7E7E: fopen@@GLIBC_2.2.5 (iofopen.c:86)
+   n0: 472 0x1091FD: main (in /home/dbarb/projects/Perf-or-comp/04/build_npb/npb_bt_w)
+#-----------
+snapshot=3
+#-----------
+time=190163
+mem_heap_B=0
+mem_heap_extra_B=0
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=4
+#-----------
+time=190450
+mem_heap_B=4096
+mem_heap_extra_B=8
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=5
+#-----------
+time=190719
+mem_heap_B=4568
+mem_heap_extra_B=24
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=6
+#-----------
+time=191166
+mem_heap_B=4568
+mem_heap_extra_B=24
+mem_stacks_B=0
+heap_tree=peak
+n2: 4568 (heap allocation functions) malloc/new/new[], --alloc-fns, etc.
+ n1: 4096 0x49C71B4: _IO_file_doallocate (filedoalloc.c:101)
+  n1: 4096 0x49D7523: _IO_doallocbuf (genops.c:347)
+   n1: 4096 0x49D4F8F: _IO_file_overflow@@GLIBC_2.2.5 (fileops.c:745)
+    n1: 4096 0x49D5AAE: _IO_new_file_xsputn (fileops.c:1244)
+     n1: 4096 0x49D5AAE: _IO_file_xsputn@@GLIBC_2.2.5 (fileops.c:1197)
+      n1: 4096 0x49C9C5C: puts (ioputs.c:40)
+       n0: 4096 0x1092E7: main (in /home/dbarb/projects/Perf-or-comp/04/build_npb/npb_bt_w)
+ n1: 472 0x49C7E7E: __fopen_internal (iofopen.c:65)
+  n2: 472 0x49C7E7E: fopen@@GLIBC_2.2.5 (iofopen.c:86)
+   n0: 472 0x1092F6: main (in /home/dbarb/projects/Perf-or-comp/04/build_npb/npb_bt_w)
+   n0: 0 in 1 place, below massif's threshold (1.00%)
+#-----------
+snapshot=7
+#-----------
+time=191166
+mem_heap_B=4096
+mem_heap_extra_B=8
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=8
+#-----------
+time=17671319862
+mem_heap_B=0
+mem_heap_extra_B=0
+mem_stacks_B=0
+heap_tree=empty

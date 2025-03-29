@@ -1,0 +1,702 @@
+desc: --massif-out-file=results_a/massif.ssca2.out
+cmd: build_ssca/ssca2 17
+time_unit: i
+#-----------
+snapshot=0
+#-----------
+time=0
+mem_heap_B=0
+mem_heap_extra_B=0
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=1
+#-----------
+time=166239
+mem_heap_B=32
+mem_heap_extra_B=8
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=2
+#-----------
+time=166474
+mem_heap_B=8393752
+mem_heap_extra_B=8104
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=3
+#-----------
+time=171682
+mem_heap_B=8393756
+mem_heap_extra_B=8124
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=4
+#-----------
+time=171988
+mem_heap_B=8409180
+mem_heap_extra_B=8196
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=5
+#-----------
+time=3364723
+mem_heap_B=8409180
+mem_heap_extra_B=8196
+mem_stacks_B=0
+heap_tree=detailed
+n3: 8409180 (heap allocation functions) malloc/new/new[], --alloc-fns, etc.
+ n1: 4194304 0x10BAC2: genScalData (in /home/dbarb/projects/Perf-or-comp/04/build_ssca/ssca2)
+  n0: 4194304 0x1093AC: main (in /home/dbarb/projects/Perf-or-comp/04/build_ssca/ssca2)
+ n1: 4194304 0x10BAD5: genScalData (in /home/dbarb/projects/Perf-or-comp/04/build_ssca/ssca2)
+  n0: 4194304 0x1093AC: main (in /home/dbarb/projects/Perf-or-comp/04/build_ssca/ssca2)
+ n0: 20572 in 2 places, all below massif's threshold (1.00%)
+#-----------
+snapshot=6
+#-----------
+time=3364723
+mem_heap_B=8409176
+mem_heap_extra_B=8176
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=7
+#-----------
+time=3618049
+mem_heap_B=8404064
+mem_heap_extra_B=8160
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=8
+#-----------
+time=3618082
+mem_heap_B=8404056
+mem_heap_extra_B=8144
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=9
+#-----------
+time=6579126838
+mem_heap_B=8928344
+mem_heap_extra_B=8152
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=10
+#-----------
+time=6597411445
+mem_heap_B=8928344
+mem_heap_extra_B=8152
+mem_stacks_B=0
+heap_tree=detailed
+n4: 8928344 (heap allocation functions) malloc/new/new[], --alloc-fns, etc.
+ n1: 4194304 0x10BAC2: genScalData (in /home/dbarb/projects/Perf-or-comp/04/build_ssca/ssca2)
+  n0: 4194304 0x1093AC: main (in /home/dbarb/projects/Perf-or-comp/04/build_ssca/ssca2)
+ n1: 4194304 0x10BAD5: genScalData (in /home/dbarb/projects/Perf-or-comp/04/build_ssca/ssca2)
+  n0: 4194304 0x1093AC: main (in /home/dbarb/projects/Perf-or-comp/04/build_ssca/ssca2)
+ n1: 524288 0x10BDB0: genScalData (in /home/dbarb/projects/Perf-or-comp/04/build_ssca/ssca2)
+  n0: 524288 0x1093AC: main (in /home/dbarb/projects/Perf-or-comp/04/build_ssca/ssca2)
+ n0: 15448 in 2 places, all below massif's threshold (1.00%)
+#-----------
+snapshot=11
+#-----------
+time=6597411477
+mem_heap_B=12598360
+mem_heap_extra_B=12184
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=12
+#-----------
+time=6678151885
+mem_heap_B=12598360
+mem_heap_extra_B=12184
+mem_stacks_B=0
+heap_tree=detailed
+n4: 12598360 (heap allocation functions) malloc/new/new[], --alloc-fns, etc.
+ n1: 4194304 0x10BAC2: genScalData (in /home/dbarb/projects/Perf-or-comp/04/build_ssca/ssca2)
+  n0: 4194304 0x1093AC: main (in /home/dbarb/projects/Perf-or-comp/04/build_ssca/ssca2)
+ n1: 4194304 0x10BAD5: genScalData (in /home/dbarb/projects/Perf-or-comp/04/build_ssca/ssca2)
+  n0: 4194304 0x1093AC: main (in /home/dbarb/projects/Perf-or-comp/04/build_ssca/ssca2)
+ n1: 4194304 0x10BFEB: genScalData (in /home/dbarb/projects/Perf-or-comp/04/build_ssca/ssca2)
+  n0: 4194304 0x1093AC: main (in /home/dbarb/projects/Perf-or-comp/04/build_ssca/ssca2)
+ n0: 15448 in 3 places, all below massif's threshold (1.00%)
+#-----------
+snapshot=13
+#-----------
+time=6678152702
+mem_heap_B=17301568
+mem_heap_extra_B=16184
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=14
+#-----------
+time=6687589932
+mem_heap_B=17825860
+mem_heap_extra_B=16204
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=15
+#-----------
+time=6687589970
+mem_heap_B=17825864
+mem_heap_extra_B=16224
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=16
+#-----------
+time=6688245381
+mem_heap_B=17825864
+mem_heap_extra_B=16224
+mem_stacks_B=0
+heap_tree=detailed
+n7: 17825864 (heap allocation functions) malloc/new/new[], --alloc-fns, etc.
+ n1: 4194304 0x10A0E8: computeGraph (in /home/dbarb/projects/Perf-or-comp/04/build_ssca/ssca2)
+  n0: 4194304 0x1093FE: main (in /home/dbarb/projects/Perf-or-comp/04/build_ssca/ssca2)
+ n1: 4194304 0x10BAC2: genScalData (in /home/dbarb/projects/Perf-or-comp/04/build_ssca/ssca2)
+  n0: 4194304 0x1093AC: main (in /home/dbarb/projects/Perf-or-comp/04/build_ssca/ssca2)
+ n1: 4194304 0x10BAD5: genScalData (in /home/dbarb/projects/Perf-or-comp/04/build_ssca/ssca2)
+  n0: 4194304 0x1093AC: main (in /home/dbarb/projects/Perf-or-comp/04/build_ssca/ssca2)
+ n1: 4194304 0x10BFEB: genScalData (in /home/dbarb/projects/Perf-or-comp/04/build_ssca/ssca2)
+  n0: 4194304 0x1093AC: main (in /home/dbarb/projects/Perf-or-comp/04/build_ssca/ssca2)
+ n1: 524292 0x10A13F: computeGraph (in /home/dbarb/projects/Perf-or-comp/04/build_ssca/ssca2)
+  n0: 524292 0x1093FE: main (in /home/dbarb/projects/Perf-or-comp/04/build_ssca/ssca2)
+ n1: 524288 0x10A0F8: computeGraph (in /home/dbarb/projects/Perf-or-comp/04/build_ssca/ssca2)
+  n0: 524288 0x1093FE: main (in /home/dbarb/projects/Perf-or-comp/04/build_ssca/ssca2)
+ n0: 68 in 5 places, all below massif's threshold (1.00%)
+#-----------
+snapshot=17
+#-----------
+time=6688245480
+mem_heap_B=25690180
+mem_heap_extra_B=24276
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=18
+#-----------
+time=6699779859
+mem_heap_B=25690180
+mem_heap_extra_B=24276
+mem_stacks_B=0
+heap_tree=peak
+n8: 25690180 (heap allocation functions) malloc/new/new[], --alloc-fns, etc.
+ n1: 4194304 0x10A0E8: computeGraph (in /home/dbarb/projects/Perf-or-comp/04/build_ssca/ssca2)
+  n0: 4194304 0x1093FE: main (in /home/dbarb/projects/Perf-or-comp/04/build_ssca/ssca2)
+ n1: 4194304 0x10A17D: computeGraph (in /home/dbarb/projects/Perf-or-comp/04/build_ssca/ssca2)
+  n0: 4194304 0x1093FE: main (in /home/dbarb/projects/Perf-or-comp/04/build_ssca/ssca2)
+ n1: 4194304 0x10A18A: computeGraph (in /home/dbarb/projects/Perf-or-comp/04/build_ssca/ssca2)
+  n0: 4194304 0x1093FE: main (in /home/dbarb/projects/Perf-or-comp/04/build_ssca/ssca2)
+ n1: 4194304 0x10BAC2: genScalData (in /home/dbarb/projects/Perf-or-comp/04/build_ssca/ssca2)
+  n0: 4194304 0x1093AC: main (in /home/dbarb/projects/Perf-or-comp/04/build_ssca/ssca2)
+ n1: 4194304 0x10BAD5: genScalData (in /home/dbarb/projects/Perf-or-comp/04/build_ssca/ssca2)
+  n0: 4194304 0x1093AC: main (in /home/dbarb/projects/Perf-or-comp/04/build_ssca/ssca2)
+ n1: 4194304 0x10BFEB: genScalData (in /home/dbarb/projects/Perf-or-comp/04/build_ssca/ssca2)
+  n0: 4194304 0x1093AC: main (in /home/dbarb/projects/Perf-or-comp/04/build_ssca/ssca2)
+ n1: 524292 0x10A13F: computeGraph (in /home/dbarb/projects/Perf-or-comp/04/build_ssca/ssca2)
+  n0: 524292 0x1093FE: main (in /home/dbarb/projects/Perf-or-comp/04/build_ssca/ssca2)
+ n0: 64 in 6 places, all below massif's threshold (1.00%)
+#-----------
+snapshot=19
+#-----------
+time=6699780276
+mem_heap_B=8912932
+mem_heap_extra_B=8108
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=20
+#-----------
+time=6699780683
+mem_heap_B=8928952
+mem_heap_extra_B=8160
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=21
+#-----------
+time=6709555727
+mem_heap_B=8928956
+mem_heap_extra_B=8180
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=22
+#-----------
+time=6709556004
+mem_heap_B=8913044
+mem_heap_extra_B=8116
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=23
+#-----------
+time=6709557445
+mem_heap_B=9437336
+mem_heap_extra_B=8136
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=24
+#-----------
+time=6709557734
+mem_heap_B=10092728
+mem_heap_extra_B=8184
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=25
+#-----------
+time=6709696658
+mem_heap_B=9961656
+mem_heap_extra_B=8176
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=26
+#-----------
+time=6709696708
+mem_heap_B=10092728
+mem_heap_extra_B=8184
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=27
+#-----------
+time=6709700992
+mem_heap_B=9961656
+mem_heap_extra_B=8176
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=28
+#-----------
+time=6709701042
+mem_heap_B=10092728
+mem_heap_extra_B=8184
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=29
+#-----------
+time=6710122616
+mem_heap_B=9961656
+mem_heap_extra_B=8176
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=30
+#-----------
+time=6710122666
+mem_heap_B=10092728
+mem_heap_extra_B=8184
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=31
+#-----------
+time=6710159757
+mem_heap_B=9961656
+mem_heap_extra_B=8176
+mem_stacks_B=0
+heap_tree=detailed
+n6: 9961656 (heap allocation functions) malloc/new/new[], --alloc-fns, etc.
+ n1: 4194304 0x10A17D: computeGraph (in /home/dbarb/projects/Perf-or-comp/04/build_ssca/ssca2)
+  n0: 4194304 0x1093FE: main (in /home/dbarb/projects/Perf-or-comp/04/build_ssca/ssca2)
+ n1: 4194304 0x10A18A: computeGraph (in /home/dbarb/projects/Perf-or-comp/04/build_ssca/ssca2)
+  n0: 4194304 0x1093FE: main (in /home/dbarb/projects/Perf-or-comp/04/build_ssca/ssca2)
+ n1: 524292 0x10A13F: computeGraph (in /home/dbarb/projects/Perf-or-comp/04/build_ssca/ssca2)
+  n0: 524292 0x1093FE: main (in /home/dbarb/projects/Perf-or-comp/04/build_ssca/ssca2)
+ n1: 524292 0x10A2EE: findSubGraphs (in /home/dbarb/projects/Perf-or-comp/04/build_ssca/ssca2)
+  n0: 524292 0x1094D2: main (in /home/dbarb/projects/Perf-or-comp/04/build_ssca/ssca2)
+ n1: 524288 0x10A302: findSubGraphs (in /home/dbarb/projects/Perf-or-comp/04/build_ssca/ssca2)
+  n0: 524288 0x1094D2: main (in /home/dbarb/projects/Perf-or-comp/04/build_ssca/ssca2)
+ n0: 176 in 20 places, all below massif's threshold (1.00%)
+#-----------
+snapshot=32
+#-----------
+time=6710159807
+mem_heap_B=10092728
+mem_heap_extra_B=8184
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=33
+#-----------
+time=6716250328
+mem_heap_B=9961656
+mem_heap_extra_B=8176
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=34
+#-----------
+time=6716250378
+mem_heap_B=10092728
+mem_heap_extra_B=8184
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=35
+#-----------
+time=6716333475
+mem_heap_B=9961656
+mem_heap_extra_B=8176
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=36
+#-----------
+time=6716333525
+mem_heap_B=10092728
+mem_heap_extra_B=8184
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=37
+#-----------
+time=6716502407
+mem_heap_B=9568436
+mem_heap_extra_B=8164
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=38
+#-----------
+time=6716502848
+mem_heap_B=8912932
+mem_heap_extra_B=8108
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=39
+#-----------
+time=6716503321
+mem_heap_B=10490908
+mem_heap_extra_B=8140
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=40
+#-----------
+time=6716508529
+mem_heap_B=10490912
+mem_heap_extra_B=8176
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=41
+#-----------
+time=6716508835
+mem_heap_B=10506336
+mem_heap_extra_B=8248
+mem_stacks_B=0
+heap_tree=detailed
+n6: 10506336 (heap allocation functions) malloc/new/new[], --alloc-fns, etc.
+ n1: 4194304 0x10A17D: computeGraph (in /home/dbarb/projects/Perf-or-comp/04/build_ssca/ssca2)
+  n0: 4194304 0x1093FE: main (in /home/dbarb/projects/Perf-or-comp/04/build_ssca/ssca2)
+ n1: 4194304 0x10A18A: computeGraph (in /home/dbarb/projects/Perf-or-comp/04/build_ssca/ssca2)
+  n0: 4194304 0x1093FE: main (in /home/dbarb/projects/Perf-or-comp/04/build_ssca/ssca2)
+ n0: 1048576 0x109527: main (in /home/dbarb/projects/Perf-or-comp/04/build_ssca/ssca2)
+ n1: 524292 0x10A13F: computeGraph (in /home/dbarb/projects/Perf-or-comp/04/build_ssca/ssca2)
+  n0: 524292 0x1093FE: main (in /home/dbarb/projects/Perf-or-comp/04/build_ssca/ssca2)
+ n1: 524288 0x1096F0: betweennessCentrality (in /home/dbarb/projects/Perf-or-comp/04/build_ssca/ssca2)
+  n0: 524288 0x109535: main (in /home/dbarb/projects/Perf-or-comp/04/build_ssca/ssca2)
+ n0: 20572 in 22 places, all below massif's threshold (1.00%)
+#-----------
+snapshot=42
+#-----------
+time=6719701570
+mem_heap_B=10506332
+mem_heap_extra_B=8212
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=43
+#-----------
+time=6719954896
+mem_heap_B=10501220
+mem_heap_extra_B=8196
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=44
+#-----------
+time=6719954929
+mem_heap_B=10501212
+mem_heap_extra_B=8180
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=45
+#-----------
+time=6730637396
+mem_heap_B=12598364
+mem_heap_extra_B=8188
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=46
+#-----------
+time=6730637531
+mem_heap_B=13646952
+mem_heap_extra_B=8264
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=47
+#-----------
+time=6736535828
+mem_heap_B=17841256
+mem_heap_extra_B=12304
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=48
+#-----------
+time=6737715523
+mem_heap_B=17316964
+mem_heap_extra_B=12284
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=49
+#-----------
+time=6737715749
+mem_heap_B=19938396
+mem_heap_extra_B=12260
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=50
+#-----------
+time=6737715787
+mem_heap_B=19938596
+mem_heap_extra_B=12276
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=51
+#-----------
+time=6737715825
+mem_heap_B=19938796
+mem_heap_extra_B=12292
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=52
+#-----------
+time=6737715863
+mem_heap_B=19938804
+mem_heap_extra_B=12324
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=53
+#-----------
+time=6737715901
+mem_heap_B=20987380
+mem_heap_extra_B=12332
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=54
+#-----------
+time=35373300487
+mem_heap_B=19938804
+mem_heap_extra_B=12324
+mem_stacks_B=0
+heap_tree=detailed
+n12: 19938804 (heap allocation functions) malloc/new/new[], --alloc-fns, etc.
+ n1: 4194304 0x10986D: betweennessCentrality (in /home/dbarb/projects/Perf-or-comp/04/build_ssca/ssca2)
+  n0: 4194304 0x109535: main (in /home/dbarb/projects/Perf-or-comp/04/build_ssca/ssca2)
+ n1: 4194304 0x10A17D: computeGraph (in /home/dbarb/projects/Perf-or-comp/04/build_ssca/ssca2)
+  n0: 4194304 0x1093FE: main (in /home/dbarb/projects/Perf-or-comp/04/build_ssca/ssca2)
+ n1: 4194304 0x10A18A: computeGraph (in /home/dbarb/projects/Perf-or-comp/04/build_ssca/ssca2)
+  n0: 4194304 0x1093FE: main (in /home/dbarb/projects/Perf-or-comp/04/build_ssca/ssca2)
+ n1: 2097152 0x1097F4: betweennessCentrality (in /home/dbarb/projects/Perf-or-comp/04/build_ssca/ssca2)
+  n0: 2097152 0x109535: main (in /home/dbarb/projects/Perf-or-comp/04/build_ssca/ssca2)
+ n0: 1048576 0x109527: main (in /home/dbarb/projects/Perf-or-comp/04/build_ssca/ssca2)
+ n1: 1048576 0x1098FE: betweennessCentrality (in /home/dbarb/projects/Perf-or-comp/04/build_ssca/ssca2)
+  n0: 1048576 0x109535: main (in /home/dbarb/projects/Perf-or-comp/04/build_ssca/ssca2)
+ n1: 1048576 0x109920: betweennessCentrality (in /home/dbarb/projects/Perf-or-comp/04/build_ssca/ssca2)
+  n0: 1048576 0x109535: main (in /home/dbarb/projects/Perf-or-comp/04/build_ssca/ssca2)
+ n1: 524292 0x10A13F: computeGraph (in /home/dbarb/projects/Perf-or-comp/04/build_ssca/ssca2)
+  n0: 524292 0x1093FE: main (in /home/dbarb/projects/Perf-or-comp/04/build_ssca/ssca2)
+ n1: 524288 0x1096F0: betweennessCentrality (in /home/dbarb/projects/Perf-or-comp/04/build_ssca/ssca2)
+  n0: 524288 0x109535: main (in /home/dbarb/projects/Perf-or-comp/04/build_ssca/ssca2)
+ n1: 524288 0x1098EF: betweennessCentrality (in /home/dbarb/projects/Perf-or-comp/04/build_ssca/ssca2)
+  n0: 524288 0x109535: main (in /home/dbarb/projects/Perf-or-comp/04/build_ssca/ssca2)
+ n1: 524288 0x10990E: betweennessCentrality (in /home/dbarb/projects/Perf-or-comp/04/build_ssca/ssca2)
+  n0: 524288 0x109535: main (in /home/dbarb/projects/Perf-or-comp/04/build_ssca/ssca2)
+ n0: 15856 in 29 places, all below massif's threshold (1.00%)
+#-----------
+snapshot=55
+#-----------
+time=35373300517
+mem_heap_B=19414516
+mem_heap_extra_B=12316
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=56
+#-----------
+time=35373300547
+mem_heap_B=15220212
+mem_heap_extra_B=8276
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=57
+#-----------
+time=35373300577
+mem_heap_B=13123060
+mem_heap_extra_B=8268
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=58
+#-----------
+time=35373300607
+mem_heap_B=12074484
+mem_heap_extra_B=8260
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=59
+#-----------
+time=35373300637
+mem_heap_B=11550196
+mem_heap_extra_B=8252
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=60
+#-----------
+time=35373300667
+mem_heap_B=10501620
+mem_heap_extra_B=8244
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=61
+#-----------
+time=35373300697
+mem_heap_B=10501420
+mem_heap_extra_B=8228
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=62
+#-----------
+time=35373300727
+mem_heap_B=10501220
+mem_heap_extra_B=8212
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=63
+#-----------
+time=35373300757
+mem_heap_B=10501212
+mem_heap_extra_B=8180
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=64
+#-----------
+time=35373300819
+mem_heap_B=9976924
+mem_heap_extra_B=8172
+mem_stacks_B=0
+heap_tree=detailed
+n5: 9976924 (heap allocation functions) malloc/new/new[], --alloc-fns, etc.
+ n1: 4194304 0x10A17D: computeGraph (in /home/dbarb/projects/Perf-or-comp/04/build_ssca/ssca2)
+  n0: 4194304 0x1093FE: main (in /home/dbarb/projects/Perf-or-comp/04/build_ssca/ssca2)
+ n1: 4194304 0x10A18A: computeGraph (in /home/dbarb/projects/Perf-or-comp/04/build_ssca/ssca2)
+  n0: 4194304 0x1093FE: main (in /home/dbarb/projects/Perf-or-comp/04/build_ssca/ssca2)
+ n0: 1048576 0x109527: main (in /home/dbarb/projects/Perf-or-comp/04/build_ssca/ssca2)
+ n1: 524292 0x10A13F: computeGraph (in /home/dbarb/projects/Perf-or-comp/04/build_ssca/ssca2)
+  n0: 524292 0x1093FE: main (in /home/dbarb/projects/Perf-or-comp/04/build_ssca/ssca2)
+ n0: 15448 in 36 places, all below massif's threshold (1.00%)
+#-----------
+snapshot=65
+#-----------
+time=35373300858
+mem_heap_B=9971812
+mem_heap_extra_B=8156
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=66
+#-----------
+time=35373300888
+mem_heap_B=9966696
+mem_heap_extra_B=8144
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=67
+#-----------
+time=35373300918
+mem_heap_B=9961580
+mem_heap_extra_B=8132
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=68
+#-----------
+time=35373300948
+mem_heap_B=9961508
+mem_heap_extra_B=8116
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=69
+#-----------
+time=35373300992
+mem_heap_B=8912932
+mem_heap_extra_B=8108
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=70
+#-----------
+time=35373301022
+mem_heap_B=8388640
+mem_heap_extra_B=8088
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=71
+#-----------
+time=35373301052
+mem_heap_B=4194336
+mem_heap_extra_B=4048
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=72
+#-----------
+time=35373301082
+mem_heap_B=32
+mem_heap_extra_B=8
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=73
+#-----------
+time=35373301112
+mem_heap_B=0
+mem_heap_extra_B=0
+mem_stacks_B=0
+heap_tree=empty
