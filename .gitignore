@@ -17,3 +17,4 @@ build-gprof
 build-tracy
 build_npb
 build_ssca
+out
