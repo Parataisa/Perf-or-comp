@@ -9,7 +9,7 @@
 
 // the second problem size = number of iterations
 #ifndef M
-	#define M 100
+	#define M 400
 #endif
 
 #ifndef L
