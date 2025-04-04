@@ -1,5 +1,5 @@
 PROGRAMS=(
-"build_ssca/ssca2 17"
+"build_ssca/ssca2 10"
 "build_npb/npb_bt_s"
 "build_npb/npb_bt_w"
 #"build_npb/npb_bt_a"
@@ -25,20 +25,16 @@ for program in "${PROGRAMS[@]}"; do
   echo "Baseline time: ${baseline}s"
   
   echo "  Measuring instruction count"
-  instr_output=$(perf stat -e instructions $program 2>&1 >/dev/null)
+  instr_output=$(perf stat -e instructions $program 2>&1)
   instr_count=$(echo "$instr_output" | grep instructions | awk '{print $1}' | tr -d ',')
   
   echo "  Instruction count: $instr_count"
-  
   FILTERED_EVENTS=$(echo "$CACHE_EVENTS" | tr ' ' '\n' | grep -v "^instructions$" | tr '\n' ' ')
   
-  echo "  Measuring instructions event"
-  output=$(perf stat -e instructions $program 2>&1 >/dev/null)
+  count=$(echo "$instr_output" | grep instructions | awk '{print $1}' | tr -d ',')
+  perf_time=$(echo "$instr_output" | grep "seconds time elapsed" | awk '{print $1}')
   
-  count=$(echo "$output" | grep instructions | awk '{print $1}' | tr -d ',')
-  perf_time=$(echo "$output" | grep "seconds time elapsed" | awk '{print $1}')
-  
-  overhead=$(echo "scale=2; 100 * ($perf_time - $baseline) / $baseline" | bc)
+  overhead=$(echo "scale=2; 100 * ($perf_time - $baseline) / $baseline" | bc 2>/dev/null)
   echo "instructions,$count,100,$overhead" >> $event_file
   echo "  Result: $count events, 100% relative, ${overhead}% overhead"
   
@@ -49,8 +45,8 @@ for program in "${PROGRAMS[@]}"; do
     count=$(echo "$output" | grep "$event" | awk '{print $1}' | tr -d ',')
     perf_time=$(echo "$output" | grep "seconds time elapsed" | awk '{print $1}')
     
-    relative=$(echo "scale=6; 100 * $count / $instr_count" | bc)
-    overhead=$(echo "scale=2; 100 * ($perf_time - $baseline) / $baseline" | bc)
+    relative=$(echo "scale=6; 100 * $count / $instr_count" | bc 2>/dev/null)
+    overhead=$(echo "scale=2; 100 * ($perf_time - $baseline) / $baseline" | bc 2>/dev/null)
     
     echo "$event,$count,$relative,$overhead" >> $event_file
     echo "  Result: $count events, ${relative}% relative, ${overhead}% overhead"
