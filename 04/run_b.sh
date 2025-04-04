@@ -1,5 +1,5 @@
 PROGRAMS=(
-"build_ssca/ssca2 10"
+"build_ssca/ssca2 17"
 "build_npb/npb_bt_s"
 "build_npb/npb_bt_w"
 #"build_npb/npb_bt_a"
@@ -11,7 +11,7 @@ bash ./build.sh
 
 mkdir -p results_b
 
-CACHE_EVENTS=$(perf list | grep "Hardware event" | awk '{print $1}')
+CACHE_EVENTS=$(perf list hwcache| awk '{print $1}')
 echo "Found cache events: $CACHE_EVENTS"
 
 for program in "${PROGRAMS[@]}"; do
