@@ -18,7 +18,7 @@ source "${SCRIPT_DIR}/lib/compiler_analysis.sh"
 
 # Configuration 
 CONFIG_FILE="test_config_b.txt"
-MODE="analyze"  # Options: "analyze", "autotune", "both", or "standard"
+MODE="autotune"  # Options: "analyze" or "standard"
 
 # Log which mode we're running
 log "INFO" "Running performance tests with mode: $MODE"
@@ -26,12 +26,6 @@ log "INFO" "Running performance tests with mode: $MODE"
 # Run based on selected mode
 if [ "$MODE" = "analyze" ]; then
     analyze_compiler_flags "$CONFIG_FILE"
-elif [ "$MODE" = "autotune" ]; then
-    find_best_configs "$CONFIG_FILE"
-elif [ "$MODE" = "both" ]; then
-    analyze_compiler_flags "$CONFIG_FILE"
-    find_best_configs "$CONFIG_FILE"
-    apply_best_configs "$CONFIG_FILE"
 else
     process_config "$CONFIG_FILE"
 fi
