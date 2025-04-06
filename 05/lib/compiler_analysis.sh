@@ -21,13 +21,19 @@ O3_FLAGS=(
 
 # Build program with given flags
 build_with_flags() {
-    local program=$1
-    local build_dir=$2
-    local build_command=$3
-    local flags=$4
-    local program_name=$(basename "$program")
+    local program_path=$1     
+    local build_dir=$2        
+    local build_command=$3    
+    local flags=$4            
     
-    log "INFO" "Building $program_name with flags: $flags"
+    # Extract program name and directory
+    local program_name=$(basename "$program_path")
+    local program_dir=$(dirname "$program_path")
+    
+    log "DEBUG" "Program path: $program_path"
+    log "DEBUG" "Program name: $program_name"
+    log "DEBUG" "Program dir: $program_dir"
+    log "INFO" "Building with flags: $flags"
     
     # Check if this is a CMake project
     if [[ "$build_command" == *"cmake"* ]]; then
@@ -37,10 +43,7 @@ build_with_flags() {
         local flag_safe=${flags//[^a-zA-Z0-9]/_}
         local unique_dir="${build_dir}_${flag_safe}"
         
-        # Create a clean build directory
-        if [ -d "$unique_dir" ]; then
-            rm -rf "$unique_dir"
-        fi
+        log "INFO" "Creating build directory: $unique_dir"
         mkdir -p "$unique_dir"
         
         # Create the CMake command with the new flags
@@ -65,49 +68,58 @@ build_with_flags() {
             return 1
         fi
         
-        local program_path=""
-        program_path="$unique_dir/$program_name"
+        # Find the program in the build directory
+        local executable_path=""
+        if [ -f "$unique_dir/$program_name" ]; then
+            executable_path="$unique_dir/$program_name"
+        else
+            executable_path=$(find "$unique_dir" -type f -executable -name "$program_name" 2>/dev/null | head -1)
+        fi
         
-        if [ -z "$program_path" ] || [ ! -f "$program_path" ]; then
+        if [ -z "$executable_path" ] || [ ! -f "$executable_path" ]; then
             log "ERROR" "Could not find built executable in $unique_dir"
             return 1
         fi
         
-        log "INFO" "Built executable: $program_path"
-        echo "$program_path"
+        log "INFO" "Built executable: $executable_path"
+        echo "$executable_path"
     else
-        # Standard GCC build 
-        local output_name="${program_name}_${flags//[^a-zA-Z0-9]/_}"
-        local built_program=$(build_program "$output_name" "gcc $flags" "$build_dir")
+        local source_file=""
+        local flag_safe=$(echo "$flags" | tr ' ' '_' | tr -d '-')
+        local output_name="${program_name}_${flag_safe}"
         
-        # If the build failed, try to find the source file and build directly
-        if [ ! -f "$built_program" ]; then
-            log "WARNING" "Standard build failed, trying direct compilation"
-            
-            mkdir -p "$build_dir"
-
-            local source_file=""
-            source_file="${program}.c"
-          
-            if [ -z "$source_file" ]; then
-                log "ERROR" "Could not find source file for $program_name"
-                return 1
-            fi
-            
-            # Build directly with gcc
-            local output_path="$build_dir/$output_name"
-            gcc $flags -o "$output_path" "$source_file" >/dev/null 2>&1
-            
-            if [ ! -f "$output_path" ]; then
-                log "ERROR" "Direct compilation failed"
-                return 1
-            fi
-            
-            built_program="$output_path"
+        # Make sure build directory exists
+        if [ -z "$build_dir" ]; then
+            build_dir="build"
+        fi
+        mkdir -p "$build_dir"
+        
+        # Look for the source file
+        if [[ "$program_path" == *.c ]]; then
+            source_file="$program_path"
+        else
+            source_file=$(find . -name "${program_name}.c" | head -1)
         fi
         
-        log "INFO" "Built executable: $built_program"
-        echo "$built_program"
+        if [ -z "$source_file" ] || [ ! -f "$source_file" ]; then
+            log "ERROR" "Could not find source file for $program_name"
+            return 1
+        fi
+        
+        log "INFO" "Found source file: $source_file"
+        
+        # Build the program
+        local output_path="$build_dir/$output_name"
+        log "INFO" "Building with GCC: $flags -o $output_path $source_file"
+        gcc $flags -o "$output_path" "$source_file" -lm >/dev/null 2>&1
+        
+        if [ ! -f "$output_path" ]; then
+            log "ERROR" "GCC build failed"
+            return 1
+        fi
+        
+        log "INFO" "Built executable: $output_path"
+        echo "$output_path"
     fi
 }
 
@@ -115,7 +127,7 @@ build_with_flags() {
 measure_execution() {
     local program_path=$1
     local program_params=$2
-    local runs=$MIN_REPETITIONS 
+    local runs=$MIN_REPETITIONS
     
     # Check if program exists and is executable
     if [ ! -x "$program_path" ]; then
@@ -123,9 +135,11 @@ measure_execution() {
         return 1
     fi
     
-    log "INFO" "Measuring $program_path with params: $program_params"
+    log "INFO" "Measuring performance of $program_path with params: $program_params"
+    
     local total_time=0
     
+    # Run multiple times for better accuracy
     for ((i=1; i<=runs; i++)); do
         log "DEBUG" "Measurement run $i"
         
@@ -175,8 +189,8 @@ analyze_compiler_flags() {
         fi
         
         log "INFO" "Analyzing compiler flags for $program"
-        log "INFO" "Build directory: $build_dir"
-        log "INFO" "Build command: $build_command"
+        log "DEBUG" "Build directory: $build_dir"
+        log "DEBUG" "Build command: $build_command"
         
         # Get first parameter set for testing
         local first_param=""
@@ -253,7 +267,6 @@ analyze_compiler_flags() {
     # Show summary of most impactful flags
     log "INFO" "Flag analysis summary:"
     
-    # Simple sorting of flag counts
     local tmpfile=$(mktemp)
     for flag in "${!flag_count[@]}"; do
         echo "$flag ${flag_count["$flag"]}" >> "$tmpfile"
@@ -283,7 +296,7 @@ find_best_configs() {
     # Process each program in config file
     while IFS= read -r line; do
         # Skip comments and empty lines
-        [[ "$line" =~ ^#.*$ || -z "$line" ]] && continue
+        [ "$line" =~ ^#.*$ || -z "$line" ] && continue
         
         # Parse the configuration
         local config_data=$(parse_config_options "$line")
@@ -326,7 +339,7 @@ find_best_configs() {
             if [ -z "$o3_time" ]; then
                 log "WARNING" "Failed to measure $program with -O3, using O2 as baseline"
                 o3_time=$o2_time
-            else 
+            else
                 log "INFO" "Baseline -O3: $o3_time seconds"
             fi
         fi
@@ -447,3 +460,5 @@ apply_best_configs() {
         log "WARNING" "Autotuning results not found. Cannot apply optimizations."
     fi
 }
+
+export -f build_with_flags measure_execution analyze_compiler_flags find_best_configs apply_best_configs

@@ -13,15 +13,14 @@
 # - sim_cpu_load=true/false       # Whether to simulate the CPU load (default: false)
 # Examples:
 
+small_samples/delannoy/delannoy|Delannoy number calculation|collect=true|13|
 
-#small_samples/delannoy/delannoy|Delannoy number calculation|collect=true|build_command=gcc -O2|13|
-#
-#small_samples/nbody/nbody|N-body simulation|collect=true|build_command=gcc -O2|
-#
-#small_samples/qap/qap|Quadratic Assignment Problem|collect=true|build_command=gcc -O2|small_samples/qap/problems/chr15c.dat|
-#
-#small_samples/mmul/mmul|Matrix multiplication|collect=true|build_command=gcc -O2|
-#
+small_samples/nbody/nbody|N-body simulation|collect=true|
+
+small_samples/qap/qap|Quadratic Assignment Problem|collect=true|small_samples/qap/problems/chr15c.dat|
+
+small_samples/mmul/mmul|Matrix multiplication|collect=true|
+
 larger_samples/ssca2/build/ssca2|ssca2 Benchmark|build=true|build_dir=larger_samples/ssca2/build|build_command=cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_FLAGS="-O2" .. && make|15|
 
 larger_samples/npb_bt/build/npb_bt_w|NPB BT Benchmark|build=true|build_dir=larger_samples/npb_bt/build|build_command=cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_FLAGS="-O2" .. && make|
