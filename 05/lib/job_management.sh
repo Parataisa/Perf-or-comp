@@ -54,7 +54,6 @@ run_on_cluster() {
     local dependency_args=$4
     local sim_cpu_load=$5
     local sim_io_load=$6
-    local build_command=$7
     local program_name=$(basename "$program_path")
     
     log "INFO" "Running on cluster using SLURM with dynamic repetitions..."
@@ -64,9 +63,6 @@ run_on_cluster() {
     
     # Create a unique job name with timestamp
     local job_name="${JOB_NAME_PREFIX}_${program_name}_$(date +%s)"
-    
-    # Export build command for the job script
-    export BUILD_COMMAND="$build_command"
     
     # Create job script
     local job_script=$(create_job_script "$program_path" "$params" "$job_name"  "$dependency_program" "$dependency_args" "$sim_cpu_load" "$sim_io_load")
