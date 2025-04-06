@@ -76,7 +76,15 @@ run_tests() {
                 dep_program=""
                 dep_args=""
             fi
-            metrics=$(run_on_cluster "$program_path" "$params" "$dep_program" "$dep_args" "$sim_cpu_load" "$sim_io_load")
+            
+            # Get build command from config if present
+            local build_cmd=""
+            if [ "$build" = "true" ] && [ -n "$build_command" ]; then
+                build_cmd="$build_command"
+                log "DEBUG" "Using build command: $build_cmd"
+            fi
+            
+            metrics=$(run_on_cluster "$program_path" "$params" "$dep_program" "$dep_args" "$sim_cpu_load" "$sim_io_load" "$build_cmd")
         else
             [ $WARMUP_RUNS -gt 0 ] && log "DEBUG" "Performing $WARMUP_RUNS warmup run(s)..."
             for ((i = 1; i <= WARMUP_RUNS; i++)); do

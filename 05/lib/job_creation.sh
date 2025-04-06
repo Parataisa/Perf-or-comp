@@ -354,34 +354,131 @@ cat >> "$script_file" << EOF
 # Get the original directory where the job script is running
 ORIGINAL_DIR="\$PWD"
 # Set up local temporary directory
-LOCAL_TEMP_DIR="/tmp/benchmarks/"
+LOCAL_TEMP_DIR="/tmp/benchmarks_\$SLURM_JOB_ID"
 mkdir -p "\$LOCAL_TEMP_DIR"
 echo "Created temporary directory: \$LOCAL_TEMP_DIR"
 chmod 755 "\$LOCAL_TEMP_DIR"
-cd "\$LOCAL_TEMP_DIR"
 
-# Copy the executable to the local directory
-executable="${program_path##*/}"
-cp -r "\$ORIGINAL_DIR/build" "\$LOCAL_TEMP_DIR/"
-cp -r "\$ORIGINAL_DIR/load_generator" "\$LOCAL_TEMP_DIR/" 2>/dev/null || true
+# Extract program path components
+full_program_path="$program_path"
+program_name=\$(basename "\$full_program_path")
+dir_path=\$(dirname "\$full_program_path")
 
-# Find the actual executable in the build directory
-if [ ! -f "\$LOCAL_TEMP_DIR/build/\$executable" ]; then
-    echo "WARNING: Executable not found at \$LOCAL_TEMP_DIR/build/\$executable"
-    echo "Searching for executable in build directory..."
-    FOUND_EXECUTABLE=\$(find "\$LOCAL_TEMP_DIR/build" -type f -perm -111 | head -1)
-    if [ -n "\$FOUND_EXECUTABLE" ]; then
-        echo "Found executable at \$FOUND_EXECUTABLE"
-        executable=\$(basename "\$FOUND_EXECUTABLE")
-        program_path="\$LOCAL_TEMP_DIR/build/\$executable"
+echo "Program path: \$full_program_path"
+echo "Program name: \$program_name"
+echo "Directory path: \$dir_path"
+
+# Check if this is a CMake project by looking for CMakeLists.txt in parent directory
+is_cmake=false
+if [[ "\$dir_path" == *"/build"* ]] || [[ "\$dir_path" == *"/build_"* ]]; then
+    source_dir=\$(dirname "\$dir_path")
+    if [ -f "\$source_dir/CMakeLists.txt" ]; then
+        is_cmake=true
+        echo "Detected CMake project"
+    fi
+fi
+
+if \$is_cmake; then
+    # For CMake projects, we need to copy the source directory and rebuild
+    source_dir=\$(dirname "\$dir_path")
+    project_name=\$(basename "\$source_dir")
+    build_dir_name=\$(basename "\$dir_path")
+    
+    echo "Source directory: \$source_dir"
+    echo "Project name: \$project_name"
+    echo "Build directory name: \$build_dir_name"
+    
+    # Create project directory in temp location
+    mkdir -p "\$LOCAL_TEMP_DIR/\$project_name"
+    
+    # Copy all source files 
+    echo "Copying source files from \$source_dir to \$LOCAL_TEMP_DIR/\$project_name"
+    cp -r "\$source_dir"/* "\$LOCAL_TEMP_DIR/\$project_name/"
+    
+    # Create build directory
+    mkdir -p "\$LOCAL_TEMP_DIR/\$project_name/\$build_dir_name"
+    cd "\$LOCAL_TEMP_DIR/\$project_name/\$build_dir_name"
+    
+    # Remove any existing CMake cache to avoid path conflicts
+    rm -f CMakeCache.txt
+    find . -name "*.cmake" -type f -delete 2>/dev/null || true
+    
+    # Extract build command from job script if available
+    build_command="$BUILD_COMMAND"
+    if [ -z "\$build_command" ]; then
+        # Default to basic CMake command if none provided
+        build_command="cmake .. && make"
+    fi
+    
+    # Parse the original build command to extract flags
+    if [[ "\$build_command" =~ cmake.*-DCMAKE_C_FLAGS=([^ ]+) ]]; then
+        cflags="\${BASH_REMATCH[1]}"
+        echo "Extracted C flags: \$cflags"
+        
+        # Create a completely fresh CMake command with explicit paths
+        fresh_command="cmake -B . -S .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_FLAGS=\$cflags && make"
+        echo "Executing fresh build command: \$fresh_command"
+        eval "\$fresh_command"
+    else
+        # If no special flags, use a simpler fresh command
+        echo "Executing build command with clean cache: cmake -B . -S .. && make"
+        cmake -B . -S .. && make
+    fi
+    
+    if [ \$? -ne 0 ]; then
+        echo "ERROR: Build failed!"
+        exit 1
+    fi
+    
+    # Update the program path to the newly built executable
+    program_path="\$LOCAL_TEMP_DIR/\$project_name/\$build_dir_name/\$program_name"
+else
+    # For regular executables, just copy the build directory
+    echo "Regular executable project"
+    
+    # Copy the build directory containing the executable
+    if [ -d "\$ORIGINAL_DIR/build" ]; then
+        echo "Copying build directory from \$ORIGINAL_DIR/build to \$LOCAL_TEMP_DIR/build"
+        cp -r "\$ORIGINAL_DIR/build" "\$LOCAL_TEMP_DIR/"
+    fi
+    
+    # Also copy load generator if it exists
+    if [ -d "\$ORIGINAL_DIR/load_generator" ]; then
+        echo "Copying load generator from \$ORIGINAL_DIR/load_generator to \$LOCAL_TEMP_DIR/load_generator"
+        cp -r "\$ORIGINAL_DIR/load_generator" "\$LOCAL_TEMP_DIR/" 2>/dev/null || true
+    fi
+    
+    # Find the actual executable in the build directory or the provided path
+    if [[ "\$full_program_path" == *"/build/"* ]]; then
+        # Program is in build directory, update the path to use the copied version
+        rel_path=\${full_program_path#*/build/}
+        program_path="\$LOCAL_TEMP_DIR/build/\$rel_path"
+    else
+        # Program is not in build directory, copy it directly
+        mkdir -p "\$LOCAL_TEMP_DIR/\$(dirname "\$full_program_path")"
+        cp "\$full_program_path" "\$LOCAL_TEMP_DIR/\$full_program_path"
+        program_path="\$LOCAL_TEMP_DIR/\$full_program_path"
+    fi
+fi
+
+# Ensure the program is executable
+if [ -f "\$program_path" ]; then
+    chmod +x "\$program_path"
+    echo "Program is ready at: \$program_path"
+else
+    echo "ERROR: Program not found at \$program_path"
+    # Try to find it
+    echo "Searching for executable..."
+    find "\$LOCAL_TEMP_DIR" -name "\$program_name" -type f
+    possible_path=\$(find "\$LOCAL_TEMP_DIR" -name "\$program_name" -type f | head -1)
+    if [ -n "\$possible_path" ]; then
+        echo "Found executable at \$possible_path"
+        program_path="\$possible_path"
         chmod +x "\$program_path"
     else
-        echo "ERROR: No executable found in build directory!"
-        ls -la "\$LOCAL_TEMP_DIR/build"
+        echo "ERROR: No executable found!"
+        exit 1
     fi
-else
-    program_path="\$LOCAL_TEMP_DIR/build/\$executable"
-    chmod +x "\$program_path"
 fi
 EOF
 
@@ -395,28 +492,42 @@ if [ -n "$dependency_program" ]; then
     # Process dependency executable path
     dep_executable="${dependency_program##*/}"
     
-    # Check if dependency exists in the build directory
-    if [ -f "\$LOCAL_TEMP_DIR/build/\$dep_executable" ]; then
-        # Make sure it's executable
-        chmod +x "\$LOCAL_TEMP_DIR/build/\$dep_executable"
+    # For CMake projects, use the newly built dependency
+    if \$is_cmake; then
+        source_dir=\$(dirname "\$dir_path")
+        project_name=\$(basename "\$source_dir")
+        build_dir_name=\$(basename "\$dir_path")
         
-        # Make temp directory writable for dependency program
-        chmod -R 755 "\$LOCAL_TEMP_DIR"
-        
-        # Run the dependency from the build directory
-        echo "Executing dependency: \$LOCAL_TEMP_DIR/build/\$dep_executable $dependency_args"
-        cd "\$LOCAL_TEMP_DIR"
-        "\$LOCAL_TEMP_DIR/build/\$dep_executable" $dependency_args
-        
-        # Show generated files for debugging
-        echo "Files generated after dependency execution:"
-        find "\$LOCAL_TEMP_DIR" -type d | head -5
-        find "\$LOCAL_TEMP_DIR/generated" -type f | head -5 2>/dev/null || echo "No generated files found"
+        dep_program_path="\$LOCAL_TEMP_DIR/\$project_name/\$build_dir_name/\$dep_executable"
     else
-        echo "Error: Dependency \$dep_executable not found in \$LOCAL_TEMP_DIR/build/"
-        ls -la "\$LOCAL_TEMP_DIR/build/"
-        exit 1
+        # Check if dependency exists in the build directory
+        if [ -f "\$LOCAL_TEMP_DIR/build/\$dep_executable" ]; then
+            dep_program_path="\$LOCAL_TEMP_DIR/build/\$dep_executable"
+        else
+            # Try to find the dependency executable
+            dep_program_path=\$(find "\$LOCAL_TEMP_DIR" -name "\$dep_executable" -type f | head -1)
+            if [ -z "\$dep_program_path" ]; then
+                echo "Error: Dependency \$dep_executable not found"
+                exit 1
+            fi
+        fi
     fi
+    
+    # Make sure it's executable
+    chmod +x "\$dep_program_path"
+    
+    # Make temp directory writable for dependency program
+    chmod -R 755 "\$LOCAL_TEMP_DIR"
+    
+    # Run the dependency
+    echo "Executing dependency: \$dep_program_path $dependency_args"
+    cd "\$LOCAL_TEMP_DIR"
+    "\$dep_program_path" $dependency_args
+    
+    # Show generated files for debugging
+    echo "Files generated after dependency execution:"
+    find "\$LOCAL_TEMP_DIR" -type d | head -5
+    find "\$LOCAL_TEMP_DIR/generated" -type f | head -5 2>/dev/null || echo "No generated files found"
 fi
 
 # Configure IO load generator if requested
@@ -442,9 +553,23 @@ if $sim_io_load; then
     mkdir -p "\$IO_LOAD_DIR"
     echo "Starting I/O load generator with files in \$IO_LOAD_DIR..."
     
+    # Find loadgen_io executable
+    loadgen_io_path=\$(find "\$LOCAL_TEMP_DIR" -name "loadgen_io" -type f | head -1)
+    if [ -z "\$loadgen_io_path" ]; then
+        echo "Warning: loadgen_io not found, trying to compile it"
+        if [ -f "\$LOCAL_TEMP_DIR/loadgen_io.c" ]; then
+            cd "\$LOCAL_TEMP_DIR"
+            gcc -o loadgen_io loadgen_io.c
+            loadgen_io_path="\$LOCAL_TEMP_DIR/loadgen_io"
+        else
+            echo "ERROR: loadgen_io.c not found"
+            exit 1
+        fi
+    fi
+    
     # Start the I/O load generator in the background
-    echo "Running I/O Load generator: \$LOCAL_TEMP_DIR/build/loadgen_io"
-    "\$LOCAL_TEMP_DIR/build/loadgen_io" \$IO_THREADS \$READ_PERCENT \$DELAY_MS \$MIN_FILE_SIZE \$MAX_FILE_SIZE \$RUN_DURATION "\$IO_LOAD_DIR" &
+    echo "Running I/O Load generator: \$loadgen_io_path"
+    "\$loadgen_io_path" \$IO_THREADS \$READ_PERCENT \$DELAY_MS \$MIN_FILE_SIZE \$MAX_FILE_SIZE \$RUN_DURATION "\$IO_LOAD_DIR" &
     LOADGEN_PID=\$!
     
     if [ -z "\$LOADGEN_PID" ] || ! kill -0 \$LOADGEN_PID 2>/dev/null; then
@@ -469,23 +594,28 @@ EOF
 if [ $WARMUP_RUNS -gt 0 ]; then
     echo "Performing $WARMUP_RUNS warmup run(s)..."
     for ((i=1; i<=$WARMUP_RUNS; i++)); do
-        "$program_path" "$params" > /dev/null 2>&1 || true
+        "\$program_path" $params > /dev/null 2>&1 || true
     done
 fi
 
-echo "About to execute program at path: $program_path"
+echo "About to execute program at path: \$program_path"
 echo "Checking if executable exists and is executable:"
-if [ -x "$program_path" ]; then
+if [ -x "\$program_path" ]; then
     echo "✓ Executable exists and has proper permissions"
-    echo "Test run of program: $program_path $params"
-    $program_path $params || echo "Error: Program test run failed with exit code $?"
+    echo "Test run of program: \$program_path $params"
+    \$program_path $params || echo "Error: Program test run failed with exit code \$?"
 else
-    echo "✗ Program not found or not executable at $program_path"
-    ls -la $(dirname "$program_path")
+    echo "✗ Program not found or not executable at \$program_path"
+    ls -la \$(dirname "\$program_path")
 fi
 
 echo "Starting performance measurement..."
-measure_program "$program_path" "$params"
+measure_program "\$program_path" "$params"
+
+# Clean up temporary directory when done
+trap - EXIT
+cd /
+rm -rf "\$LOCAL_TEMP_DIR"
 EOF
     
     chmod +x "$script_file"
