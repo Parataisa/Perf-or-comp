@@ -1,0 +1,57 @@
+# Performance Test Configuration
+#
+# Format: program_name|description|[options]|param_set1|param_set2|...
+#
+# Available options:
+# - depends=program_name args     # Dependency program to run first with its arguments
+# - collect=true/false            # Whether to collect metrics for this run (default: true)
+# - cleanup=command or path       # Cleanup command or path pattern to remove after execution
+# - build=true/false              # Whether to build the program before running (default: true)
+# - build_dir=path                # Build directory for the program
+# - build_command=command         # Build command for the program(The whole command like "gcc -Wall -Wextra -O3")
+# - sim_io_load=true/false        # Whether to simulate the I/O load (default: false)
+# - sim_cpu_load=true/false       # Whether to simulate the CPU load (default: false)
+# Examples:
+
+#small_samples/delannoy/delannoy|Delannoy number calculation|collect=true|build_command=gcc -O0|13|
+#small_samples/delannoy/delannoy|Delannoy number calculation|collect=true|build_command=gcc -O1|13|
+#small_samples/delannoy/delannoy|Delannoy number calculation|collect=true|build_command=gcc -O2|13|
+#small_samples/delannoy/delannoy|Delannoy number calculation|collect=true|build_command=gcc -O3|13|
+#small_samples/delannoy/delannoy|Delannoy number calculation|collect=true|build_command=gcc -Os|13|
+#small_samples/delannoy/delannoy|Delannoy number calculation|collect=true|build_command=gcc -Ofast|13|
+
+#small_samples/nbody/nbody|N-body simulation|collect=true|build_command=gcc -O0|
+#small_samples/nbody/nbody|N-body simulation|collect=true|build_command=gcc -O1|
+#small_samples/nbody/nbody|N-body simulation|collect=true|build_command=gcc -O2|
+#small_samples/nbody/nbody|N-body simulation|collect=true|build_command=gcc -O3|
+#small_samples/nbody/nbody|N-body simulation|collect=true|build_command=gcc -Os|
+#small_samples/nbody/nbody|N-body simulation|collect=true|build_command=gcc -Ofast|
+
+#small_samples/qap/qap|Quadratic Assignment Problem|collect=true|build_command=gcc -O0|small_samples/qap/problems/chr15c.dat|
+#small_samples/qap/qap|Quadratic Assignment Problem|collect=true|build_command=gcc -O1|small_samples/qap/problems/chr15c.dat|
+#small_samples/qap/qap|Quadratic Assignment Problem|collect=true|build_command=gcc -O2|small_samples/qap/problems/chr15c.dat|
+#small_samples/qap/qap|Quadratic Assignment Problem|collect=true|build_command=gcc -O3|small_samples/qap/problems/chr15c.dat|
+#small_samples/qap/qap|Quadratic Assignment Problem|collect=true|build_command=gcc -Os|small_samples/qap/problems/chr15c.dat|
+#small_samples/qap/qap|Quadratic Assignment Problem|collect=true|build_command=gcc -Ofast|small_samples/qap/problems/chr15c.dat|
+
+#small_samples/mmul/mmul|Matrix multiplication|collect=true|build_command=gcc -O0|
+#small_samples/mmul/mmul|Matrix multiplication|collect=true|build_command=gcc -O1|
+#small_samples/mmul/mmul|Matrix multiplication|collect=true|build_command=gcc -O2|
+#small_samples/mmul/mmul|Matrix multiplication|collect=true|build_command=gcc -O3|
+#small_samples/mmul/mmul|Matrix multiplication|collect=true|build_command=gcc -Os|
+#small_samples/mmul/mmul|Matrix multiplication|collect=true|build_command=gcc -Ofast|
+
+larger_samples/ssca2/build_O0/ssca2|ssca2 Benchmark O0|build=true|build_dir=larger_samples/ssca2/build_O0|build_command=cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_FLAGS="-O0" .. && make|15|
+larger_samples/ssca2/build_O1/ssca2|ssca2 Benchmark O1|build=true|build_dir=larger_samples/ssca2/build_O1|build_command=cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_FLAGS="-O1" .. && make|15|
+larger_samples/ssca2/build_O2/ssca2|ssca2 Benchmark O2|build=true|build_dir=larger_samples/ssca2/build_O2|build_command=cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_FLAGS="-O2" .. && make|15|
+larger_samples/ssca2/build_O3/ssca2|ssca2 Benchmark O3|build=true|build_dir=larger_samples/ssca2/build_O3|build_command=cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_FLAGS="-O3" .. && make|15|
+larger_samples/ssca2/build_Os/ssca2|ssca2 Benchmark Os|build=true|build_dir=larger_samples/ssca2/build_Os|build_command=cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_FLAGS="-Os" .. && make|15|
+larger_samples/ssca2/build_Ofast/ssca2|ssca2 Benchmark Ofast|build=true|build_dir=larger_samples/ssca2/build_Ofast|build_command=cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_FLAGS="-Ofast" .. && make|15|
+
+larger_samples/npb_bt/build/npb_bt_w|NPB BT Benchmark O0|build=true|build_dir=larger_samples/npb_bt/build_O0|build_command=cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_FLAGS="-O0" .. && make|
+larger_samples/npb_bt/build/npb_bt_w|NPB BT Benchmark O1|build=true|build_dir=larger_samples/npb_bt/build_O1|build_command=cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_FLAGS="-O1" .. && make|
+larger_samples/npb_bt/build/npb_bt_w|NPB BT Benchmark O2|build=true|build_dir=larger_samples/npb_bt/build_O2|build_command=cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_FLAGS="-O2" .. && make|
+larger_samples/npb_bt/build/npb_bt_w|NPB BT Benchmark O3|build=true|build_dir=larger_samples/npb_bt/build_O3|build_command=cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_FLAGS="-O3" .. && make|
+larger_samples/npb_bt/build/npb_bt_w|NPB BT Benchmark Os|build=true|build_dir=larger_samples/npb_bt/build_Os|build_command=cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_FLAGS="-Os" .. && make|
+larger_samples/npb_bt/build/npb_bt_w|NPB BT Benchmark Ofast|build=true|build_dir=larger_samples/npb_bt/build_Ofast|build_command=cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_FLAGS="-Ofast" .. && make|
+

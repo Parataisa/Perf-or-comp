@@ -16,7 +16,7 @@ source "${SCRIPT_DIR}/lib/job_management.sh"
 source "${SCRIPT_DIR}/lib/result_processing.sh"
 
 # Process command line arguments
-CONFIG_FILE="test_config.txt"
+CONFIG_FILE="test_config_a.txt"
 
 # Run the performance tests
 process_config "$CONFIG_FILE"

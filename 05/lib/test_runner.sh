@@ -178,8 +178,8 @@ process_config() {
         log "DEBUG" "Program path: $program_path"
 
         # Determine program path 
-        if [ ! -f $program_path ]; then
-            log "WARNING" "Program not found: $program"
+        if [ ! -f "$program_path" ]; then
+            log "WARNING" "Program not found: $program_path"
             continue
         fi
 
