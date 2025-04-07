@@ -37,22 +37,74 @@ B) Individual Compiler Optimizations
 ![Headmap of the flags](results_b/combined_heatmap.png)
 ![Combined Barchart](results_b/combined_bars.png)
 
-## Top 3 Most Impactful Options Across All Test Cases
-- -fversion-loops-for-strides (2.93% average improvement)
-- -fipa-cp-clone (2.32% average improvement)
-- -fvect-cost-model=dynamic (2.12% average improvement)
-
 [Optimize-Options](https://gcc.gnu.org/onlinedocs/gcc/Optimize-Options.html)
-### -fversion-loops-for-strides
-If a loop iterates over an array with a variable stride, create another version of the loop that assumes the stride is always one. 
+### delannoy
 
+- -fpredictive-commoning
+- -floop-interchange
+- -fvect-cost-model=dynamic
+
+### mmul
+
+- -funswitch-loops
+- -fsplit-loops
+- -fgcse-after-reload
+
+
+### nbody
+
+- All the flags worsen the time when applied. It can also be seen on result_a cluster where the runtime is the same between -O3, and -O2.
+
+
+### npb
+
+- -fvect-cost-model=dynamic
+- -fversion-loops-for-strides
+- -ftree-partial-pre
+
+### qap
+
+- -fvect-cost-model=dynamic
+- -jpa-cp-clone
+- -peel-loops
+
+### ssca2
+
+- -tree-partial-pre
+- -unswitch-loops
+- -predictive-commoning
+
+### Flags Meaning
+
+#### -fpredictive-commoning
+    Perform predictive commoning optimization, i.e., reusing computations (especially memory loads and stores) performed in previous iterations of loops. 
+#### -floop-interchange
+Perform loop interchange outside of graphite. This flag can improve cache performance on loop nest and allow further loop optimizations, like vectorization, to take place.
+```c
+for (int i = 0; i < N; i++)
+  for (int j = 0; j < N; j++)
+    for (int k = 0; k < N; k++)
+      c[i][j] = c[i][j] + a[i][k]*b[k][j];
+```
+to 
+```c
+for (int i = 0; i < N; i++)
+  for (int k = 0; k < N; k++)
+    for (int j = 0; j < N; j++)
+      c[i][j] = c[i][j] + a[i][k]*b[k][j];
+```
+#### -fvect-cost-model=dynamic
+With the ‘dynamic’ model a runtime check guards the vectorized code-path to enable it only for iteration counts that will likely execute faster than when executing the original scalar loop.
+#### -fsplit-loops
+Split a loop into two if it contains a condition that’s always true for one side of the iteration space and false for the other. 
+#### -fversion-loops-for-strides
+If a loop iterates over an array with a variable stride, create another version of the loop that assumes the stride is always one. 
 ```c
 for (int i = 0; i < n; ++i)
   x[i * stride] = …;
 ```
-to 
-
-```c	
+to
+```c
 if (stride == 1)
   for (int i = 0; i < n; ++i)
     x[i] = …;
@@ -60,14 +112,23 @@ else
   for (int i = 0; i < n; ++i)
     x[i * stride] = …;
 ```
+#### -funswitch-loops
+Move branches with loop invariant conditions out of the loop, with duplicates of the loop on both branches (modified according to result of the condition). 
+#### -fgcse-after-reload
+When -fgcse-after-reload is enabled, a redundant load elimination pass is performed after reload. The purpose of this pass is to clean up redundant spilling. 
+#### -ftree-partial-pre
+Make partial redundancy elimination (PRE) more aggressive
+#### -fipa-cp-clone
+Perform function cloning to make interprocedural constant propagation stronger. When enabled, interprocedural constant propagation performs function cloning when externally visible function can be called with constant arguments. Because this optimization can create multiple copies of functions, it may significantly increase code size.
+#### -fpeel-loops
+Peels loops for which there is enough information that they do not roll much (from profile feedback or static analysis). It also turns on complete loop peeling (i.e. complete removal of loops with small constant number of iterations).
 
-### -fipa-cp-clone
+### What are the Insights
 
-Perform function cloning to make interprocedural constant propagation stronger. When enabled, interprocedural constant propagation performs function cloning when externally visible function can be called with constant arguments. Because this optimization can create multiple copies of functions, it may significantly increase code size (see --param ipa-cp-unit-growth=value).
-
-### -fvect-cost-model=dynamic
-
-With the ‘dynamic’ model a runtime check guards the vectorized code-path to enable it only for iteration counts that will likely execute faster than when executing the original scalar loop.
+- Matrix and numerical computations (mmul, delannoy) benefit most from loop transformations and redundancy elimination
+- Graph algorithms (ssca2) show dramatic improvements with partial redundancy elimination
+- Complex simulations (npb, qap) respond well to dynamic vectorization strategies
+- For some programs like nbody, individual optimizations can actually degrade performance compared to the balanced approach of -O3
 
 
 C) Autotuning (optional)
