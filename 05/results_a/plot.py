@@ -73,7 +73,7 @@ def create_plots(df, output_prefix='optimization'):
         plt.grid(axis='y', linestyle='--', alpha=0.7)
         plt.tight_layout()
         
-        plt.savefig(f'{output_prefix}_{program}_local.png')
+        plt.savefig(f'{output_prefix}_{program}_cluster.png')
         plt.close()
     
     plt.figure(figsize=(14, 8))
@@ -90,9 +90,9 @@ def create_plots(df, output_prefix='optimization'):
     plt.legend(title='Optimization Flag')
     plt.grid(axis='y', linestyle='--', alpha=0.7)
     plt.tight_layout()
-    plt.savefig(f'{output_prefix}_summary_bars_local.png')
+    plt.savefig(f'{output_prefix}_summary_bars_cluster.png')
 
-def main(file_path='performance_results_local.csv'):
+def main(file_path='performance_results_cluster.csv'):
     df = load_data(file_path)
     create_plots(df)
     print("Optimization graphs have been generated.")

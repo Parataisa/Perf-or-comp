@@ -13,33 +13,33 @@
 # - sim_cpu_load=true/false       # Whether to simulate the CPU load (default: false)
 # Examples:
 
-#small_samples/delannoy/delannoy|Delannoy number calculation|collect=true|build_command=gcc -O0|13|
-#small_samples/delannoy/delannoy|Delannoy number calculation|collect=true|build_command=gcc -O1|13|
-#small_samples/delannoy/delannoy|Delannoy number calculation|collect=true|build_command=gcc -O2|13|
-#small_samples/delannoy/delannoy|Delannoy number calculation|collect=true|build_command=gcc -O3|13|
-#small_samples/delannoy/delannoy|Delannoy number calculation|collect=true|build_command=gcc -Os|13|
-#small_samples/delannoy/delannoy|Delannoy number calculation|collect=true|build_command=gcc -Ofast|13|
-#
-#small_samples/nbody/nbody|N-body simulation|collect=true|build_command=gcc -O0|
-#small_samples/nbody/nbody|N-body simulation|collect=true|build_command=gcc -O1|
-#small_samples/nbody/nbody|N-body simulation|collect=true|build_command=gcc -O2|
-#small_samples/nbody/nbody|N-body simulation|collect=true|build_command=gcc -O3|
-#small_samples/nbody/nbody|N-body simulation|collect=true|build_command=gcc -Os|
-#small_samples/nbody/nbody|N-body simulation|collect=true|build_command=gcc -Ofast|
-#
-#small_samples/qap/qap|Quadratic Assignment Problem|collect=true|build_command=gcc -O0|small_samples/qap/problems/chr15c.dat|
-#small_samples/qap/qap|Quadratic Assignment Problem|collect=true|build_command=gcc -O1|small_samples/qap/problems/chr15c.dat|
-#small_samples/qap/qap|Quadratic Assignment Problem|collect=true|build_command=gcc -O2|small_samples/qap/problems/chr15c.dat|
-#small_samples/qap/qap|Quadratic Assignment Problem|collect=true|build_command=gcc -O3|small_samples/qap/problems/chr15c.dat|
-#small_samples/qap/qap|Quadratic Assignment Problem|collect=true|build_command=gcc -Os|small_samples/qap/problems/chr15c.dat|
-#small_samples/qap/qap|Quadratic Assignment Problem|collect=true|build_command=gcc -Ofast|small_samples/qap/problems/chr15c.dat|
-#
-#small_samples/mmul/mmul|Matrix multiplication|collect=true|build_command=gcc -O0|
-#small_samples/mmul/mmul|Matrix multiplication|collect=true|build_command=gcc -O1|
-#small_samples/mmul/mmul|Matrix multiplication|collect=true|build_command=gcc -O2|
-#small_samples/mmul/mmul|Matrix multiplication|collect=true|build_command=gcc -O3|
-#small_samples/mmul/mmul|Matrix multiplication|collect=true|build_command=gcc -Os|
-#small_samples/mmul/mmul|Matrix multiplication|collect=true|build_command=gcc -Ofast|
+small_samples/delannoy/delannoy|Delannoy number calculation|collect=true|build_command=gcc -O0|13|
+small_samples/delannoy/delannoy|Delannoy number calculation|collect=true|build_command=gcc -O1|13|
+small_samples/delannoy/delannoy|Delannoy number calculation|collect=true|build_command=gcc -O2|13|
+small_samples/delannoy/delannoy|Delannoy number calculation|collect=true|build_command=gcc -O3|13|
+small_samples/delannoy/delannoy|Delannoy number calculation|collect=true|build_command=gcc -Os|13|
+small_samples/delannoy/delannoy|Delannoy number calculation|collect=true|build_command=gcc -Ofast|13|
+
+small_samples/nbody/nbody|N-body simulation|collect=true|build_command=gcc -O0|
+small_samples/nbody/nbody|N-body simulation|collect=true|build_command=gcc -O1|
+small_samples/nbody/nbody|N-body simulation|collect=true|build_command=gcc -O2|
+small_samples/nbody/nbody|N-body simulation|collect=true|build_command=gcc -O3|
+small_samples/nbody/nbody|N-body simulation|collect=true|build_command=gcc -Os|
+small_samples/nbody/nbody|N-body simulation|collect=true|build_command=gcc -Ofast|
+
+small_samples/qap/qap|Quadratic Assignment Problem|collect=true|build_command=gcc -O0|small_samples/qap/problems/chr15c.dat|
+small_samples/qap/qap|Quadratic Assignment Problem|collect=true|build_command=gcc -O1|small_samples/qap/problems/chr15c.dat|
+small_samples/qap/qap|Quadratic Assignment Problem|collect=true|build_command=gcc -O2|small_samples/qap/problems/chr15c.dat|
+small_samples/qap/qap|Quadratic Assignment Problem|collect=true|build_command=gcc -O3|small_samples/qap/problems/chr15c.dat|
+small_samples/qap/qap|Quadratic Assignment Problem|collect=true|build_command=gcc -Os|small_samples/qap/problems/chr15c.dat|
+small_samples/qap/qap|Quadratic Assignment Problem|collect=true|build_command=gcc -Ofast|small_samples/qap/problems/chr15c.dat|
+
+small_samples/mmul/mmul|Matrix multiplication|collect=true|build_command=gcc -O0|
+small_samples/mmul/mmul|Matrix multiplication|collect=true|build_command=gcc -O1|
+small_samples/mmul/mmul|Matrix multiplication|collect=true|build_command=gcc -O2|
+small_samples/mmul/mmul|Matrix multiplication|collect=true|build_command=gcc -O3|
+small_samples/mmul/mmul|Matrix multiplication|collect=true|build_command=gcc -Os|
+small_samples/mmul/mmul|Matrix multiplication|collect=true|build_command=gcc -Ofast|
 
 larger_samples/ssca2/build_O0/ssca2|ssca2 Benchmark O0|build=true|build_dir=larger_samples/ssca2/build_O0|build_command=cmake -DCMAKE_C_FLAGS="-O0" .. && make|15|
 larger_samples/ssca2/build_O1/ssca2|ssca2 Benchmark O1|build=true|build_dir=larger_samples/ssca2/build_O1|build_command=cmake -DCMAKE_C_FLAGS="-O1" .. && make|15|
