@@ -40,7 +40,7 @@ for program in df['Program'].unique():
                     f'{height:.2f}%', ha="center", fontsize=9)
     
     plt.tight_layout()
-    plt.savefig(f'{output_dir}/{program_name}_optimization.png', dpi=300)
+    plt.savefig(f'{output_dir}/{program_name}_optimization.png')
     plt.close()
 
 plt.figure(figsize=(14, 10))
@@ -53,7 +53,7 @@ plt.title('Performance Improvement for All Programs and Flags')
 plt.xticks(rotation=45, ha='right')
 plt.yticks(rotation=0)
 plt.tight_layout()
-plt.savefig(f'{output_dir}/combined_heatmap.png', dpi=300)
+plt.savefig(f'{output_dir}/combined_heatmap.png')
 
 plt.figure(figsize=(16, 10))
 ax = plt.subplot(111)
@@ -84,6 +84,6 @@ ax.axhline(y=0, color='black', linestyle='-', alpha=0.3)
 ax.legend(loc='upper left', bbox_to_anchor=(1, 1))
 
 plt.tight_layout()
-plt.savefig(f'{output_dir}/combined_bars.png', dpi=300)
+plt.savefig(f'{output_dir}/combined_bars.png')
 
 print(f"Plots saved to the '{output_dir}' directory.")
