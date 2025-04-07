@@ -77,7 +77,7 @@ B) Individual Compiler Optimizations
 ### Flags Meaning
 
 #### -fpredictive-commoning
-    Perform predictive commoning optimization, i.e., reusing computations (especially memory loads and stores) performed in previous iterations of loops. 
+Perform predictive commoning optimization, i.e., reusing computations (especially memory loads and stores) performed in previous iterations of loops. 
 #### -floop-interchange
 Perform loop interchange outside of graphite. This flag can improve cache performance on loop nest and allow further loop optimizations, like vectorization, to take place.
 ```c
