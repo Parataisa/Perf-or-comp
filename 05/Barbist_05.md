@@ -1,17 +1,18 @@
 A) Basic Optimization Levels
 ----------------------------
-
+## Cluster
 ![Comparison of GCC optimization levels on cluster](results_a/optimization_summary_bars_cluster.png)
+## Local
 ![Comparison of GCC optimization levels on local](results_a/optimization_summary_bars_local.png)
 - For all the graphs see results_a folder.
 
 ## Discusion
-- For delannoy: Further optimizations (-O3, -Ofast) don't improve performance beyond -O2
-- For mmul: It already sees performance improvements with -O1, the other flags do not show any further improvements, some improvements with -Ofast
-- For nbody: Mostly the same as with mmul but further improvements are seen when compiled with -Ofast.
+- For delannoy: -O2, -O3, and -Ofast are almost the same. -O1, and -Os are the same.
+- For mmul: It already sees performance improvements with -O1, the other flags do not show any further improvements, maybe some improvements with -Ofast and -O3
+- For nbody: Has significant improvements with -Ofast
 - For npb: Almost consisted performance across all optimization levels, but -O0.
-- For qap: Almost consisted performance across all optimization levels, but -O0. -O1 and -Os are a bit worse than the rest.
-- For ssca2: Almost consisted performance across all optimization levels, but -O0. -O1 and -Os are a bit worse than the rest.
+- For qap: Almost consisted performance across all optimization levels, but -O0. A bit worse performance with -O1, and -Os.
+- For ssca2: Similar to delannoy
 - Like expected -O0 has the worst performance.
 
 
@@ -19,19 +20,19 @@ B) Individual Compiler Optimizations
 ------------------------------------
 - This task was done on my local system for time saving reason 
 - Flag analysis summary:
-    - fversion-loops-for-strides: appeared in top flags for 4 programs
-    - fvect-cost-model=dynamic: appeared in top flags for 4 programs
-    - ftree-partial-pre: appeared in top flags for 4 programs
-    - fsplit-loops: appeared in top flags for 4 programs
-    - fipa-cp-clone: appeared in top flags for 4 programs
-    - funswitch-loops: appeared in top flags for 3 programs
-    - ftree-loop-distribution: appeared in top flags for 3 programs
-    - fsplit-paths: appeared in top flags for 3 programs
-    - fpredictive-commoning: appeared in top flags for 3 programs
-    - fpeel-loops: appeared in top flags for 3 programs
-    - floop-unroll-and-jam: appeared in top flags for 3 programs
-    - floop-interchange: appeared in top flags for 3 programs
-    - fgcse-after-reload: appeared in top flags for 3 programs
+    - -fvect-cost-model=dynamic: appeared in top flags for 4 programs
+    - -ftree-loop-distribution: appeared in top flags for 4 programs
+    - -fpredictive-commoning: appeared in top flags for 4 programs
+    - -fversion-loops-for-strides: appeared in top flags for 3 programs
+    - -ftree-partial-pre: appeared in top flags for 3 programs
+    - -fsplit-paths: appeared in top flags for 3 programs
+    - -floop-unroll-and-jam: appeared in top flags for 3 programs
+    - -fipa-cp-clone: appeared in top flags for 3 programs
+    - -funswitch-loops: appeared in top flags for 2 programs
+    - -fsplit-loops: appeared in top flags for 1 programs
+    - -fpeel-loops: appeared in top flags for 1 programs
+    - -floop-interchange: appeared in top flags for 1 programs
+    - -fgcse-after-reload: appeared in top flags for 1 programs
 
 ![Headmap of the flags](results_b/combined_heatmap.png)
 ![Combined Barchart](results_b/combined_bars.png)

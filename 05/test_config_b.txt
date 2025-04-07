@@ -21,8 +21,8 @@ small_samples/qap/qap|Quadratic Assignment Problem|collect=true|small_samples/qa
 
 small_samples/mmul/mmul|Matrix multiplication|collect=true|
 
-larger_samples/ssca2/build/ssca2|ssca2 Benchmark|build=true|build_dir=larger_samples/ssca2/build|build_command=cmake && make|15|
+larger_samples/ssca2/build/ssca2|ssca2 Benchmark|build=true|build_dir=larger_samples/ssca2/build|build_command=cmake ..|15|
 
-larger_samples/npb_bt/build/npb_bt_w|NPB BT Benchmark|build=true|build_dir=larger_samples/npb_bt/build|build_command=cmake && make|
+larger_samples/npb_bt/build/npb_bt_w|NPB BT Benchmark|build=true|build_dir=larger_samples/npb_bt/build|build_command=cmake ..|
 
 

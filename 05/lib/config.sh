@@ -18,7 +18,7 @@ CSV_FILE="performance_results.csv"
 WARMUP_RUNS=1               # Warmup runs to eliminate cold-start effects
 PAUSE_SECONDS=1             # Time to pause between runs for system stability
 MAX_REPETITIONS=40              # Maximum number of repetitions to perform
-MIN_REPETITIONS=6               # Minimum number of repetitions to perform
+MIN_REPETITIONS=3               # Minimum number of repetitions to perform
 TARGET_PRECISION=0.05           # Target relative precision (0.05 for 5%)
 
 # I/O load generator configuration

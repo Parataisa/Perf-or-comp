@@ -45,13 +45,16 @@ build_with_flags() {
         log "INFO" "Creating build directory: $unique_dir"
         mkdir -p "$unique_dir"
         
-        local new_build_cmd="$build_command"
-        if [[ "$build_command" == *"CMAKE_C_FLAGS"* ]]; then
-            new_build_cmd=$(echo "$build_command" | sed "s|-DCMAKE_C_FLAGS=\"[^\"]*\"|-DCMAKE_C_FLAGS=\"$flags\"|")
+        local cmake_part=$(echo "$build_command" | grep -o "cmake[^&]*")
+        local make_part=$(echo "$build_command" | grep -o "make[^.]*" || echo "make")
+        
+        if [[ "$cmake_part" == *"CMAKE_C_FLAGS"* ]]; then
+            cmake_part=$(echo "$cmake_part" | sed "s|-DCMAKE_C_FLAGS=\"[^\"]*\"|-DCMAKE_C_FLAGS=\"$flags\"|")
         else
-            new_build_cmd="$build_command -DCMAKE_C_FLAGS=\"$flags\""
+            cmake_part="$cmake_part -DCMAKE_C_FLAGS=\"$flags\""
         fi
         
+        local new_build_cmd="$cmake_part && $make_part"
         log "DEBUG" "Modified build command: $new_build_cmd"
         
         # Execute the build
