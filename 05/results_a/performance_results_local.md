@@ -337,7 +337,7 @@ ssca2 Benchmark O0
 
 | Parameters | Avg Time (s) | User CPU (s) | System CPU (s) | Memory (KB) | Std Dev (s) | Min Time (s) | Max Time (s) | Variance (s²) | Notes |
 |------------|--------------|--------------|----------------|-------------|-------------|-------------|-------------|--------------|-------|
-| `15` | 2.563333 | 2.553333 | 1.000e-10 | 8019 | 0.0513160 | 2.520000 | 2.620000 | 0.0026333 | Target precision of 0.05 reached after 3 runs, Cache cleared |
+| `15` | 4.719474 | 4.793684 | 0.0026316 | 8007 | 0.725303 | 4.200000 | 6.930000 | 0.526065 | Target precision of 0.05 reached after 38 runs, Cache cleared |
 ## larger_samples/ssca2/build_O1/ssca2
 
 ssca2 Benchmark O1
@@ -350,7 +350,7 @@ ssca2 Benchmark O1
 
 | Parameters | Avg Time (s) | User CPU (s) | System CPU (s) | Memory (KB) | Std Dev (s) | Min Time (s) | Max Time (s) | Variance (s²) | Notes |
 |------------|--------------|--------------|----------------|-------------|-------------|-------------|-------------|--------------|-------|
-| `15` | 2.543333 | 2.533333 | 1.000e-10 | 7933 | 0.0550757 | 2.480000 | 2.580000 | 0.0030333 | Target precision of 0.05 reached after 3 runs, Cache cleared |
+| `15` | 2.866750 | 2.838750 | 0.0042500 | 7982 | 0.523530 | 2.480000 | 5.410000 | 0.274084 | Target precision of 0.05 not reached after 40 runs, Cache cleared |
 ## larger_samples/ssca2/build_O2/ssca2
 
 ssca2 Benchmark O2
@@ -363,7 +363,7 @@ ssca2 Benchmark O2
 
 | Parameters | Avg Time (s) | User CPU (s) | System CPU (s) | Memory (KB) | Std Dev (s) | Min Time (s) | Max Time (s) | Variance (s²) | Notes |
 |------------|--------------|--------------|----------------|-------------|-------------|-------------|-------------|--------------|-------|
-| `15` | 2.616667 | 2.603333 | 1.000e-10 | 7996 | 0.0513160 | 2.560000 | 2.660000 | 0.0026333 | Target precision of 0.05 reached after 3 runs, Cache cleared |
+| `15` | 2.558333 | 2.545000 | 0.0033333 | 8010 | 0.0449073 | 2.510000 | 2.640000 | 0.0020167 | Target precision of 0.05 reached after 6 runs, Cache cleared |
 ## larger_samples/ssca2/build_O3/ssca2
 
 ssca2 Benchmark O3
@@ -376,7 +376,7 @@ ssca2 Benchmark O3
 
 | Parameters | Avg Time (s) | User CPU (s) | System CPU (s) | Memory (KB) | Std Dev (s) | Min Time (s) | Max Time (s) | Variance (s²) | Notes |
 |------------|--------------|--------------|----------------|-------------|-------------|-------------|-------------|--------------|-------|
-| `15` | 2.590000 | 2.580000 | 1.000e-10 | 7964 | 0.0624500 | 2.540000 | 2.660000 | 0.0039000 | Target precision of 0.05 reached after 3 runs, Cache cleared |
+| `15` | 2.565000 | 2.553333 | 1.000e-10 | 8002 | 0.0301662 | 2.520000 | 2.600000 | 9.100e-04 | Target precision of 0.05 reached after 6 runs, Cache cleared |
 ## larger_samples/ssca2/build_Os/ssca2
 
 ssca2 Benchmark Os
@@ -389,7 +389,7 @@ ssca2 Benchmark Os
 
 | Parameters | Avg Time (s) | User CPU (s) | System CPU (s) | Memory (KB) | Std Dev (s) | Min Time (s) | Max Time (s) | Variance (s²) | Notes |
 |------------|--------------|--------------|----------------|-------------|-------------|-------------|-------------|--------------|-------|
-| `15` | 2.486667 | 2.473333 | 0.0033333 | 8001 | 0.0208167 | 2.470000 | 2.510000 | 4.333e-04 | Target precision of 0.05 reached after 3 runs, Cache cleared |
+| `15` | 3.198333 | 3.195000 | 1.000e-10 | 7995 | 0.0970395 | 3.090000 | 3.300000 | 0.0094167 | Target precision of 0.05 reached after 6 runs, Cache cleared |
 ## larger_samples/ssca2/build_Ofast/ssca2
 
 ssca2 Benchmark Ofast
@@ -402,7 +402,7 @@ ssca2 Benchmark Ofast
 
 | Parameters | Avg Time (s) | User CPU (s) | System CPU (s) | Memory (KB) | Std Dev (s) | Min Time (s) | Max Time (s) | Variance (s²) | Notes |
 |------------|--------------|--------------|----------------|-------------|-------------|-------------|-------------|--------------|-------|
-| `15` | 2.606667 | 2.590000 | 0.0066667 | 8035 | 0.0057735 | 2.600000 | 2.610000 | 3.333e-05 | Target precision of 0.05 reached after 3 runs, Cache cleared |
+| `15` | 2.526667 | 2.508333 | 0.0016667 | 7981 | 0.0520256 | 2.460000 | 2.620000 | 0.0027067 | Target precision of 0.05 reached after 6 runs, Cache cleared |
 ## larger_samples/npb_bt/build/npb_bt_w
 
 NPB BT Benchmark O0
@@ -415,7 +415,7 @@ NPB BT Benchmark O0
 
 | Parameters | Avg Time (s) | User CPU (s) | System CPU (s) | Memory (KB) | Std Dev (s) | Min Time (s) | Max Time (s) | Variance (s²) | Notes |
 |------------|--------------|--------------|----------------|-------------|-------------|-------------|-------------|--------------|-------|
-| `` | 1.373333 | 1.370000 | 1.000e-10 | 4641 | 0.0404145 | 1.350000 | 1.420000 | 0.0016333 | Target precision of 0.05 reached after 3 runs, Cache cleared |
+| `` | 5.458333 | 5.451667 | 1.000e-10 | 4731 | 0.0376386 | 5.390000 | 5.500000 | 0.0014167 | Target precision of 0.05 reached after 6 runs, Cache cleared |
 ## larger_samples/npb_bt/build/npb_bt_w
 
 NPB BT Benchmark O1
@@ -428,7 +428,7 @@ NPB BT Benchmark O1
 
 | Parameters | Avg Time (s) | User CPU (s) | System CPU (s) | Memory (KB) | Std Dev (s) | Min Time (s) | Max Time (s) | Variance (s²) | Notes |
 |------------|--------------|--------------|----------------|-------------|-------------|-------------|-------------|--------------|-------|
-| `` | 1.376667 | 1.373333 | 1.000e-10 | 4643 | 0.0057735 | 1.370000 | 1.380000 | 3.333e-05 | Target precision of 0.05 reached after 3 runs, Cache cleared |
+| `` | 1.393333 | 1.390000 | 1.000e-10 | 4647 | 0.0186190 | 1.370000 | 1.410000 | 3.467e-04 | Target precision of 0.05 reached after 6 runs, Cache cleared |
 ## larger_samples/npb_bt/build/npb_bt_w
 
 NPB BT Benchmark O2
@@ -441,7 +441,7 @@ NPB BT Benchmark O2
 
 | Parameters | Avg Time (s) | User CPU (s) | System CPU (s) | Memory (KB) | Std Dev (s) | Min Time (s) | Max Time (s) | Variance (s²) | Notes |
 |------------|--------------|--------------|----------------|-------------|-------------|-------------|-------------|--------------|-------|
-| `` | 1.406667 | 1.406667 | 1.000e-10 | 4695 | 0.0404145 | 1.360000 | 1.430000 | 0.0016333 | Target precision of 0.05 reached after 3 runs, Cache cleared |
+| `` | 1.460000 | 1.451667 | 1.000e-10 | 4636 | 0.0303315 | 1.430000 | 1.500000 | 9.200e-04 | Target precision of 0.05 reached after 6 runs, Cache cleared |
 ## larger_samples/npb_bt/build/npb_bt_w
 
 NPB BT Benchmark O3
@@ -454,7 +454,7 @@ NPB BT Benchmark O3
 
 | Parameters | Avg Time (s) | User CPU (s) | System CPU (s) | Memory (KB) | Std Dev (s) | Min Time (s) | Max Time (s) | Variance (s²) | Notes |
 |------------|--------------|--------------|----------------|-------------|-------------|-------------|-------------|--------------|-------|
-| `` | 1.386667 | 1.383333 | 1.000e-10 | 4705 | 0.0057735 | 1.380000 | 1.390000 | 3.333e-05 | Target precision of 0.05 reached after 3 runs, Cache cleared |
+| `` | 1.380000 | 1.371667 | 1.000e-10 | 4679 | 0.0282843 | 1.350000 | 1.430000 | 8.000e-04 | Target precision of 0.05 reached after 6 runs, Cache cleared |
 ## larger_samples/npb_bt/build/npb_bt_w
 
 NPB BT Benchmark Os
@@ -467,7 +467,7 @@ NPB BT Benchmark Os
 
 | Parameters | Avg Time (s) | User CPU (s) | System CPU (s) | Memory (KB) | Std Dev (s) | Min Time (s) | Max Time (s) | Variance (s²) | Notes |
 |------------|--------------|--------------|----------------|-------------|-------------|-------------|-------------|--------------|-------|
-| `` | 1.406667 | 1.406667 | 1.000e-10 | 4609 | 0.0321455 | 1.370000 | 1.430000 | 0.0010333 | Target precision of 0.05 reached after 3 runs, Cache cleared |
+| `` | 1.350000 | 1.343333 | 1.000e-10 | 4655 | 0.0447214 | 1.320000 | 1.440000 | 0.0020000 | Target precision of 0.05 reached after 6 runs, Cache cleared |
 ## larger_samples/npb_bt/build/npb_bt_w
 
 NPB BT Benchmark Ofast
@@ -480,4 +480,4 @@ NPB BT Benchmark Ofast
 
 | Parameters | Avg Time (s) | User CPU (s) | System CPU (s) | Memory (KB) | Std Dev (s) | Min Time (s) | Max Time (s) | Variance (s²) | Notes |
 |------------|--------------|--------------|----------------|-------------|-------------|-------------|-------------|--------------|-------|
-| `` | 1.406667 | 1.403333 | 1.000e-10 | 4639 | 0.0208167 | 1.390000 | 1.430000 | 4.333e-04 | Target precision of 0.05 reached after 3 runs, Cache cleared |
+| `` | 1.375000 | 1.371667 | 1.000e-10 | 4699 | 0.0288097 | 1.350000 | 1.420000 | 8.300e-04 | Target precision of 0.05 reached after 6 runs, Cache cleared |
