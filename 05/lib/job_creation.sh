@@ -405,29 +405,18 @@ if \$is_cmake; then
     
     # Extract build command from job script if available
     build_command="$BUILD_COMMAND"
-    if [ -z "\$build_command" ]; then
-        # Default to basic CMake command if none provided
-        build_command="cmake .. && make"
-    fi
     
-    # Parse the original build command to extract flags
-    if [[ "\$build_command" =~ cmake.*-DCMAKE_C_FLAGS=([^ ]+) ]]; then
-        cflags="\${BASH_REMATCH[1]}"
-        echo "Extracted C flags: \$cflags"
+    if [[ "$build_command" == *"cmake"* ]]; then
+        echo "Detected CMake build"
         
-        # Create a completely fresh CMake command with explicit paths
-        fresh_command="cmake -B . -S .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_FLAGS=\$cflags && make"
-        echo "Executing fresh build command: \$fresh_command"
-        eval "\$fresh_command"
-    else
-        # If no special flags, use a simpler fresh command
-        echo "Executing build command with clean cache: cmake -B . -S .. && make"
-        cmake -B . -S .. && make
-    fi
-    
-    if [ \$? -ne 0 ]; then
-        echo "ERROR: Build failed!"
-        exit 1
+        # Get source directory (one level up from build directory)
+        cmake_source_dir=".."
+        
+        echo "Building in directory: \$(pwd)"
+        echo "Executing: $build_command"
+        
+        eval "$build_command"       
+        echo "Build successful!"
     fi
     
     # Update the program path to the newly built executable
