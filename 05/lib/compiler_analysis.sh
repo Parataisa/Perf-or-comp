@@ -39,14 +39,12 @@ build_with_flags() {
     if [[ "$build_command" == *"cmake"* ]]; then
         log "INFO" "CMake project detected"
         
-        # Create a unique directory for this flag combination
         local flag_safe=${flags//[^a-zA-Z0-9]/_}
         local unique_dir="${build_dir}_${flag_safe}"
         
         log "INFO" "Creating build directory: $unique_dir"
         mkdir -p "$unique_dir"
         
-        # Create the CMake command with the new flags
         local new_build_cmd="$build_command"
         if [[ "$build_command" == *"CMAKE_C_FLAGS"* ]]; then
             new_build_cmd=$(echo "$build_command" | sed "s|-DCMAKE_C_FLAGS=\"[^\"]*\"|-DCMAKE_C_FLAGS=\"$flags\"|")
@@ -68,7 +66,6 @@ build_with_flags() {
             return 1
         fi
         
-        # Find the program in the build directory
         local executable_path=""
         if [ -f "$unique_dir/$program_name" ]; then
             executable_path="$unique_dir/$program_name"
@@ -88,13 +85,11 @@ build_with_flags() {
         local flag_safe=$(echo "$flags" | tr ' ' '_' | tr -d '-')
         local output_name="${program_name}_${flag_safe}"
         
-        # Make sure build directory exists
         if [ -z "$build_dir" ]; then
             build_dir="build"
         fi
         mkdir -p "$build_dir"
         
-        # Look for the source file
         if [[ "$program_path" == *.c ]]; then
             source_file="$program_path"
         else
@@ -108,7 +103,6 @@ build_with_flags() {
         
         log "INFO" "Found source file: $source_file"
         
-        # Build the program
         local output_path="$build_dir/$output_name"
         log "INFO" "Building with GCC: $flags -o $output_path $source_file"
         gcc $flags -o "$output_path" "$source_file" -lm >/dev/null 2>&1
@@ -123,13 +117,11 @@ build_with_flags() {
     fi
 }
 
-# Measure execution time more reliably
 measure_execution() {
     local program_path=$1
     local program_params=$2
     local runs=$MIN_REPETITIONS
     
-    # Check if program exists and is executable
     if [ ! -x "$program_path" ]; then
         log "ERROR" "Program not found or not executable: $program_path"
         return 1
@@ -139,11 +131,8 @@ measure_execution() {
     
     local total_time=0
     
-    # Run multiple times for better accuracy
     for ((i=1; i<=runs; i++)); do
         log "DEBUG" "Measurement run $i"
-        
-        # Use the time command for more accurate measurement
         local start_time=$(date +%s.%N)
         "$program_path" $program_params >/dev/null 2>&1
         local end_time=$(date +%s.%N)
@@ -152,7 +141,6 @@ measure_execution() {
         total_time=$(echo "$total_time + $run_time" | bc -l)
     done
     
-    # Calculate average
     local avg_time=$(echo "scale=6; $total_time / $runs" | bc -l)
     log "INFO" "Average execution time: $avg_time seconds"
     

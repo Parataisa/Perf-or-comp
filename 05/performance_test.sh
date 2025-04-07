@@ -17,8 +17,8 @@ source "${SCRIPT_DIR}/lib/result_processing.sh"
 source "${SCRIPT_DIR}/lib/compiler_analysis.sh"
 
 # Configuration 
-CONFIG_FILE="test_config_b.txt"
-MODE="autotune"  # Options: "analyze" or "standard"
+CONFIG_FILE="test_config_a.txt"
+MODE="standard"  # Options: "analyze" or "standard"
 
 # Log which mode we're running
 log "INFO" "Running performance tests with mode: $MODE"
@@ -26,14 +26,11 @@ log "INFO" "Running performance tests with mode: $MODE"
 # Run based on selected mode
 if [ "$MODE" = "analyze" ]; then
     analyze_compiler_flags "$CONFIG_FILE"
+    log "INFO" "Compiler optimization results saved to compiler_results/"
 else
     process_config "$CONFIG_FILE"
-fi
-
-log "INFO" "Performance testing complete!"
-log "INFO" "Results saved to $OUTPUT_FILE"
-log "INFO" "CSV metrics saved to $CSV_FILE"
-if [ "$MODE" != "standard" ]; then
-    log "INFO" "Compiler optimization results saved to compiler_results/"
+    log "INFO" "Performance testing complete!"
+    log "INFO" "Results saved to $OUTPUT_FILE"
+    log "INFO" "CSV metrics saved to $CSV_FILE"
 fi
 exit 0
