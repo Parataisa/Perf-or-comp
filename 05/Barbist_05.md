@@ -1,7 +1,19 @@
 A) Basic Optimization Levels
 ----------------------------
 
+![Comparison of GCC optimization levels on cluster](results_a/optimization_summary_bars_cluster.png)
+![Comparison of GCC optimization levels on local](results_a/optimization_summary_bars_local.png)
+- For all the graphs see results_a folder.
 
+## Discusion
+- For delannoy: Further optimizations (-O3, -Ofast) don't improve performance beyond -O2
+- For mmul: It already sees performance improvements with -O1, the other flags do not show any further improvements
+- For nbody: Mostly the same as with mmul but further improvements are seen when compiled with -Ofast.
+- For npb: Almost no performance difference between optimization levels
+- For qap: Almost consisted performance accorss all optimization levels, but -O0
+- For ssca2: Same as with npb, no performance difference between optimization levels
+- Like expexted -O0 has the worst performance(With some exceptions for npb and ssca2).
+- npb and ssca2 did not really get any performance improvements when run with optimizations flags(They are probably already optimized in the source code).
 
 
 B) Individual Compiler Optimizations
