@@ -7,7 +7,10 @@
 #define N S
 #define M S
 #define K S
-#define T 32 // tile size
+
+#ifndef T
+  #define T 32 // tile size
+#endif
 
 #define MIN(X,Y) ((X)<(Y)?(X):(Y))
 #define MAX(X,Y) ((X)>(Y)?(X):(Y))

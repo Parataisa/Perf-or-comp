@@ -17,13 +17,10 @@
 mmul/mmul|Baseline S=2048|collect=true|build_command=gcc -O3 -DS=2048|
 
 # Test different tile sizes for 2048x2048 matrices
-mmul/mmul_tiling|Tiling S=2048 T=8|collect=true|build_command=gcc -O3 -DS=2048 -DT=8|
-mmul/mmul_tiling|Tiling S=2048 T=16|collect=true|build_command=gcc -O3 -DS=2048 -DT=16|
-mmul/mmul_tiling|Tiling S=2048 T=32|collect=true|build_command=gcc -O3 -DS=2048 -DT=32|
-mmul/mmul_tiling|Tiling S=2048 T=64|collect=true|build_command=gcc -O3 -DS=2048 -DT=64|
-mmul/mmul_tiling|Tiling S=2048 T=96|collect=true|build_command=gcc -O3 -DS=2048 -DT=96|
+mmul/mmul_tiling|Tiling S=2048 T=8  |collect=true|build_command=gcc -O3 -DS=2048 -DT=8|
+mmul/mmul_tiling|Tiling S=2048 T=16 |collect=true|build_command=gcc -O3 -DS=2048 -DT=16|
+mmul/mmul_tiling|Tiling S=2048 T=32 |collect=true|build_command=gcc -O3 -DS=2048 -DT=32|
+mmul/mmul_tiling|Tiling S=2048 T=64 |collect=true|build_command=gcc -O3 -DS=2048 -DT=64|
 mmul/mmul_tiling|Tiling S=2048 T=128|collect=true|build_command=gcc -O3 -DS=2048 -DT=128|
-mmul/mmul_tiling|Tiling S=2048 T=192|collect=true|build_command=gcc -O3 -DS=2048 -DT=192|
 mmul/mmul_tiling|Tiling S=2048 T=256|collect=true|build_command=gcc -O3 -DS=2048 -DT=256|
-mmul/mmul_tiling|Tiling S=2048 T=384|collect=true|build_command=gcc -O3 -DS=2048 -DT=384|
 mmul/mmul_tiling|Tiling S=2048 T=512|collect=true|build_command=gcc -O3 -DS=2048 -DT=512|

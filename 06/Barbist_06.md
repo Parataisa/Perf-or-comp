@@ -8,10 +8,11 @@ The formula: T = sqrt(cache_size / (3 * sizeof(double)))
 Will give the theoretical optimal tile size for a matrix multiplication, where cache_size is the size of the cache in bits.
 
 For Example:
- - For a 32 KiB cache, T = sqrt(32768 / (3 * 8)) = sqrt(1365.33) = 37
- - For a 256 KiB cache, T = sqrt(262144 / (3 * 8)) = sqrt(10922.67) = 104
- - For a 2 MiB cache, T = sqrt(2097152 / (3 * 8)) = sqrt(87381.33) = 295
-
+ - For a 32 KiB cache, T = sqrt(32768 / (3 * 8)) = sqrt(1365.33) = 37  
+ - For a 256 KiB cache, T = sqrt(262144 / (3 * 8)) = sqrt(10922.67) = 104  
+ - For a 1 MiB cache, T = sqrt(1048576 / (3 * 8)) = sqrt(43690.67) = 209  
+ - For a 2 MiB cache, T = sqrt(2097152 / (3 * 8)) = sqrt(87381.33) = 295  
+ - For a 6 MiB cache, T = sqrt(6291456 / (3 * 8)) = sqrt(262144) = 512   
 
 Take the "mmul" small sample program and apply a tiling optimization to its main computation loop nest.
 Think about which loop(s) to tile in order to achieve a meaningful performance benefit, and argue why your choice makes sense in terms of reuse distance reduction.
