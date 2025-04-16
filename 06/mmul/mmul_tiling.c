@@ -1,7 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define S 2048
+#ifndef S
+  #define S 2048
+#endif
 #define N S
 #define M S
 #define K S
@@ -53,21 +55,22 @@ int main(void) {
 			B[i][j] = (i==j)?1:0;
 		}
 	}
+
 	// Added tiling
 	for(int iT=0; iT<N; iT+=T) {
-		for(int jT=0; jT<K; jT+=T) {
-			for(int k=0; k<M; k+=T) {
-				for (int i=iT; i<MIN(iT+T,N); i++) {
-					for (int j=jT; j<MIN(jT+T,K); j++) {
-						TYPE sum = 0;
-						for (int k=k; k<MIN(k+T,M); k++) {
-							sum += A[i][k] * B[k][j];
-						}
-						C[i][j] += sum;
-					}
-				}
-			}
-		}
+	    for(int jT=0; jT<K; jT+=T) {
+	        for(int kT=0; kT<M; kT+=T) {
+	            for (int i=iT; i<MIN(iT+T,N); i++) {
+	                for (int j=jT; j<MIN(jT+T,K); j++) {
+	                    TYPE sum = 0;
+	                    for (int k=kT; k<MIN(kT+T,M); k++) {
+	                        sum += A[i][k] * B[k][j];
+	                    }
+	                    C[i][j] += sum;
+	                }
+	            }
+	        }
+	    }
 	}
 
 	// verify result

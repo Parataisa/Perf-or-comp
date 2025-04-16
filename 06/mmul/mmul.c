@@ -1,7 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define S 2048
+#ifndef S
+  #define S 2048
+#endif
 #define N S
 #define M S
 #define K S
