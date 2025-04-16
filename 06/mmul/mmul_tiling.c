@@ -5,6 +5,7 @@
 #define N S
 #define M S
 #define K S
+#define T 32 // tile size
 
 #define MIN(X,Y) ((X)<(Y)?(X):(Y))
 #define MAX(X,Y) ((X)>(Y)?(X):(Y))
@@ -52,15 +53,20 @@ int main(void) {
 			B[i][j] = (i==j)?1:0;
 		}
 	}
-
-	// conduct multiplication
-	for (int i=0; i<N; i++) {
-		for (int j=0; j<K; j++) {
-			TYPE sum = 0;
-			for (int k=0; k<M; k++) {
-				sum += A[i][k] * B[k][j];
+	// Added tiling
+	for(int iT=0; iT<N; iT+=T) {
+		for(int jT=0; jT<K; jT+=T) {
+			for(int k=0; k<M; k+=T) {
+				for (int i=iT; i<MIN(iT+T,N); i++) {
+					for (int j=jT; j<MIN(jT+T,K); j++) {
+						TYPE sum = 0;
+						for (int k=k; k<MIN(k+T,M); k++) {
+							sum += A[i][k] * B[k][j];
+						}
+						C[i][j] += sum;
+					}
+				}
 			}
-			C[i][j] = sum;
 		}
 	}
 
