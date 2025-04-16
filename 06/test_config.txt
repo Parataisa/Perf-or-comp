@@ -13,5 +13,5 @@
 # - sim_cpu_load=true/false       # Whether to simulate the CPU load (default: false)
 # Examples:
 
-small_samples/mmul/mmul|Matrix multiplication|collect=true|
-small_samples/mmul/mmul_tiling|Matrix multiplication|collect=true|
+mmul/mmul|Matrix multiplication|collect=true|
+mmul/mmul_tiling|Matrix multiplication|collect=true|

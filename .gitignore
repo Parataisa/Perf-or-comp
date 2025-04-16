@@ -12,4 +12,5 @@ CMakeUserPresets.json
 generated
 io_load
 tracy
-build*
+build/
+build_*/
