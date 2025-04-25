@@ -9,10 +9,9 @@ import matplotlib.gridspec as gridspec
 plt.style.use('ggplot')
 plt.rcParams['font.family'] = 'DejaVu Sans'
 plt.rcParams['font.size'] = 11
-plt.rcParams['figure.figsize'] = [12, 10]
 
 try:
-    data = pd.read_csv('cache_latency.csv')
+    data = pd.read_csv('memory_latency.csv')
     print(f"Successfully loaded data with {len(data)} rows")
     print(f"Block size range: {data['Block Size (bytes)'].min()} to {data['Block Size (bytes)'].max()} bytes")
 except Exception as e:
@@ -23,7 +22,7 @@ data['Block Size (KiB)'] = data['Block Size (bytes)'] / 1024
 
 # Create a figure with a grid layout for multiple plots
 fig = plt.figure(figsize=[14, 12])
-gs = gridspec.GridSpec(3, 1, height_ratios=[3, 3, 1.5])
+gs = gridspec.GridSpec(3, 1, height_ratios=[2, 2, 2])
 
 # Function to format x-axis tick labels to avoid overlapping
 def format_tick_labels(ax, xticks):
@@ -116,9 +115,8 @@ ax2.grid(True, which="both", ls="-", alpha=0.2)
 # ------- BANDWIDTH PLOT  -------
 ax3 = plt.subplot(gs[2 ,0])
 
-# Plot bandwidth with log scale on both axes
 bandwidth_line, = ax3.loglog(data['Block Size (KiB)'], data['Bandwidth (MB/s)'], 
-                           'o-', linewidth=2.5, color='green', markersize=8)
+                              'o-', linewidth=2.5, color='green', markersize=8)
 
 ax3.axvspan(data['Block Size (KiB)'].min(), l1_boundary, alpha=0.12, color='limegreen')
 ax3.axvspan(l1_boundary, l2_boundary, alpha=0.12, color='gold')
@@ -135,18 +133,23 @@ ax3.set_xlabel('Block Size', fontsize=12, fontweight='bold')
 ax3.set_ylabel('Bandwidth (MB/s)', fontsize=12, fontweight='bold', color='green')
 ax3.set_title('Memory Bandwidth vs. Block Size', fontsize=14, fontweight='bold')
 
+ax3.set_yscale('log')
+ax3.yaxis.set_major_locator(LogLocator(numticks=8))
+ax3.yaxis.set_major_formatter(ScalarFormatter(useOffset=False))
+ax3.tick_params(axis='y', which='major', pad=8) 
+ax3.yaxis.set_tick_params(labelrotation=0) 
+
 # Apply the same tick formatting to the bandwidth plot
 format_tick_labels(ax3, xticks)
 ax3.grid(True, which="both", ls="-", alpha=0.2)
 ax3.xaxis.set_major_formatter(ScalarFormatter())
-ax3.yaxis.set_major_formatter(ScalarFormatter())
 
 # Add overall title for the figure
 fig.suptitle('Memory Hierarchy Performance Analysis', fontsize=16, fontweight='bold', y=0.98)
 
 # Adjust layout and save
 plt.tight_layout(rect=[0, 0.05, 1, 0.95])
-plt.subplots_adjust(bottom=0.15)  # Add more space at the bottom for rotated labels
+plt.subplots_adjust(bottom=0.15)  
 plt.savefig('cache_hierarchy_analysis.png', dpi=300, bbox_inches='tight')
 plt.show()
 
