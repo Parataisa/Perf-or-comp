@@ -84,7 +84,7 @@ def plot_benchmark_data(csv_file):
                     arrowprops=dict(arrowstyle='->', color='green'))
     
     plt.tight_layout()
-    plt.savefig("matrix_multiplication_performance.png", dpi=300)
+    plt.savefig("matrix_multiplication_performance.png")
     print(f"Plot saved to matrix_multiplication_performance.png")
     plt.show()
 
