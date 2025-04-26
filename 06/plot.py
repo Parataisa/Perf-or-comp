@@ -47,10 +47,15 @@ ax1 = plt.subplot(gs[0, 0])
 latency_line, = ax1.semilogx(data['Block Size (KiB)'], data['Latency (cycles)'], 
                             'o-', linewidth=2.5, color='blue', markersize=8)
 
-# Define cache boundaries (adjust based on your CPU)
-l1_boundary = 768    # L1 cache boundary in KiB (updated to your 768KB value)
-l2_boundary = 6 * 1024   # L2 boundary in KiB (updated to your 6MB value)
-l3_boundary = 64 * 1024  # L3 boundary in KiB (updated to your 64MB value)
+# Define cache boundaries (home system)
+#l1_boundary = 768          # L1 cache boundary in KiB (768KB)
+#l2_boundary = 6 * 1024     # L2 boundary in KiB (6MB)
+#l3_boundary = 64 * 1024    # L3 boundary in KiB (64MB)
+
+# Lcc3 system cache boundaries
+l1_boundary = 32      # L1 cache boundary in KiB (32KB) 
+l2_boundary = 256     # L2 boundary in KiB (256KB)
+l3_boundary = 12288   # L3 boundary in KiB 12MB)
 
 # Add colored regions for different cache levels
 ax1.axvspan(data['Block Size (KiB)'].min(), l1_boundary, alpha=0.12, color='limegreen', label='L1 Cache')
