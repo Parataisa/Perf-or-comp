@@ -85,7 +85,6 @@ CacheLineNode* create_random_chase_array(size_t array_size) {
     return nodes;
 }
 
-// Flush caches before measurement
 void flush_caches() {
     size_t flush_size = 32 * 1024 * 1024;
     volatile unsigned char* cleaner = (volatile unsigned char*)malloc(flush_size);
@@ -105,14 +104,11 @@ double measure_chase_latency(CacheLineNode* start, size_t iterations) {
         p = (volatile CacheLineNode*)p->next;
     }
     
-    // Actual measurement
     uint64_t start_time = __rdtsc();
-    
     for (size_t i = 0; i < iterations; i++) {
         p = (volatile CacheLineNode*)p->next;
         __asm__ volatile("" ::: "memory");  // Prevent compiler optimizations
     }
-    
     uint64_t end_time = __rdtsc();
     
     // Prevent optimizing away the loop
@@ -131,11 +127,10 @@ int main() {
     
     const double cpu_freq_ghz = measure_cpu_freq_ghz();
     
-    printf("=== LCC3 Memory Access Latency Benchmark ===\n");
+    printf("=== Memory Access Latency Benchmark ===\n");
     printf("CPU frequency: %.2f GHz\n", cpu_freq_ghz);
     printf("Testing block sizes from %d bytes to %d bytes\n", MIN_ARRAY_SIZE, MAX_ARRAY_SIZE);
     
-    // Test increasingly larger array sizes
     for (size_t array_size = MIN_ARRAY_SIZE; array_size <= MAX_ARRAY_SIZE; array_size *= 2) {
         printf("\nTesting block size: %zu bytes\n", array_size);
         double total_latency = 0;
