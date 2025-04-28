@@ -4,31 +4,26 @@ Exercise Sheet 6
 A) MMUL tiling
 --------------
 
-The formula: T = sqrt(cache_size / (3 * sizeof(double)))
-Will give the theoretical optimal tile size for a matrix multiplication, where cache_size is the size of the cache in bits.
+![MMUL tiling local](./figures/matrix_multiplication_performance_local.png)
+![MMUL tiling cluster_2](./figures/matrix_multiplication_performance_cluster_2.png)
 
-For Example:
- - For a 32 KiB cache, T = sqrt(32768 / (3 * 8)) = sqrt(1365.33) = 37  
- - For a 256 KiB cache, T = sqrt(262144 / (3 * 8)) = sqrt(10922.67) = 104  
- - For a 1 MiB cache, T = sqrt(1048576 / (3 * 8)) = sqrt(43690.67) = 209  
- - For a 2 MiB cache, T = sqrt(2097152 / (3 * 8)) = sqrt(87381.33) = 295  
- - For a 6 MiB cache, T = sqrt(6291456 / (3 * 8)) = sqrt(262144) = 512   
+Top image shows the performance of my local machine, while the bottom image shows the performance of the cluster.  
+Interestingly, on my local machine, the performance is declining with increasing block size, while on the cluster, the performance stays more or less constant until the block size reaches 1024, after which it starts to decline dramatically.  
+Some possible reasons for this could be that the local machine the smallest block size(8) still fittes in the L1 cache, while on the cluster, it does not. So on the cluster, the performance is limited by the L2 cache, while on the local machine, we can still benefit from the L1 cache.    
 
-Take the "mmul" small sample program and apply a tiling optimization to its main computation loop nest.
-Think about which loop(s) to tile in order to achieve a meaningful performance benefit, and argue why your choice makes sense in terms of reuse distance reduction.
-
-Test various tiling options on LCC3 (either manually or in an automated fashion) and report the results. Attempt to provide an explanation for the best parameter choices you found.
-
-Note: use a **2048²** matrix for this benchmark.
-
-
-B) Cache investigation
+B) Cache investigation and C) Cache benchmark
 ----------------------
 
-Think about (and/or research) how you would implement a benchmark to measure cache latencies over progressively larger memory blocks, as seen in the lecture on memory optimization. Precisely explain its working principle and how it determines access latency while avoiding unintended effects.
+![Cache investigation](./figures/cache_hierarchy_analysis_local.png)
+![Cache benchmark](./figures/cache_hierarchy_analysis_cluster.png)
+The cache investigation shows the performance of the local machine on the top and the cluster on the bottom.
+On those images, we can more or less clearly see the cache hierarchy of the machines.
 
-
-C) Cache benchmark (optional)
------------------------------
-
-Implement your idea from B). Use the resulting program to measure and plot the access latency on LCC3 compute nodes for blocks of size 512 Byte to 16 MiB, in powers of 2.
+## How it works
+- Random Chase Array Creation:
+  - Creates an array of cache-line-sized nodes (64 bytes)
+  - Randomizes the order of node traversal to defeat hardware prefetchers
+  - Each node points to another node, creating a linked list with unpredictable access patterns
+  - Fisher-Yates shuffle algorithm
+    - Each position has an equal probability of receiving any element
+    - The shuffle is unbiased
