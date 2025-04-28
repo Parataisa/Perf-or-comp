@@ -24,3 +24,5 @@ mmul/mmul_tiling|Tiling S=2048 T=64 |collect=true|build_command=gcc -O3 -DS=2048
 mmul/mmul_tiling|Tiling S=2048 T=128|collect=true|build_command=gcc -O3 -DS=2048 -DT=128|
 mmul/mmul_tiling|Tiling S=2048 T=256|collect=true|build_command=gcc -O3 -DS=2048 -DT=256|
 mmul/mmul_tiling|Tiling S=2048 T=512|collect=true|build_command=gcc -O3 -DS=2048 -DT=512|
+mmul/mmul_tiling|Tiling S=2048 T=1024|collect=true|build_command=gcc -O3 -DS=2048 -DT=1024|
+mmul/mmul_tiling|Tiling S=2048 T=2048|collect=true|build_command=gcc -O3 -DS=2048 -DT=2048|
