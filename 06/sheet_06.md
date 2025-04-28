@@ -4,8 +4,8 @@ Exercise Sheet 6
 A) MMUL tiling
 --------------
 
-![MMUL tiling local](./matrix_multiplication_performance_local.png)
-![MMUL tiling cluster_2](./matrix_multiplication_performance_cluster_2.png)
+![MMUL tiling local](./figures/matrix_multiplication_performance_local.png)
+![MMUL tiling cluster_2](./figures/matrix_multiplication_performance_cluster_2.png)
 
 Top image shows the performance of my local machine, while the bottom image shows the performance of the cluster.  
 Interestingly, on my local machine, the performance is declining with increasing block size, while on the cluster, the performance stays more or less constant until the block size reaches 1024, after which it starts to decline dramatically.  
@@ -14,8 +14,8 @@ Some possible reasons for this could be that the local machine the smallest bloc
 B) Cache investigation and C) Cache benchmark
 ----------------------
 
-![Cache investigation](./cache_hierarchy_analysis_local.png)
-![Cache benchmark](./cache_hierarchy_analysis_cluster.png)
+![Cache investigation](./figures/cache_hierarchy_analysis_local.png)
+![Cache benchmark](./figures/cache_hierarchy_analysis_cluster.png)
 The cache investigation shows the performance of the local machine on the top and the cluster on the bottom.
 On those images, we can more or less clearly see the cache hierarchy of the machines.
 
