@@ -9,7 +9,7 @@ plt.rcParams['font.family'] = 'DejaVu Sans'
 plt.rcParams['font.size'] = 11
 
 try:
-    data = pd.read_csv('memory_latency_cluster.csv')
+    data = pd.read_csv('memory_latency.csv')
     print(f"Successfully loaded data with {len(data)} rows")
     print(f"Block size range: {data['Block Size (bytes)'].min()} to {data['Block Size (bytes)'].max()} bytes")
 except Exception as e:
@@ -43,9 +43,14 @@ latency_line, = ax1.semilogx(data['Block Size (KiB)'], data['Latency (cycles)'],
 #l3_boundary = 64 * 1024    # L3 boundary in KiB (64MB)
 
 # Lcc3 system cache boundaries
-l1_boundary = 32      # L1 cache boundary in KiB (32KB) 
-l2_boundary = 256     # L2 boundary in KiB (256KB)
-l3_boundary = 12288   # L3 boundary in KiB 12MB)
+#l1_boundary = 32      # L1 cache boundary in KiB (32KB) 
+#l2_boundary = 256     # L2 boundary in KiB (256KB)
+#l3_boundary = 12288   # L3 boundary in KiB 12MB)
+
+# Laptop system cache boundaries
+l1_boundary = 768      # L1 cache boundary in KiB (768KB)
+l2_boundary = 14 * 1024     # L2 boundary in KiB (14MB)
+l3_boundary = 18 * 1024    # L3 boundary in KiB (18MB)
 
 ax1.axvspan(data['Block Size (KiB)'].min(), l1_boundary, alpha=0.12, color='limegreen', label='L1 Cache')
 ax1.axvspan(l1_boundary, l2_boundary, alpha=0.12, color='gold', label='L2 Cache')

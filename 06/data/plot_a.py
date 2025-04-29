@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+import re
 
 df = pd.read_csv("performance_results_local.csv")
 
