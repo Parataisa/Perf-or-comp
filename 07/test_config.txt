@@ -1,0 +1,16 @@
+# Performance Test Configuration
+#
+# Format: program_name|description|[options]|param_set1|param_set2|...
+#
+# Available options:
+# - depends=program_name args     # Dependency program to run first with its arguments
+# - collect=true/false            # Whether to collect metrics for this run (default: true)
+# - cleanup=command or path       # Cleanup command or path pattern to remove after execution
+# - build=true/false              # Whether to build the program before running (default: true)
+# - build_dir=path                # Build directory for the program
+# - build_command=command         # Build command for the program(The whole command like "gcc -Wall -Wextra -O3")
+# - sim_io_load=true/false        # Whether to simulate the I/O load (default: false)
+# - sim_cpu_load=true/false       # Whether to simulate the CPU load (default: false)
+# Examples:
+
+mmul/mmul|Baseline S=2048|collect=true|build_command=gcc -O3 -DS=2048|

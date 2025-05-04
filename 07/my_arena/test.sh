@@ -46,8 +46,8 @@ run_benchmark() {
 make all
 
 # Define allocation size test cases
-declare -a min_sizes=(10  10   10)
-declare -a max_sizes=(100 1000 10000)
+declare -a min_sizes=(10 10  10  )
+declare -a max_sizes=(50 100 1000)
 
 # Test parameters
 THREADS=1
