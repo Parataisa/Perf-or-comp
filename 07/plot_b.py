@@ -124,4 +124,4 @@ if __name__ == "__main__":
     MIN_SIZE = 10
     MAX_SIZE = 1000
     
-    analyze_results("results.csv")
+    analyze_results("/my_arena/results.csv")
