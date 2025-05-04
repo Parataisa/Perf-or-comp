@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <dlfcn.h>
+#include <pthread.h>
 #include <sys/mman.h>
 #include <unistd.h>
 #include <errno.h>
@@ -21,6 +22,7 @@ typedef struct arena {
 
 // Global state
 static arena_t* current_arena = NULL;
+static pthread_mutex_t arena_mutex = PTHREAD_MUTEX_INITIALIZER;
 
 static void* os_alloc(size_t size) {
     size_t aligned_size = ALIGN_TO_PAGE(size);
@@ -66,10 +68,13 @@ static arena_t* arena_create(size_t size) {
 void* arena_malloc(size_t size) {
     if (size == 0) return NULL;
     
+    pthread_mutex_lock(&arena_mutex);
+    
     // Make sure we have an arena
     if (!current_arena)
         current_arena = arena_create(size);
     if (!current_arena) {
+        pthread_mutex_unlock(&arena_mutex);
         return NULL;
     }
     
@@ -81,6 +86,7 @@ void* arena_malloc(size_t size) {
         arena_t* new_arena = arena_create(new_size);
         
         if (!new_arena) {
+            pthread_mutex_unlock(&arena_mutex);
             return NULL;
         }
         
@@ -95,6 +101,7 @@ void* arena_malloc(size_t size) {
     current_arena->used += total_size;
     void* result = header + 1;
     
+    pthread_mutex_unlock(&arena_mutex);
     return result;
 }
 
@@ -137,10 +144,13 @@ void* arena_realloc(void* ptr, size_t size) {
 }
 
 void arena_cleanup(void) {
+    pthread_mutex_lock(&arena_mutex);
     
     while (current_arena) {
         arena_t* prev = current_arena->prev;
         os_free(current_arena, sizeof(arena_t) + current_arena->size);
         current_arena = prev;
     }
+    
+    pthread_mutex_unlock(&arena_mutex);
 }
