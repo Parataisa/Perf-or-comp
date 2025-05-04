@@ -12,4 +12,4 @@ cd /scratch/cb761222/Perf-or-comp/07/
 module load llvm/15.0.4-python-3.10.8-gcc-8.5.0-bq44zh7
 
 echo "Running benchmark..."
-bash performance_test.sh
+bash malloc_test.sh

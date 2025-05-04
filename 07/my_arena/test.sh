@@ -1,7 +1,7 @@
 #!/bin/bash
 
 CSV_FILE="results.csv"
-echo "Allocator,Threads,Repeats,Iterations,MinSize,MaxSize,RealTime,UserTime,SysTime" > $CSV_FILE
+echo "Allocator,Threads,Repeats,Iterations,MinSize,MaxSize,RealTime,UserTime,SysTime,MemoryKB" > $CSV_FILE
 
 # Test different allocation sizes with both allocators
 run_benchmark() {
@@ -15,31 +15,29 @@ run_benchmark() {
     
     echo "Running benchmark: $allocator - threads=$threads, repeats=$repeats, iterations=$iterations, size=$min_size-$max_size"
     
-    # Create a temporary file to capture time output
     time_file=$(mktemp)
     
     if [[ "$cmd" == LD_PRELOAD* ]]; then
         lib_path=$(echo "$cmd" | cut -d' ' -f1 | cut -d'=' -f2)
         real_cmd=$(echo "$cmd" | cut -d' ' -f2-)
         
-        /usr/bin/time -f "%e %U %S" -o "$time_file" bash -c "LD_PRELOAD=\"$lib_path\" $real_cmd $threads $repeats $iterations $min_size $max_size"
+        /usr/bin/time -v bash -c "LD_PRELOAD=\"$lib_path\" $real_cmd $threads $repeats $iterations $min_size $max_size" 2> "$time_file"
     else
-        /usr/bin/time -f "%e %U %S" -o "$time_file" $cmd $threads $repeats $iterations $min_size $max_size
+        /usr/bin/time -v $cmd $threads $repeats $iterations $min_size $max_size 2> "$time_file"
     fi
     
-    # Read timing results
-    time_result=$(cat "$time_file")
+    real_seconds=$(grep "Elapsed (wall clock) time" "$time_file" | sed 's/.*: //' | awk -F: '{ if (NF == 2) print $1*60+$2; else print $1*3600+$2*60+$3 }')
+    user_seconds=$(grep "User time" "$time_file" | sed 's/.*: //')
+    sys_seconds=$(grep "System time" "$time_file" | sed 's/.*: //')
+    memory_kb=$(grep "Maximum resident set size" "$time_file" | sed 's/.*: //')
+    
     rm "$time_file"
     
-    # Extract real, user, and system time
-    real_seconds=$(echo "$time_result" | awk '{print $1}')
-    user_seconds=$(echo "$time_result" | awk '{print $2}')
-    sys_seconds=$(echo "$time_result" | awk '{print $3}')
-    
     # Write results to CSV
-    echo "$allocator,$threads,$repeats,$iterations,$min_size,$max_size,$real_seconds,$user_seconds,$sys_seconds" >> $CSV_FILE
+    echo "$allocator,$threads,$repeats,$iterations,$min_size,$max_size,$real_seconds,$user_seconds,$sys_seconds,$memory_kb" >> $CSV_FILE
     
     echo "  Time: real=$real_seconds, user=$user_seconds, sys=$sys_seconds"
+    echo "  Memory: $memory_kb KB"
     echo "--------------------------------------------------------------"
 }
 
@@ -59,7 +57,6 @@ for i in "${!min_sizes[@]}"; do
     run_benchmark "Default" $THREADS $REPEATS $ITERATIONS ${min_sizes[$i]} ${max_sizes[$i]} "./malloctest"
     run_benchmark "Arena" $THREADS $REPEATS $ITERATIONS ${min_sizes[$i]} ${max_sizes[$i]} "LD_PRELOAD=./libarena_malloc.so ./malloctest"
 done
-
 
 # Test multi-threaded performance
 declare -a thread_counts=(2 8 16)
