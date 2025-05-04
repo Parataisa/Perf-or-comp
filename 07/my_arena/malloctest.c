@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <pthread.h>
 #include <inttypes.h>
+#include <time.h>
 
 typedef struct {
 	int64_t repeats;
@@ -41,6 +42,8 @@ int main(int argc, char** argv) {
 
 	pthread_t* threads = (pthread_t*)calloc(num_threads, sizeof(pthread_t));
 	
+	clock_t start = clock();
+
 	for(int64_t i = 0; i < num_threads; ++i) {
 		pthread_create(&threads[i], NULL, benchmark_thread, &t_args);
 	}
@@ -48,6 +51,10 @@ int main(int argc, char** argv) {
 	for(int64_t i = 0; i < num_threads; ++i) {
 		pthread_join(threads[i], NULL);
 	}
+
+	clock_t end = clock();
+    double cpu_time_used = ((double) (end - start)) / CLOCKS_PER_SEC;
+	printf("All threads completed in %.2f seconds\n", cpu_time_used);
 
 	free(threads);
 }
