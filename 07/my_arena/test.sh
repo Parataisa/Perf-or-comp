@@ -46,8 +46,8 @@ run_benchmark() {
 make all
 
 # Define allocation size test cases
-declare -a min_sizes=(8 16 32 64 128 256 512 1024 2048 4096 10)
-declare -a max_sizes=(16 32 64 128 256 512 1024 2048 4096 8192 1000)
+declare -a min_sizes=(8  32 128 512  1024 4096 10)
+declare -a max_sizes=(16 64 256 1024 4096 8192 1000)
 
 # Test parameters
 THREADS=1
@@ -62,7 +62,7 @@ done
 
 
 # Test multi-threaded performance
-declare -a thread_counts=(1 2 4 8 12 16 24 32)
+declare -a thread_counts=(2 4 8 16 32)
 MIN_SIZE=10
 MAX_SIZE=1000
 
