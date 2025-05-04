@@ -46,8 +46,8 @@ run_benchmark() {
 make all
 
 # Define allocation size test cases
-declare -a min_sizes=(8  32 512  10)
-declare -a max_sizes=(16 64 1024 1000)
+declare -a min_sizes=(10  10   10)
+declare -a max_sizes=(100 1000 10000)
 
 # Test parameters
 THREADS=1
@@ -62,13 +62,13 @@ done
 
 
 # Test multi-threaded performance
-declare -a thread_counts=(2 4 8 16)
+declare -a thread_counts=(2 8 16)
 MIN_SIZE=10
 MAX_SIZE=1000
 
 for threads in "${thread_counts[@]}"; do
     run_benchmark "Default" $threads $REPEATS $ITERATIONS $MIN_SIZE $MAX_SIZE "./malloctest"
-    run_benchmark "Arena" $threads $REPEATS $ITERATIONS $MIN_SIZE $MAX_SIZE "LD_PRELOAD=./libarena_malloc_ts.so ./malloctest"
+    run_benchmark "Arena" $threads $REPEATS $ITERATIONS $MIN_SIZE $MAX_SIZE "LD_PRELOAD=./libarena_malloc.so ./malloctest"
 done
 
 make clean
