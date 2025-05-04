@@ -59,14 +59,14 @@ for i in "${!min_sizes[@]}"; do
 done
 
 # Test multi-threaded performance
-declare -a thread_counts=(2 8 16)
-MIN_SIZE=10
-MAX_SIZE=1000
-
-for threads in "${thread_counts[@]}"; do
-    run_benchmark "Default" $threads $REPEATS $ITERATIONS $MIN_SIZE $MAX_SIZE "./malloctest"
-    run_benchmark "Arena" $threads $REPEATS $ITERATIONS $MIN_SIZE $MAX_SIZE "LD_PRELOAD=./libarena_malloc.so ./malloctest"
-done
+#declare -a thread_counts=(2 8 16)
+#MIN_SIZE=10
+#MAX_SIZE=1000
+#
+#for threads in "${thread_counts[@]}"; do
+#    run_benchmark "Default" $threads $REPEATS $ITERATIONS $MIN_SIZE $MAX_SIZE "./malloctest"
+#    run_benchmark "Arena" $threads $REPEATS $ITERATIONS $MIN_SIZE $MAX_SIZE "LD_PRELOAD=./libarena_malloc.so ./malloctest"
+#done
 
 make clean
 

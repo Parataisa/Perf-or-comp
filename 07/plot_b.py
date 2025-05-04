@@ -62,8 +62,8 @@ def analyze_results(csv_file):
                     thread_sizes[threads] = []
                 thread_sizes[threads].append((size_range, time_speedup, default_time, arena_time, default_memory, arena_memory))
         
-        # Plot single-threaded performance by allocation size
-        thread_count = 1  
+        # Create detailed single-threaded comparison
+        thread_count = 1
         if thread_count in thread_sizes:
             sizes = [x[0] for x in thread_sizes[thread_count]]
             default_times = [x[2] for x in thread_sizes[thread_count]]
@@ -71,117 +71,113 @@ def analyze_results(csv_file):
             default_memory = [x[4] for x in thread_sizes[thread_count]]
             arena_memory = [x[5] for x in thread_sizes[thread_count]]
             
+            # Create a figure showing execution times with focused y-axis
+            fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(12, 10))
+            
             x = np.arange(len(sizes))
             width = 0.35
             
-            # Create figure with 2 subplots (time and memory)
-            fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(14, 14))
+            rects1 = ax1.bar(x - width/2, default_times, width, label='Default', alpha=0.8, color='#1f77b4')
+            rects2 = ax1.bar(x + width/2, arena_times, width, label='Arena', alpha=0.8, color='#ff7f0e')
             
-            # Plot execution times
-            rects1 = ax1.bar(x - width/2, default_times, width, label='Default Allocator')
-            rects2 = ax1.bar(x + width/2, arena_times, width, label='Arena Allocator')
+            # Calculate appropriate y-axis limits to show differences
+            all_times = default_times + arena_times
+            min_time = min(all_times)
+            max_time = max(all_times)
+            margin = (max_time - min_time) * 0.1
             
-            ax1.set_title('Execution Time Comparison by Allocation Size (Single-threaded)')
-            ax1.set_xlabel('Allocation Size Range (bytes)')
-            ax1.set_ylabel('Execution Time (seconds)')
+            if margin < max_time * 0.05:
+                margin = max_time * 0.1
+                ax1.set_ylim(min_time - margin, max_time + margin)
+            
+            ax1.set_title('Execution Time Comparison (Single-threaded)', fontsize=14)
+            ax1.set_xlabel('Allocation Size Range', fontsize=12)
+            ax1.set_ylabel('Time (seconds)', fontsize=12)
             ax1.set_xticks(x)
             ax1.set_xticklabels(sizes, rotation=45)
             ax1.legend()
+            ax1.grid(axis='y', alpha=0.3)
+            ax1.set_yscale('log')
             
-            # Plot memory usage
-            rects3 = ax2.bar(x - width/2, default_memory, width, label='Default Allocator')
-            rects4 = ax2.bar(x + width/2, arena_memory, width, label='Arena Allocator')
+            # Add precise value labels
+            for rect in rects1 + rects2:
+                height = rect.get_height()
+                ax1.annotate(f'{height:.3f}',
+                            xy=(rect.get_x() + rect.get_width() / 2, height),
+                            xytext=(0, 3),
+                            textcoords="offset points",
+                            ha='center', va='bottom', fontsize=9)
             
-            ax2.set_title('Memory Usage Comparison by Allocation Size (Single-threaded)')
-            ax2.set_xlabel('Allocation Size Range (bytes)')
-            ax2.set_ylabel('Memory Usage (MB)')
-            ax2.set_xticks(x)
-            ax2.set_xticklabels(sizes, rotation=45)
-            ax2.legend()
+            # Plot percentage difference
+            differences = [(d - a) / d * 100 if d > 0 else 0 for d, a in zip(default_times, arena_times)]
             
-            # Add value labels on top of bars
-            def autolabel(rects, ax, fmt='.3f'):
-                for rect in rects:
-                    height = rect.get_height()
-                    ax.annotate(f'{height:{fmt}}',
-                                xy=(rect.get_x() + rect.get_width() / 2, height),
-                                xytext=(0, 3),  # 3 points vertical offset
-                                textcoords="offset points",
-                                ha='center', va='bottom', fontsize=8)
+            bars = ax2.bar(sizes, differences, alpha=0.8, 
+                          color=['red' if diff < 0 else 'green' for diff in differences])
             
-            autolabel(rects1, ax1)
-            autolabel(rects2, ax1)
-            autolabel(rects3, ax2, '.2f')
-            autolabel(rects4, ax2, '.2f')
+            ax2.set_title('Performance Difference (% faster/slower than default)', fontsize=14)
+            ax2.set_xlabel('Allocation Size Range', fontsize=12)
+            ax2.set_ylabel('Difference (%)', fontsize=12)
+            ax2.axhline(y=0, color='black', linestyle='-', linewidth=1)
+            ax2.grid(axis='y', alpha=0.3)
             
+            # Add value labels
+            for bar, diff in zip(bars, differences):
+                height = bar.get_height()
+                ax2.annotate(f'{diff:.2f}%',
+                            xy=(bar.get_x() + bar.get_width() / 2, height),
+                            xytext=(0, 3 if height >= 0 else -15),
+                            textcoords="offset points",
+                            ha='center', va='bottom' if height >= 0 else 'top',
+                            fontsize=10)
+            
+            plt.xticks(rotation=45)
             fig.tight_layout()
-            plt.savefig('single_thread_comparison.png')
-        
-        # Create plots comparing performance by thread count
-        threads = sorted(thread_sizes.keys())
-        default_times = []
-        arena_times = []
-        default_memory = []
-        arena_memory = []
-        
-        for t in threads:
-            # Filter for the specific size range we're interested in for multi-threaded tests
-            data = [(x[2], x[3], x[4], x[5]) for x in thread_sizes[t] if x[0] == f'{MIN_SIZE}-{MAX_SIZE}']
-            if data:
-                default_times.append(data[0][0])
-                arena_times.append(data[0][1])
-                default_memory.append(data[0][2])
-                arena_memory.append(data[0][3])
-            else:
-                default_times.append(0)
-                arena_times.append(0)
-                default_memory.append(0)
-                arena_memory.append(0)
-        
-        x = np.arange(len(threads))
-        width = 0.35
-        
-        # Create figure with 2 subplots (time and memory)
-        fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(14, 14))
-        
-        # Plot execution times
-        rects1 = ax1.bar(x - width/2, default_times, width, label='Default Allocator')
-        rects2 = ax1.bar(x + width/2, arena_times, width, label='Arena Allocator')
-        
-        ax1.set_title(f'Execution Time Comparison by Thread Count (Size range: {MIN_SIZE}-{MAX_SIZE})')
-        ax1.set_xlabel('Number of Threads')
-        ax1.set_ylabel('Execution Time (seconds)')
-        ax1.set_xticks(x)
-        ax1.set_xticklabels(threads)
-        ax1.legend()
-        
-        # Plot memory usage
-        rects3 = ax2.bar(x - width/2, default_memory, width, label='Default Allocator')
-        rects4 = ax2.bar(x + width/2, arena_memory, width, label='Arena Allocator')
-        
-        ax2.set_title(f'Memory Usage Comparison by Thread Count (Size range: {MIN_SIZE}-{MAX_SIZE})')
-        ax2.set_xlabel('Number of Threads')
-        ax2.set_ylabel('Memory Usage (MB)')
-        ax2.set_xticks(x)
-        ax2.set_xticklabels(threads)
-        ax2.legend()
-        
-        autolabel(rects1, ax1)
-        autolabel(rects2, ax1)
-        autolabel(rects3, ax2, '.2f')
-        autolabel(rects4, ax2, '.2f')
-        
-        fig.tight_layout()
-        plt.savefig('thread_comparison.png')
-        
-        print("\nResults have been saved as:")
-        print("- single_thread_comparison.png (Time and memory comparison by allocation size)")
-        print("- thread_comparison.png (Time and memory comparison by thread count)")
+            plt.savefig('detailed_comparison.png', bbox_inches='tight')
+            plt.close()
+            
+            # Create a table showing exact numbers
+            fig, ax = plt.subplots(figsize=(10, 6))
+            ax.axis('tight')
+            ax.axis('off')
+            
+            # Create table data
+            table_data = [['Size Range', 'Default (s)', 'Arena (s)', 'Difference (s)', 'Difference (%)']]
+            for i, size in enumerate(sizes):
+                def_time = default_times[i]
+                arena_time = arena_times[i]
+                diff_time = arena_time - def_time
+                diff_pct = (def_time - arena_time) / def_time * 100 if def_time > 0 else 0
+                
+                table_data.append([
+                    size,
+                    f'{def_time:.6f}',
+                    f'{arena_time:.6f}',
+                    f'{diff_time:+.6f}',
+                    f'{diff_pct:+.2f}%'
+                ])
+            
+            # Create the table
+            table = ax.table(cellText=table_data, loc='center', cellLoc='center')
+            table.auto_set_font_size(False)
+            table.set_fontsize(12)
+            table.scale(1.2, 1.5)
+            
+            # Style the header row
+            for i in range(len(table_data[0])):
+                table[(0, i)].set_facecolor('#4CAF50')
+                table[(0, i)].set_text_props(weight='bold', color='white')
+            
+            # Color-code the differences
+            for i in range(1, len(table_data)):
+                diff_cell = table[(i, 4)]
+                if float(table_data[i][3]) > 0:  # Arena is slower
+                    diff_cell.set_facecolor('#ffcdd2')
+                elif float(table_data[i][3]) < 0:  # Arena is faster
+                    diff_cell.set_facecolor('#c8e6c9')
+            
+            plt.title('Detailed Performance Comparison (Single-threaded)', fontsize=16, pad=20)
+            plt.savefig('performance_table.png', bbox_inches='tight')
+            plt.close()  
 
 if __name__ == "__main__":
-    # Define the allocation size for multi-threaded tests
-    MIN_SIZE = 10
-    MAX_SIZE = 1000
-    
-    # Fix the path to your results file
-    analyze_results("/scratch/cb761222/Perf-or-comp/07/my_arena/results.csv")
+    analyze_results("my_arena/results1.csv")
