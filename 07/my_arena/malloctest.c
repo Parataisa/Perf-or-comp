@@ -4,6 +4,10 @@
 #include <inttypes.h>
 #include <time.h>
 
+#ifdef ARENA_MALLOC_H
+#include "arena_malloc.h"
+#endif
+
 typedef struct {
 	int64_t repeats;
 	int64_t iterations;
@@ -57,4 +61,11 @@ int main(int argc, char** argv) {
 	printf("All threads completed in %.2f seconds\n", cpu_time_used);
 
 	free(threads);
+
+#ifdef ARENA_MALLOC_H
+	arena_cleanup();
+	printf("Arena cleanup completed\n");
+#endif
+
+	return 0;
 }
