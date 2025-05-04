@@ -1,36 +1,50 @@
 #!/bin/bash
 
-# Performance testing framework - Main script
-# This is the entry point for the performance testing framework
+module load llvm/15.0.4-python-3.10.8-gcc-8.5.0-bq44zh7
 
-# Import all modules
-SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-source "${SCRIPT_DIR}/lib/config.sh"
-source "${SCRIPT_DIR}/lib/parsing.sh"
-source "${SCRIPT_DIR}/lib/measurement.sh"
-source "${SCRIPT_DIR}/lib/reporting.sh"
-source "${SCRIPT_DIR}/lib/test_runner.sh"
-source "${SCRIPT_DIR}/lib/build_system.sh"
-source "${SCRIPT_DIR}/lib/job_creation.sh"
-source "${SCRIPT_DIR}/lib/job_management.sh"
-source "${SCRIPT_DIR}/lib/result_processing.sh"
-source "${SCRIPT_DIR}/lib/compiler_analysis.sh"
+TMPDIR=$(mktemp -d /tmp/benchmark-XXXXX)
+echo "Working in temporary directory: $TMPDIR"
+cp -r /scratch/cb761222/Perf-or-comp/07/allscale_api $TMPDIR/
+cd $TMPDIR/allscale_api
 
-# Configuration 
-CONFIG_FILE="test_config.txt"
-MODE="standard"  # Options: "analyze" or "standard"
+# Create fresh build directory (remove old one if it exists)
+rm -rf build
+mkdir -p build
+cd build
 
-# Log which mode we're running
-log "INFO" "Running performance tests with mode: $MODE"
+# Run benchmark with default allocator
+echo "=== BENCHMARK 1: Default Allocator ==="
+# Use fresh CMake configuration to avoid cached paths
+cmake -DCMAKE_BUILD_TYPE=Release -G Ninja $TMPDIR/allscale_api/code
+/usr/bin/time -v ninja > /dev/null 2> time_default.txt
 
-# Run based on selected mode
-if [ "$MODE" = "analyze" ]; then
-    analyze_compiler_flags "$CONFIG_FILE"
-    log "INFO" "Compiler optimization results saved to compiler_results/"
-else
-    process_config "$CONFIG_FILE"
-    log "INFO" "Performance testing complete!"
-    log "INFO" "Results saved to $OUTPUT_FILE"
-    log "INFO" "CSV metrics saved to $CSV_FILE"
-fi
-exit 0
+# Run benchmark with RPMalloc
+echo "=== BENCHMARK 2: RPMalloc ==="
+ninja clean
+LD_PRELOAD=/scratch/cb761222/Perf-or-comp/07/rpmalloc/bin/linux/release/x86-64/librpmalloc.so /usr/bin/time -v ninja > /dev/null 2> time_rpmalloc.txt
+
+# Run benchmark with MiMalloc
+echo "=== BENCHMARK 3: MiMalloc ==="
+ninja clean
+LD_PRELOAD=/scratch/cb761222/Perf-or-comp/07/mimalloc/out/release/libmimalloc.so /usr/bin/time -v ninja > /dev/null 2> time_mimalloc.txt
+
+# Extract results
+echo "=== RESULTS ==="
+for file in time_*.txt; do
+  alloc=$(echo $file | sed 's/time_\(.*\)\.txt/\1/')
+  echo "$alloc allocator:"
+  grep "User time" $file
+  grep "System time" $file
+  grep "Elapsed" $file
+  grep "Maximum resident" $file
+  echo ""
+done
+
+# Copy results back to scratch
+mkdir -p /scratch/cb761222/Perf-or-comp/07/results
+cp time_*.txt /scratch/cb761222/Perf-or-comp/07/results/
+
+# Clean up
+cd /scratch/cb761222/Perf-or-comp/07/
+rm -rf $TMPDIR
+echo "Benchmark complete. Results saved to /scratch/cb761222/Perf-or-comp/07/results/"

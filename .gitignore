@@ -16,3 +16,4 @@ build/
 build_*/
 *.o
 *.so
+*.out 
