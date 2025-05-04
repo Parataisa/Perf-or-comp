@@ -71,4 +71,6 @@ for threads in "${thread_counts[@]}"; do
     run_benchmark "Arena" $threads $REPEATS $ITERATIONS $MIN_SIZE $MAX_SIZE "LD_PRELOAD=./libarena_malloc.so ./malloctest"
 done
 
+make clean
+
 echo "Benchmark completed. Results saved to $CSV_FILE"

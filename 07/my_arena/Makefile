@@ -20,27 +20,5 @@ $(MALLOC_TEST): malloctest.c
 %.o: %.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
-# Test with default system allocator
-test_default: $(MALLOC_TEST)
-	@echo "=== Running benchmark with default allocator ==="
-	time ./$(MALLOC_TEST) 1 500 1000000 10 1000
-
-# Test with arena allocator
-test_arena: $(LIB_TARGET) $(MALLOC_TEST)
-	@echo "=== Running benchmark with arena allocator ==="
-	time LD_PRELOAD=./$(LIB_TARGET) ./$(MALLOC_TEST) 1 500 1000000 10 1000
-
-# Combined benchmark
-benchmark: $(LIB_TARGET) $(MALLOC_TEST)
-	@echo "=== Benchmark comparison ==="
-	@echo "Default allocator:"
-	@time ./$(MALLOC_TEST) 12 500 1000000 10 1000
-	@echo "\nArena allocator:"
-	@time LD_PRELOAD=./$(LIB_TARGET) ./$(MALLOC_TEST) 12 500 1000000 10 1000
-
-# Smaller test for debugging
-debug_test: $(LIB_TARGET) $(MALLOC_TEST)
-	LD_PRELOAD=./$(LIB_TARGET) ./$(MALLOC_TEST) 1 5 100 10 1000
-
 clean:
 	rm -f $(OBJ) $(LIB_TARGET) $(MALLOC_TEST)
