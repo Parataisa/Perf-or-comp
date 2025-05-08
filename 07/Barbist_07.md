@@ -2,8 +2,6 @@ A) Preloading General Allocators
 --------------------------------
 Perform 3 sets of benchmarks:
 
-Perform 3 sets of benchmarks:
-
 1. No allocator preloading
 ```
     Command being timed: "ninja"  
@@ -82,7 +80,6 @@ Perform 3 sets of benchmarks:
 	Page size (bytes): 4096
 	Exit status: 0
 ```
-- Chart and report the CPU time, wall time and peak memory consumption for each of these.
 ![benchmakrs_plot](results/allocator_comparison.png)
 ```
 Performance Comparison Report
@@ -110,4 +107,12 @@ B) Implementing a special-purpose allocator
 
 ![detailed_comparison](results/arena_detailed_comparison.png)
 ![performance_table](results/arena_performance_table.png)
-The custom arean+bump allocator only shows modest performance improvements over the default allocator. 
+```
+Threads         Size Range      Time Speedup    Default (s)     Arena (s)       Default (MB)    Arena (MB)     
+---------------------------------------------------------------------------------------------------------
+1               10-50           1.00            59.110000       59.060000       51.98           51.95          
+1               10-100          1.00            86.460000       86.250000       75.56           75.47          
+1               10-1000         1.01            229.470000      227.500000      504.79          504.82   
+```
+The custom arean+bump allocator only shows modest performance improvements over the default allocator.
+It seems the default allocator is already quite efficient for this test case, and the custom allocator does not provide significant advantages in terms of speed or memory usage.(Memory usage is more or less the same for both) 
