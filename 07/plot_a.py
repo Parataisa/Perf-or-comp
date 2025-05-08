@@ -60,7 +60,7 @@ for i, (metric, label) in enumerate(zip(metrics, metric_labels)):
         axs[i].text(j, v + (max(values) * 0.01), f"{v:.2f}", ha='center')
 
 plt.tight_layout()
-plt.savefig(os.path.join(results_dir, 'allocator_comparison.png'))
+plt.savefig(os.path.join(results_dir, 'results/allocator_comparison.png'))
 
 print("\nPerformance Comparison Report")
 print("============================\n")

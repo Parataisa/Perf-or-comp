@@ -102,18 +102,12 @@ Allocator    User Time (%)   System Time (%)  Wall Time (%)   Memory (%)
 rpmalloc     8.36            28.23            12.63           -12.31      
 mimalloc     8.59            36.54            11.14           -3.09       
 ````
-
+Here we see a trade-off: both specialized allocators consume more memory, with RPMalloc using significantly more than MiMalloc. This suggests that these allocators trade some memory overhead for speed improvements.
 
 
 B) Implementing a special-purpose allocator
 -------------------------------------------
 
-For this exercise, we are using the benchmark found in `tools/malloctest`.
-This is a very simple memory allocator benchmark which repeatedly performs a sequence of random allocations, and then frees them all.
-
-Implement a bump allocator working on an arena, and use it with this benchmark. 
-
-Report the benchmark time for the default allocator, and your bump allocator, for a call to
-```bash
-./malloctest 1 500 1000000 10 1000
-```
+![detailed_comparison](results/arena_detailed_comparison.png)
+![performance_table](results/arena_performance_table.png)
+The custom arean+bump allocator only shows modest performance improvements over the default allocator. 

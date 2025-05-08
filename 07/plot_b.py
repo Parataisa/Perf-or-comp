@@ -132,7 +132,7 @@ def analyze_results(csv_file):
             
             plt.xticks(rotation=45)
             fig.tight_layout()
-            plt.savefig('detailed_comparison.png', bbox_inches='tight')
+            plt.savefig('results/arena_detailed_comparison.png', bbox_inches='tight')
             plt.close()
             
             # Create a table showing exact numbers
@@ -175,8 +175,8 @@ def analyze_results(csv_file):
                 elif float(table_data[i][3]) < 0:  # Arena is faster
                     diff_cell.set_facecolor('#c8e6c9')
             
-            plt.title('Detailed Performance Comparison (Single-threaded)', fontsize=16, pad=20)
-            plt.savefig('performance_table.png', bbox_inches='tight')
+            plt.title('Detailed Performance Comparison', fontsize=16, pad=20)
+            plt.savefig('results/arena_performance_table.png', bbox_inches='tight')
             plt.close()  
 
 if __name__ == "__main__":
