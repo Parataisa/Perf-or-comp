@@ -1,3 +1,5 @@
+#define _GNU_SOURCE
+
 #include "my_malloc.h"
 #include <stdio.h>
 #include <string.h>
@@ -34,13 +36,29 @@ void* arena_malloc(size_t size) {
         
         arena->size = ARENA_SIZE;
         arena->used = 0;
+        printf("Arena initialized with size: %d bytes\n", ARENA_SIZE);
     }
     
     // Align to 8 bytes
     size_t aligned_size = (size + 7) & ~7;
     
     if (arena->used + aligned_size > arena->size) {
-        return NULL;  
+        // Calculate the current and new total size
+        size_t old_total = sizeof(arena_t) + arena->size;
+        size_t new_total = sizeof(arena_t) + arena->size * 2;
+        
+        // Correctly store the result of mremap
+        void* new_arena = mremap(arena, old_total, new_total, MREMAP_MAYMOVE);
+        
+        if (new_arena == MAP_FAILED) {
+            perror("mremap failed");
+            return NULL;
+        }
+        
+        // Update arena pointer to the new location
+        arena = (arena_t*)new_arena;
+        arena->size *= 2;
+        printf("Arena resized to: %lu bytes\n", arena->size);
     }
     
     void* ptr = &arena->data[arena->used];
@@ -48,7 +66,6 @@ void* arena_malloc(size_t size) {
     
     return ptr;
 }
-
 void arena_free(void* ptr) {
     (void)ptr;
 }
