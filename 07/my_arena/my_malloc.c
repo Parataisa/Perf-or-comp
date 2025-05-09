@@ -47,7 +47,6 @@ void* arena_malloc(size_t size) {
         size_t old_total = sizeof(arena_t) + arena->size;
         size_t new_total = sizeof(arena_t) + arena->size * 2;
         
-        // Correctly store the result of mremap
         void* new_arena = mremap(arena, old_total, new_total, MREMAP_MAYMOVE);
         
         if (new_arena == MAP_FAILED) {
