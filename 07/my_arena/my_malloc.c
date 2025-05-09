@@ -12,7 +12,7 @@
 typedef struct arena {
     size_t size;        // total size of the arena
     size_t used;        // amount of memory used
-    char data[];        // flexible array member for the arena data
+    char data[];        // array for the arena data
 } arena_t;
 
 // Global state

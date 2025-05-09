@@ -180,4 +180,4 @@ def analyze_results(csv_file):
             plt.close()  
 
 if __name__ == "__main__":
-    analyze_results("my_arena/results1.csv")
+    analyze_results("my_arena/results.csv")

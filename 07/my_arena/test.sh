@@ -1,6 +1,6 @@
 #!/bin/bash
 
-CSV_FILE="results_lap.csv"
+CSV_FILE="results.csv"
 echo "Allocator,Threads,Repeats,Iterations,MinSize,MaxSize,RealTime,UserTime,SysTime,MemoryKB" > $CSV_FILE
 
 # Test different allocation sizes with both allocators
