@@ -1,5 +1,5 @@
-#ifndef
-#define ARENA_MALLOC_H
+#ifndef MY_MALLOC_H
+#define MY_MALLOC_H
 
 #include <stdlib.h>
 
