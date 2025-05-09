@@ -1,6 +1,6 @@
 #!/bin/bash
 
-CSV_FILE="results.csv"
+CSV_FILE="results_lap.csv"
 echo "Allocator,Threads,Repeats,Iterations,MinSize,MaxSize,RealTime,UserTime,SysTime,MemoryKB" > $CSV_FILE
 
 # Test different allocation sizes with both allocators
@@ -17,14 +17,7 @@ run_benchmark() {
     
     time_file=$(mktemp)
     
-    if [[ "$cmd" == LD_PRELOAD* ]]; then
-        lib_path=$(echo "$cmd" | cut -d' ' -f1 | cut -d'=' -f2)
-        real_cmd=$(echo "$cmd" | cut -d' ' -f2-)
-        
-        /usr/bin/time -v bash -c "LD_PRELOAD=\"$lib_path\" $real_cmd $threads $repeats $iterations $min_size $max_size" 2> "$time_file"
-    else
-        /usr/bin/time -v $cmd $threads $repeats $iterations $min_size $max_size 2> "$time_file"
-    fi
+    /usr/bin/time -v $cmd $threads $repeats $iterations $min_size $max_size 2> "$time_file"
     
     real_seconds=$(grep "Elapsed (wall clock) time" "$time_file" | sed 's/.*: //' | awk -F: '{ if (NF == 2) print $1*60+$2; else print $1*3600+$2*60+$3 }')
     user_seconds=$(grep "User time" "$time_file" | sed 's/.*: //')
@@ -55,18 +48,8 @@ ITERATIONS=1000000
 # Run tests for different allocation sizes
 for i in "${!min_sizes[@]}"; do
     run_benchmark "Default" $THREADS $REPEATS $ITERATIONS ${min_sizes[$i]} ${max_sizes[$i]} "./malloctest"
-    run_benchmark "Arena" $THREADS $REPEATS $ITERATIONS ${min_sizes[$i]} ${max_sizes[$i]} "LD_PRELOAD=./libarena_malloc.so ./malloctest"
+    run_benchmark "Arena" $THREADS $REPEATS $ITERATIONS ${min_sizes[$i]} ${max_sizes[$i]} "./malloctest_arena"
 done
-
-# Test multi-threaded performance
-#declare -a thread_counts=(2 8 16)
-#MIN_SIZE=10
-#MAX_SIZE=1000
-#
-#for threads in "${thread_counts[@]}"; do
-#    run_benchmark "Default" $threads $REPEATS $ITERATIONS $MIN_SIZE $MAX_SIZE "./malloctest"
-#    run_benchmark "Arena" $threads $REPEATS $ITERATIONS $MIN_SIZE $MAX_SIZE "LD_PRELOAD=./libarena_malloc.so ./malloctest"
-#done
 
 make clean
 

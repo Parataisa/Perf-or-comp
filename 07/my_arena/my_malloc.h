@@ -1,4 +1,3 @@
-#ifndef ARENA_MALLOC_H
 #define ARENA_MALLOC_H
 
 #include <stdlib.h>
@@ -18,5 +17,3 @@ void arena_reset(void);
 
 // Arena cleanup function - call at program exit
 void arena_cleanup(void);
-
-#endif 

@@ -5,7 +5,7 @@
 #include <time.h>
 
 #ifdef ARENA_MALLOC_H
-#include "arena_malloc.h"
+#include "my_malloc.h"
 #endif
 
 typedef struct {
