@@ -1,36 +1,40 @@
-CC = gcc 
+CC = gcc
 CFLAGS = -Wall -O2 -I. -Idata_structure
 LDFLAGS = 
 
+# Source files
 SRCS = benchmark.c lib/args_parser.c lib/container_registry.c
-DS_SRCS = data_structure/array_container.c data_structure/linkedlist_container.c
-CUSTOM_SRCS = 
-OBJS = $(SRCS:.c=.o) $(DS_SRCS:.c=.o) $(CUSTOM_SRCS:.c=.o)
+DS_SRCS = data_structure/array_container.c data_structure/linkedlist_sequential.c data_structure/linkedlist_random.c
+OBJS = $(SRCS:.c=.o) $(DS_SRCS:.c=.o)
 
+# Target executable
 TARGET = benchmark
+
+# Default target
 all: $(TARGET)
 
+# Build the target
 $(TARGET): $(OBJS)
 	$(CC) $(LDFLAGS) $(OBJS) -o $(TARGET)
 
+# Compile source files
 %.o: %.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
-list:
-	./$(TARGET) --list-containers
-
-test-array: $(TARGET)
-	./$(TARGET) array 100 4 0.2 0.5 1
-
-test-linkedlist-seq: $(TARGET)
-	./$(TARGET) linkedlist_seq 100 4 0.2 0.5 1
-
-test-linkedlist-rand: $(TARGET)
-	./$(TARGET) linkedlist_rand 100 4 0.2 0.5 1
-
-test-all: test-array test-linkedlist-seq test-linkedlist-rand 
-
+# Clean up
 clean:
 	rm -f $(OBJS) $(TARGET)
 
-.PHONY: all clean list test-array test-linkedlist-seq test-linkedlist-rand test-all
+# Test targets
+test-array:
+	./$(TARGET) array 1000 8388608 0.5 0.5 3
+
+test-linkedlist-seq:
+	./$(TARGET) linkedlist_seq 1000 8 0.2 0.5 3
+
+test-linkedlist-rand:
+	./$(TARGET) linkedlist_rand 1000 8 0.2 0.5 3
+
+test-all: test-array test-linkedlist-seq test-linkedlist-rand
+
+.PHONY: all clean test-array test-linkedlist-seq test-linkedlist-rand test-all

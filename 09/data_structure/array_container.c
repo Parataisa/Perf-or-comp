@@ -3,100 +3,132 @@
 #include <string.h>
 #include "lib/benchmark.h"
 
-typedef struct {
-    int* elements;
-    size_t capacity;
+typedef struct
+{
+    void *elements;
     size_t size;
+    size_t capacity;
     size_t element_size;
     size_t current_pos;
 } ArrayData;
 
-int array_read(void* data, size_t index) {
-    ArrayData* array = (ArrayData*)data;
-    if (index >= array->size) {
+static int array_read(void *data, size_t index)
+{
+    ArrayData *array = (ArrayData *)data;
+    if (index >= array->size)
+    {
         fprintf(stderr, "Error: Array read index out of bounds\n");
         return -1;
     }
-    return array->elements[index];
+    return *((int *)((char *)array->elements + (index * array->element_size)));
 }
 
-void array_write(void* data, size_t index, int value) {
-    ArrayData* array = (ArrayData*)data;
-    if (index >= array->size) {
+static void array_write(void *data, size_t index, int value)
+{
+    ArrayData *array = (ArrayData *)data;
+    if (index >= array->size)
+    {
         fprintf(stderr, "Error: Array write index out of bounds\n");
         return;
     }
-    array->elements[index] = value;
+    *((int *)((char *)array->elements + (index * array->element_size))) = value;
 }
 
-void array_insert(void* data, size_t index, int value) {
-    ArrayData* array = (ArrayData*)data;
-    if (index > array->size) {
+static void array_insert(void *data, size_t index, int value)
+{
+    ArrayData *array = (ArrayData *)data;
+
+    if (index > array->size)
+    {
         fprintf(stderr, "Error: Array insert index out of bounds\n");
         return;
     }
-    
-    if (array->size >= array->capacity) {
-        fprintf(stderr, "Error: Array capacity reached\n");
-        return;
+
+    if (index < array->size)
+    {
+        memmove(
+            (char *)array->elements + ((index + 1) * array->element_size),
+            (char *)array->elements + (index * array->element_size),
+            (array->size - index) * array->element_size);
     }
-    
-    if (index < array->size) {
-        memmove(&array->elements[index + 1], 
-                &array->elements[index], 
-                (array->size - index) * sizeof(int));
-    }
-    
-    array->elements[index] = value;
+
+    *((int *)((char *)array->elements + (index * array->element_size))) = value;
     array->size++;
 }
 
-void array_delete(void* data, size_t index) {
-    ArrayData* array = (ArrayData*)data;
-    if (index >= array->size) {
+static void array_delete(void *data, size_t index)
+{
+    ArrayData *array = (ArrayData *)data;
+
+    if (index >= array->size)
+    {
         fprintf(stderr, "Error: Array delete index out of bounds\n");
         return;
     }
-    
-    if (index < array->size - 1) {
-        memmove(&array->elements[index], 
-                &array->elements[index + 1], 
-                (array->size - index - 1) * sizeof(int));
+
+    if (index < array->size - 1)
+    {
+        memmove(
+            (char *)array->elements + (index * array->element_size),
+            (char *)array->elements + ((index + 1) * array->element_size),
+            (array->size - index - 1) * array->element_size);
     }
-    
+
     array->size--;
 }
 
-void array_init(void* data, size_t size) {
-    ArrayData* array = (ArrayData*)data;
-    array->capacity = size + 1;  
-    array->size = size;
-    array->current_pos = 0;
+static void array_init(void *data, size_t size, size_t element_size)
+{
+    ArrayData *array = (ArrayData *)data;
     
-    array->elements = (int*)malloc(array->capacity * sizeof(int));
-    if (!array->elements) {
+    array->capacity = size + 1;
+    array->size = size;
+    array->element_size = element_size;
+
+    array->elements = malloc(array->capacity * array->element_size);
+    if (!array->elements)
+    {
         fprintf(stderr, "Error: Failed to allocate memory for array\n");
         exit(1);
     }
-    
-    for (size_t i = 0; i < size; i++) {
-        array->elements[i] = rand() % 1000;
+
+    for (size_t i = 0; i < size; i++)
+    {
+        *((int *)((char *)array->elements + (i * array->element_size))) = i % 1000;
     }
 }
 
-void array_cleanup(void* data) {
-    ArrayData* array = (ArrayData*)data;
-    free(array->elements);
-    array->elements = NULL;
+static void array_cleanup(void *data)
+{
+    ArrayData *array = (ArrayData *)data;
+    printf("Cleaning up array container\n");
+    printf("Array size: %zu\n", array->size);
+    printf("Array capacity: %zu\n", array->capacity);
+    printf("Array current position: %zu\n", array->current_pos);
+    printf("Array elements: ");
+    for (size_t i = 0; i < array->size; i++)
+    {
+        printf("%d ", *((int *)((char *)array->elements + (i * array->element_size))));
+    }
+    printf("\n");
+
+    if (array->elements != NULL)
+    {
+        free(array->elements);
+        array->elements = NULL;
+    }
+
     array->size = 0;
     array->capacity = 0;
     array->current_pos = 0;
 }
 
-Container create_array_container() {
+Container create_array_container()
+{
     Container container;
-    ArrayData* array_data = (ArrayData*)malloc(sizeof(ArrayData));
-    if (!array_data) {
+    ArrayData *array_data = (ArrayData *)malloc(sizeof(ArrayData));
+    if (!array_data)
+    {
         fprintf(stderr, "Error: Failed to allocate memory for array container\n");
         exit(1);
     }
