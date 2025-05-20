@@ -1,0 +1,25 @@
+#ifndef BENCHMARK_H
+#define BENCHMARK_H
+#include <stdlib.h>
+
+typedef struct {
+    void* data;
+    size_t element_size;                             
+    int (*read)(void* data, size_t index);   
+    void (*write)(void* data, size_t index, int value);
+    void (*insert)(void* data, size_t index, int value);
+    void (*delete)(void* data, size_t index); 
+    void (*init)(void* data, size_t size);
+    void (*cleanup)(void* data);
+} Container;
+
+typedef struct {
+    Container container;
+    unsigned char* operation_sequence;
+    size_t sequence_length; 
+    size_t container_size;
+    double insert_delete_ratio;
+    double read_write_ratio;
+} Benchmark;
+
+#endif // BENCHMARK_H

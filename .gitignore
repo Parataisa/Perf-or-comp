@@ -16,4 +16,5 @@ build/
 build_*/
 *.o
 *.so
-*.out 
+*.out
+*.exe
