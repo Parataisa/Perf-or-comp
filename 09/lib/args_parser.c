@@ -56,6 +56,10 @@ int initialize_benchmark(const BenchmarkArgs *args, Benchmark *benchmark)
 
     benchmark->container.element_size = args->element_size;
     printf("Using container: %s\n", args->container_type);
+    printf("Container size: %zu\n", benchmark->container_size);
+    printf("Element size: %zu\n", benchmark->container.element_size);
+    printf("Total Memory: %zu bytes -> %zu MB\n", benchmark->container_size * benchmark->container.element_size, 
+           (benchmark->container_size * benchmark->container.element_size) / (1024 * 1024));
 
     return 0;
 }
