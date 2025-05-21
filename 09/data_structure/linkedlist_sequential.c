@@ -110,7 +110,7 @@ static void linkedlist_write(void *data, size_t index, int value)
     node->value = value;
 }
 
-static void linkedlist_insert(void *data, size_t index, int value)
+static int linkedlist_insert(void *data, size_t index, int value)
 {
     LinkedListData *list = (LinkedListData *)data;
 
@@ -122,14 +122,14 @@ static void linkedlist_insert(void *data, size_t index, int value)
     if (index > list->size)
     {
         fprintf(stderr, "Error: Linked list insert index out of bounds\n");
-        return;
+        return -1;
     }
 
     Node *new_node = (Node *)malloc(sizeof(Node));
     if (!new_node)
     {
         fprintf(stderr, "Error: Failed to allocate memory for new node\n");
-        return;
+        return -1;
     }
 
     new_node->value = value;
@@ -146,7 +146,7 @@ static void linkedlist_insert(void *data, size_t index, int value)
         {
             free(new_node);
             fprintf(stderr, "Error: Failed to find node for insertion\n");
-            return;
+            return -1;
         }
 
         new_node->next = prev->next;
@@ -156,9 +156,10 @@ static void linkedlist_insert(void *data, size_t index, int value)
     list->size++;
     list->current = NULL;
     list->current_index = 0;
+    return 0;
 }
 
-static void linkedlist_delete(void *data, size_t index)
+static int linkedlist_delete(void *data, size_t index)
 {
     LinkedListData *list = (LinkedListData *)data;
 
@@ -169,13 +170,13 @@ static void linkedlist_delete(void *data, size_t index)
     else
     {
         fprintf(stderr, "Error: Cannot delete from empty list\n");
-        return;
+        return -1;
     }
 
     if (index >= list->size || !list->head)
     {
         fprintf(stderr, "Error: Linked list delete index out of bounds\n");
-        return;
+        return -1;
     }
 
     Node *to_delete;
@@ -191,7 +192,7 @@ static void linkedlist_delete(void *data, size_t index)
         if (!prev || !prev->next)
         {
             fprintf(stderr, "Error: Failed to find node for deletion\n");
-            return;
+            return -1;
         }
 
         to_delete = prev->next;
@@ -210,6 +211,7 @@ static void linkedlist_delete(void *data, size_t index)
 
     free(to_delete);
     list->size--;
+    return 0;
 }
 
 static void linkedlist_init(void *data, size_t size, size_t element_size)

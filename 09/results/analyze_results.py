@@ -19,6 +19,15 @@ def format_size(size):
 
 df['ElemSizeLabel'] = df['ElemSize'].apply(format_size)
 
+# Set better figure parameters for text visibility
+plt.rcParams.update({
+    'figure.autolayout': True,
+    'figure.figsize': (12, 7),  # Wider figure
+    'axes.labelpad': 10,        # Add padding to axes labels
+    'ytick.major.pad': 5,      # Add padding to y-tick labels
+    'xtick.major.pad': 5       # Add padding to x-tick labels
+})
+
 # Create plots for each combination
 for elem_size in df['ElemSize'].unique():
     for container_size in df['Size'].unique():
@@ -26,17 +35,28 @@ for elem_size in df['ElemSize'].unique():
         
         if subset.empty:
             continue
-            
-        plt.figure(figsize=(10, 6))
-        sns.barplot(x='InsDelRatio', y='OpsPerSecond', hue='Container', data=subset)
+        
+        # Create figure with sufficient left margin    
+        fig, ax = plt.subplots()
+        fig.subplots_adjust(left=0.15)  # Increase left margin
+        
+        # Create the plot
+        sns.barplot(x='InsDelRatio', y='OpsPerSecond', hue='Container', data=subset, ax=ax)
         
         elem_size_label = format_size(elem_size)
-        plt.title(f'Performance: {container_size} elements with {elem_size_label} each')
-        plt.ylabel('Operations per Second')
-        plt.xlabel('Insert/Delete Ratio')
-        plt.tight_layout()
+        ax.set_title(f'Performance: {container_size} elements with {elem_size_label} each')
+        ax.set_ylabel('Operations per Second')
+        ax.set_xlabel('Insert/Delete Ratio')
+        ax.set_yscale('log')
         
-        plt.savefig(f'plot_{container_size}_{elem_size}.png')
+        # Adjust legend position
+        plt.legend(bbox_to_anchor=(1.05, 1), loc='upper left')
+        
+        # Make sure the y-axis labels are fully visible
+        plt.tight_layout(pad=2.0)
+        
+        # Save the figure
+        plt.savefig(f'plot_{container_size}_{elem_size}.png', bbox_inches='tight')
         plt.close()
 
 print("Analysis complete. Plots saved as PNG files.")

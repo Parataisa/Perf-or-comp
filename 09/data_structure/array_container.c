@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <string.h>
 #include "lib/benchmark.h"
+#include <stdint.h>
 
 typedef struct
 {
@@ -20,7 +21,9 @@ static int array_read(void *data, size_t index)
         fprintf(stderr, "Error: Array read index out of bounds\n");
         return -1;
     }
-    return *((int *)((char *)array->elements + (index * array->element_size)));
+    int value;
+    memcpy(&value, (char *)array->elements + (index * array->element_size), sizeof(int));
+    return value;
 }
 
 static void array_write(void *data, size_t index, int value)
@@ -31,17 +34,22 @@ static void array_write(void *data, size_t index, int value)
         fprintf(stderr, "Error: Array write index out of bounds\n");
         return;
     }
-    *((int *)((char *)array->elements + (index * array->element_size))) = value;
+    memcpy((char *)array->elements + (index * array->element_size), &value, sizeof(int));
 }
 
-static void array_insert(void *data, size_t index, int value)
+static int array_insert(void *data, size_t index, int value)
 {
     ArrayData *array = (ArrayData *)data;
 
     if (index > array->size)
     {
         fprintf(stderr, "Error: Array insert index out of bounds\n");
-        return;
+        return -1;
+    }
+    if (array->size >= array->capacity)
+    {
+        fprintf(stderr, "Error: Array insert capacity exceeded\n");
+        return -1;
     }
 
     if (index < array->size)
@@ -52,18 +60,19 @@ static void array_insert(void *data, size_t index, int value)
             (array->size - index) * array->element_size);
     }
 
-    *((int *)((char *)array->elements + (index * array->element_size))) = value;
+    memcpy((char *)array->elements + (index * array->element_size), &value, sizeof(int));
     array->size++;
+    return 0;
 }
 
-static void array_delete(void *data, size_t index)
+static int array_delete(void *data, size_t index)
 {
     ArrayData *array = (ArrayData *)data;
 
     if (index >= array->size)
     {
         fprintf(stderr, "Error: Array delete index out of bounds\n");
-        return;
+        return -1;
     }
 
     if (index < array->size - 1)
@@ -75,12 +84,20 @@ static void array_delete(void *data, size_t index)
     }
 
     array->size--;
+    return 0;
 }
 
 static void array_init(void *data, size_t size, size_t element_size)
 {
     ArrayData *array = (ArrayData *)data;
-    
+
+    if (element_size > 0 && size > SIZE_MAX / element_size)
+    {
+        fprintf(stderr, "Error: Allocation size would overflow (elements: %zu, size: %zu)\n",
+                size, element_size);
+        exit(1);
+    }
+
     array->capacity = size + 1;
     array->size = size;
     array->element_size = element_size;
@@ -88,13 +105,15 @@ static void array_init(void *data, size_t size, size_t element_size)
     array->elements = malloc(array->capacity * array->element_size);
     if (!array->elements)
     {
-        fprintf(stderr, "Error: Failed to allocate memory for array\n");
+        fprintf(stderr, "Error: Failed to allocate %zu bytes for array\n",
+                array->capacity * array->element_size);
         exit(1);
     }
 
     for (size_t i = 0; i < size; i++)
     {
-        *((int *)((char *)array->elements + (i * array->element_size))) = i % 1000;
+        int val = i % 1000;
+        memcpy((char *)array->elements + (i * array->element_size), &val, sizeof(int));
     }
 }
 
@@ -132,13 +151,13 @@ Container create_array_container()
         fprintf(stderr, "Error: Failed to allocate memory for array container\n");
         exit(1);
     }
-    
+
     array_data->elements = NULL;
     array_data->capacity = 0;
     array_data->size = 0;
     array_data->element_size = sizeof(int);
     array_data->current_pos = 0;
-    
+
     container.data = array_data;
     container.element_size = sizeof(int);
     container.read = array_read;
@@ -147,6 +166,6 @@ Container create_array_container()
     container.delete = array_delete;
     container.init = array_init;
     container.cleanup = array_cleanup;
-    
+
     return container;
 }

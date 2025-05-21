@@ -8,8 +8,8 @@ typedef struct
     size_t element_size;
     int (*read)(void *data, size_t index);
     void (*write)(void *data, size_t index, int value);
-    void (*insert)(void *data, size_t index, int value);
-    void (*delete)(void *data, size_t index);
+    int (*insert)(void *data, size_t index, int value);
+    int (*delete)(void *data, size_t index);
     void (*init)(void *data, size_t size, size_t element_size);
     void (*cleanup)(void *data);
 } Container;
