@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 
 # Load results
-df = pd.read_csv('benchmark_results_cluster.csv')
+df = pd.read_csv('benchmark_results.csv')
 df['OpsPerSecond'] = pd.to_numeric(df['OpsPerSecond'])
 df['ElemSize'] = pd.to_numeric(df['ElemSize'])
 df['Size'] = pd.to_numeric(df['Size'])
@@ -56,7 +56,7 @@ for elem_size in df['ElemSize'].unique():
         plt.tight_layout(pad=2.0)
         
         # Save the figure
-        plt.savefig(f'plot_{container_size}_{elem_size}_cluster.png', bbox_inches='tight')
+        plt.savefig(f'plot_{container_size}_{elem_size}.png', bbox_inches='tight')
         plt.close()
 
 print("Analysis complete. Plots saved as PNG files.")
