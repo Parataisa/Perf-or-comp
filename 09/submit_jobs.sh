@@ -4,7 +4,7 @@ CONTAINERS=("array" "linkedlist_seq" "linkedlist_rand")
 INS_DEL_RATIOS=("0.00" "0.01" "0.10" "0.50")
 ELEM_SIZES=("8" "512" "8388608")  # 8B, 512B, 8MB
 CONTAINER_SIZES=("10" "1000" "100000" "10000000")
-READ_RATIO="0.5"  
+READ_RATIO=("1.0", "0.99, "0.90, "0.5")
 TEST_DURATION="3"
 
 SCRIPT_DIR="slurm_jobs"
@@ -29,7 +29,9 @@ for container in "${CONTAINERS[@]}"; do
     for size in "${CONTAINER_SIZES[@]}"; do
         for elem_size in "${ELEM_SIZES[@]}"; do      
             for ratio in "${INS_DEL_RATIOS[@]}"; do
-                TOTAL_JOBS=$((TOTAL_JOBS+1))
+                for read_ratio in "${READ_RATIO[@]}"; do
+                    TOTAL_JOBS=$((TOTAL_JOBS+1))
+                done
             done
         done
     done
@@ -41,10 +43,11 @@ for container in "${CONTAINERS[@]}"; do
     for size in "${CONTAINER_SIZES[@]}"; do
         for elem_size in "${ELEM_SIZES[@]}"; do      
             for ratio in "${INS_DEL_RATIOS[@]}"; do
-                JOB_NAME="${container}_s${size}_e${elem_size}_r${ratio/./_}"
-                JOB_SCRIPT="$SCRIPT_DIR/job_${JOB_NAME}.sh"
+                for read_ratio in "${READ_RATIO[@]}"; do
+                    JOB_NAME="${container}_s${size}_e${elem_size}_r${ratio/./_}_rr${read_ratio/./_}"
+                    JOB_SCRIPT="$SCRIPT_DIR/job_${JOB_NAME}.sh"
                 
-                cat > $JOB_SCRIPT << EOF
+                    cat > $JOB_SCRIPT << EOF
 #!/bin/bash
 #SBATCH --job-name=${JOB_NAME}
 #SBATCH --nodes=1
@@ -63,7 +66,7 @@ module load ninja/1.11.1-python-3.10.8-gcc-8.5.0-2oc4wj6
 cd $BENCHMARK_DIR
 
 # Run the benchmark with specific parameters
-OUTPUT=\$(./benchmark $container $size $elem_size $ratio $READ_RATIO $TEST_DURATION)
+OUTPUT=\$(./benchmark $container $size $elem_size $ratio $read_ratio $TEST_DURATION)
 
 # Extract operations per second
 OPS=\$(echo "\$OUTPUT" | grep "Operations per second" | awk '{print \$4}')
@@ -76,16 +79,18 @@ echo "Container: $container"
 echo "Size: $size elements"
 echo "Element size: ${elem_size}B"
 echo "Ins/Del ratio: $ratio"
+echo "Read ratio: $read_ratio"
 echo "Operations per second: \$OPS"
 EOF
 
-                chmod +x $JOB_SCRIPT
-                
-                JOB_ID=$(sbatch $JOB_SCRIPT | awk '{print $4}')
-                SUBMITTED_JOBS=$((SUBMITTED_JOBS+1))
-                
-                echo "Submitted job $SUBMITTED_JOBS of $TOTAL_JOBS: $JOB_NAME (Job ID: $JOB_ID)"
-                sleep 0.1
+                    chmod +x $JOB_SCRIPT
+
+                    JOB_ID=$(sbatch $JOB_SCRIPT | awk '{print $4}')
+                    SUBMITTED_JOBS=$((SUBMITTED_JOBS+1))
+
+                    echo "Submitted job $SUBMITTED_JOBS of $TOTAL_JOBS: $JOB_NAME (Job ID: $JOB_ID)"
+                    sleep 0.1
+                done
             done
         done
     done
