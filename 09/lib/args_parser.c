@@ -6,6 +6,7 @@
 #include "container_registry.h"
 
 extern unsigned char *generate_sequence(double ins_del_ratio, double read_ratio, size_t length);
+extern unsigned char *generate_sequence_fixed(double ins_del_ratio, double read_ratio, size_t length);
 
 int parse_benchmark_args(int argc, char *argv[], BenchmarkArgs *args)
 {
@@ -40,7 +41,7 @@ int initialize_benchmark(const BenchmarkArgs *args, Benchmark *benchmark)
     benchmark->insert_delete_ratio = args->ins_del_ratio;
     benchmark->read_write_ratio = args->read_ratio;
 
-    benchmark->operation_sequence = generate_sequence(args->ins_del_ratio, args->read_ratio, args->num_elements);
+    benchmark->operation_sequence = generate_sequence_fixed(args->ins_del_ratio, args->read_ratio, args->num_elements);
     benchmark->sequence_length = args->num_elements;
 
     Container *container = create_container_by_name(args->container_type);
