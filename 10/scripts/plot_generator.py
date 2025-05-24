@@ -76,8 +76,7 @@ class PlotGenerator:
             ax.set_xlabel("Number of Elements")
             ax.set_ylabel("Operations per Second")
             ax.set_yscale("log")
-            ax.legend(rotation=45)
-            ax.tick_params(axis="x", rotation=45)
+            ax.tick_params(axis="x")
 
         # Remove empty subplot
         if len(ds_categories) < 4:
@@ -94,25 +93,25 @@ class PlotGenerator:
 
         # Unrolled linked lists
         unrolled_data = success_df[
-            success_df["data_structure"].str.startswith("unrolled")
+            success_df["container"].str.startswith("unrolled")
         ]
         if not unrolled_data.empty:
             # Extract chunk sizes
             unrolled_data = unrolled_data.copy()
             unrolled_data["chunk_size"] = (
-                unrolled_data["data_structure"]
+                unrolled_data["container"]
                 .str.extract(r"unrolled_(\d+)")
                 .astype(int)
             )
 
             chunk_perf = (
-                unrolled_data.groupby(["chunk_size", "num_elements"])["ops_per_second"]
+                unrolled_data.groupby(["chunk_size", "size"])["ops_per_second"]
                 .mean()
                 .reset_index()
             )
 
-            for num_elem in sorted(chunk_perf["num_elements"].unique()):
-                elem_data = chunk_perf[chunk_perf["num_elements"] == num_elem]
+            for num_elem in sorted(chunk_perf["size"].unique()):
+                elem_data = chunk_perf[chunk_perf["size"] == num_elem]
                 axes[0].bar(
                     elem_data["chunk_size"],
                     elem_data["ops_per_second"],
@@ -127,23 +126,23 @@ class PlotGenerator:
             axes[0].legend()
 
         # Tiered arrays
-        tiered_data = success_df[success_df["data_structure"].str.startswith("tiered")]
+        tiered_data = success_df[success_df["container"].str.startswith("tiered")]
         if not tiered_data.empty:
             tiered_data = tiered_data.copy()
             tiered_data["chunk_size"] = (
-                tiered_data["data_structure"]
+                tiered_data["container"]
                 .str.extract(r"tiered_array_(\d+)")
                 .astype(int)
             )
 
             chunk_perf = (
-                tiered_data.groupby(["chunk_size", "num_elements"])["ops_per_second"]
+                tiered_data.groupby(["chunk_size", "size"])["ops_per_second"]
                 .mean()
                 .reset_index()
             )
 
-            for num_elem in sorted(chunk_perf["num_elements"].unique()):
-                elem_data = chunk_perf[chunk_perf["num_elements"] == num_elem]
+            for num_elem in sorted(chunk_perf["size"].unique()):
+                elem_data = chunk_perf[chunk_perf["size"] == num_elem]
                 axes[1].bar(
                     elem_data["chunk_size"],
                     elem_data["ops_per_second"],
@@ -174,22 +173,22 @@ class PlotGenerator:
                 break
 
             ax = axes[i // 2, i % 2]
-            ds_data = success_df[success_df["data_structure"] == ds]
+            ds_data = success_df[success_df["container"] == ds]
 
             if ds_data.empty:
                 continue
 
             # Group by instruction mix and element count
             mix_perf = (
-                ds_data.groupby(["ins_del_ratio", "num_elements"])["ops_per_second"]
+                ds_data.groupby(["ratio", "size"])["ops_per_second"]
                 .mean()
                 .reset_index()
             )
 
-            for num_elem in sorted(mix_perf["num_elements"].unique()):
-                elem_data = mix_perf[mix_perf["num_elements"] == num_elem]
+            for num_elem in sorted(mix_perf["size"].unique()):
+                elem_data = mix_perf[mix_perf["size"] == num_elem]
                 ax.bar(
-                    elem_data["ins_del_ratio"] * 100,
+                    elem_data["ratio"] * 100,
                     elem_data["ops_per_second"],
                     alpha=0.7,
                     label=f"{num_elem} elements",
@@ -214,15 +213,15 @@ class PlotGenerator:
 
         # Memory usage vs number of elements
         mem_data = (
-            success_df.groupby(["data_structure", "num_elements"])["peak_memory_mb"]
+            success_df.groupby(["container", "size"])["peak_memory_mb"]
             .mean()
             .reset_index()
         )
 
-        for ds in mem_data["data_structure"].unique():
-            ds_data = mem_data[mem_data["data_structure"] == ds]
+        for ds in mem_data["container"].unique():
+            ds_data = mem_data[mem_data["container"] == ds]
             axes[0].loglog(
-                ds_data["num_elements"],
+                ds_data["size"],
                 ds_data["peak_memory_mb"],
                 marker="o",
                 label=ds,
@@ -242,7 +241,7 @@ class PlotGenerator:
         )
 
         eff_grouped = (
-            efficiency_data.groupby("data_structure")["ops_per_mb"]
+            efficiency_data.groupby("container")["ops_per_mb"]
             .mean()
             .sort_values(ascending=True)
         )
@@ -265,10 +264,10 @@ class PlotGenerator:
         baseline_performance = {}
         scalability_data = []
 
-        for ds in success_df["data_structure"].unique():
-            ds_data = success_df[success_df["data_structure"] == ds]
+        for ds in success_df["container"].unique():
+            ds_data = success_df[success_df["container"] == ds]
             perf_by_size = (
-                ds_data.groupby("num_elements")["ops_per_second"].mean().sort_index()
+                ds_data.groupby("size")["ops_per_second"].mean().sort_index()
             )
 
             if len(perf_by_size) > 1:
@@ -277,20 +276,20 @@ class PlotGenerator:
                 for size, perf in perf_by_size.items():
                     scalability_data.append(
                         {
-                            "data_structure": ds,
-                            "num_elements": size,
-                            "performance_ratio": perf / baseline,
+                            "container": ds,
+                            "size": size,
+                            "ratio": perf / baseline,
                         }
                     )
 
         scalability_df = pd.DataFrame(scalability_data)
 
         if not scalability_df.empty:
-            for ds in scalability_df["data_structure"].unique():
-                ds_data = scalability_df[scalability_df["data_structure"] == ds]
+            for ds in scalability_df["container"].unique():
+                ds_data = scalability_df[scalability_df["container"] == ds]
                 ax.semilogx(
-                    ds_data["num_elements"],
-                    ds_data["performance_ratio"],
+                    ds_data["size"],
+                    ds_data["ratio"],
                     marker="o",
                     label=ds,
                     linewidth=2,
