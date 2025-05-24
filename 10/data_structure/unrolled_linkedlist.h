@@ -4,10 +4,6 @@
 #include <stddef.h>
 #include "benchmark.h"
 
-#define DEFAULT_CHUNK_SIZE 32
-
-typedef struct UnrolledNode UnrolledNode;
-
 typedef struct UnrolledNode
 {
     int *elements;             // Array of elements in this chunk

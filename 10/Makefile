@@ -27,21 +27,19 @@ clean:
 
 # Test targets
 test-array:
-	./$(TARGET) array 1000 1000 0.5 5
+	./$(TARGET) array 1000 8 0.5 3
 
 test-linkedlist-seq:
-	./$(TARGET) linkedlist_seq 1000 8 0.2 5 
+	./$(TARGET) linkedlist_seq 1000 8 0.2 3
 
 test-linkedlist-rand:
-	./$(TARGET) linkedlist_rand 1000 8 0.2 5
+	./$(TARGET) linkedlist_rand 1000 8 0.2 3
 
 test-unrolledlist:
-	./$(TARGET) unrolled_linkedlist_8 1000 8 0.6 5
-	./$(TARGET) unrolled_linkedlist_16 1000 8 0.6 5
-	./$(TARGET) unrolled_linkedlist_32 1000 8 0.6 5
-	./$(TARGET) unrolled_linkedlist_64 1000 8 0.6 5
-	./$(TARGET) unrolled_linkedlist_128 1000 8 0.6 5
-
-test-all: test-array test-linkedlist-seq test-linkedlist-rand
+	./$(TARGET) unrolled_linkedlist_8 1000 8 0.6 3
+	./$(TARGET) unrolled_linkedlist_16 1000 8 0.6 3
+	./$(TARGET) unrolled_linkedlist_32 1000 8 0.6 3
+	./$(TARGET) unrolled_linkedlist_64 1000 8 0.6 3
+	./$(TARGET) unrolled_linkedlist_128 1000 8 0.6 3
 
 .PHONY: all clean test-array test-linkedlist-seq test-linkedlist-rand test-all
