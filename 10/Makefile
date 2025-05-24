@@ -7,15 +7,26 @@ SRCS = benchmark.c lib/args_parser.c lib/container_registry.c
 DS_SRCS = data_structure/array_container.c data_structure/linkedlist_sequential.c data_structure/linkedlist_random.c data_structure/unrolled_linkedlist.c
 OBJS = $(SRCS:.c=.o) $(DS_SRCS:.c=.o)
 
+# Test source files
+TEST_SRCS = test/generate_sequence_test.c
+TEST_OBJS = $(TEST_SRCS:.c=.o)
+TEST_DEPS = lib/args_parser.o lib/container_registry.o data_structure/array_container.o \
+            data_structure/linkedlist_sequential.o data_structure/linkedlist_random.o \
+            data_structure/unrolled_linkedlist.o
+
 # Target executable
 TARGET = benchmark
-
+TEST_TARGET = sequence_test
 # Default target
-all: $(TARGET)
+all: $(TARGET) $(TEST_TARGET)
 
-# Build the target
+# Build the benchmark target
 $(TARGET): $(OBJS)
 	$(CC) $(LDFLAGS) $(OBJS) -o $(TARGET)
+
+# Build the sequence test target
+$(TEST_TARGET): $(TEST_OBJS) $(TEST_DEPS)
+	$(CC) $(LDFLAGS) -o $@ $^
 
 # Compile source files
 %.o: %.c
@@ -23,11 +34,11 @@ $(TARGET): $(OBJS)
 
 # Clean up
 clean:
-	rm -f $(OBJS) $(TARGET)
+	rm -f $(OBJS) $(TARGET) $(TEST_OBJS) $(TEST_TARGET)
 
 # Test targets
 test-array:
-	./$(TARGET) array 1000 8 0.5 3
+	./$(TARGET) array 1000 8 1.0 3
 
 test-linkedlist-seq:
 	./$(TARGET) linkedlist_seq 1000 8 0.2 3
@@ -42,4 +53,7 @@ test-unrolledlist:
 	./$(TARGET) unrolled_linkedlist_64 1000 8 0.6 3
 	./$(TARGET) unrolled_linkedlist_128 1000 8 0.6 3
 
-.PHONY: all clean test-array test-linkedlist-seq test-linkedlist-rand test-all
+test-sequence:
+	./$(TEST_TARGET)
+
+.PHONY: all clean test-array test-linkedlist-seq test-linkedlist-rand test-unrolledlist test-sequence

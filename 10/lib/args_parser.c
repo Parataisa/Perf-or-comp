@@ -5,7 +5,7 @@
 #include "benchmark.h"
 #include "container_registry.h"
 
-unsigned char *generate_sequence(double ins_del_ratio, size_t length)
+unsigned char *generate_sequence(double ratio, size_t length)
 {
     unsigned char *sequence = malloc(length * sizeof(unsigned char));
     if (!sequence)
@@ -14,7 +14,7 @@ unsigned char *generate_sequence(double ins_del_ratio, size_t length)
         exit(1);
     }
 
-    size_t ins_del_ops = (size_t)(length * ins_del_ratio);
+    size_t ins_del_ops = (size_t)(length * ratio);
     if (ins_del_ops % 2 != 0)
     {
         ins_del_ops = (ins_del_ops > 0) ? ins_del_ops - 1 : 0;
@@ -126,7 +126,7 @@ unsigned char *generate_sequence(double ins_del_ratio, size_t length)
     validate_sequence(sequence, length, &r_count, &w_count, &i_count, &d_count,
                       &insert_balance, &max_consecutive_inserts);
     print_statistics(i_count, d_count, length, r_count, w_count,
-                     ins_del_ratio, 0.5, insert_balance,
+                     ratio, 0.5, insert_balance,
                      max_consecutive_inserts, sequence);
 
     return sequence;
@@ -140,9 +140,9 @@ int parse_benchmark_args(int argc, char *argv[], BenchmarkArgs *args)
         exit(0);
     }
 
-    if (argc < 6)
+    if (argc < 5)
     {
-        printf("Usage: %s <container_type> <num_elements> <element_size> <ins_del_ratio> <read_ratio> [benchmark_seconds]\n", argv[0]);
+        printf("Usage: %s <container_type> <num_elements> <element_size> <read_ratio> [benchmark_seconds]\n", argv[0]);
         printf("       %s --list-containers\n", argv[0]);
         return 1;
     }
@@ -153,7 +153,7 @@ int parse_benchmark_args(int argc, char *argv[], BenchmarkArgs *args)
     args->num_elements = strtoul(argv[2], NULL, 10);
     args->element_size = strtoul(argv[3], NULL, 10);
     args->ratio = strtod(argv[4], NULL);
-    args->benchmark_seconds = (argc > 5) ? strtod(argv[5], NULL) : 5.0;
+    args->benchmark_seconds = (argc > 4) ? strtod(argv[5], NULL) : 5.0;
 
     return 0;
 }

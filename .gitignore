@@ -15,6 +15,7 @@ tracy
 build/
 build_*/
 benchmark
+sequence_test
 *.o
 *.so
 *.out

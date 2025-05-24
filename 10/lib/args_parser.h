@@ -21,5 +21,6 @@ void print_statistics(size_t i_count, size_t d_count, size_t length, size_t r_co
 void validate_sequence(unsigned char *sequence, size_t length,
                        size_t *r_count, size_t *w_count, size_t *i_count, size_t *d_count,
                        int *insert_balance, int *max_consecutive_inserts);
+unsigned char *generate_sequence(double ins_del_ratio, size_t length);
 
 #endif // ARGS_PARSER_H
