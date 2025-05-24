@@ -85,7 +85,7 @@ class SlurmManager:
 #SBATCH --job-name={job_name}
 #SBATCH --partition={SLURM_PARTITION}
 #SBATCH --cpus-per-task={SLURM_CPUS_PER_TASK}
-#SBATCH --memory={SLURM_MEMORY}
+#SBATCH --mem={SLURM_MEMORY}
 #SBATCH --time={SLURM_TIME_LIMIT}
 #SBATCH --output={log_path}
 #SBATCH --error={log_path}
@@ -129,6 +129,7 @@ echo "Benchmark completed at: $(date)"
     def submit_slurm_job(self, script_path):
         """Submit SLURM job and return job ID."""
         try:
+            
             result = subprocess.run(
                 ["sbatch", str(script_path)], 
                 capture_output=True, text=True, check=True
