@@ -104,6 +104,7 @@ void init_container_registry(void)
     extern Container create_unrolled_linkedlist_32(void);
     extern Container create_unrolled_linkedlist_64(void);
     extern Container create_unrolled_linkedlist_128(void);
+    extern Container create_unrolled_linkedlist_256(void);
     extern Container create_tiered_array_8(void);
     extern Container create_tiered_array_16(void);
     extern Container create_tiered_array_32(void);
@@ -113,7 +114,7 @@ void init_container_registry(void)
 
     // Register all available containers
     register_container("array",
-                       "Dynamic array with O(1) access",
+                       "Static array implementation",
                        create_array_container);
 
     register_container("linkedlist_seq",
@@ -143,6 +144,10 @@ void init_container_registry(void)
     register_container("unrolled_linkedlist_128",
                        "Unrolled linked list with chunked storage (128 elements per chunk)",
                        create_unrolled_linkedlist_128);
+
+    register_container("unrolled_linkedlist_256",
+                       "Unrolled linked list with chunked storage (256 elements per chunk)",
+                       create_unrolled_linkedlist_256);
 
     register_container("tiered_array_8",
                        "Tiered array with 8 elements per chunk",
