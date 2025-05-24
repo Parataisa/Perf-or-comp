@@ -200,7 +200,6 @@ static void unrolled_write(void *data, size_t index, int value)
 static int unrolled_insert(void *data, size_t index, int value)
 {
     UnrolledLinkedList *list = (UnrolledLinkedList *)data;
-
     if (!list->head)
     {
         UnrolledNode *node = create_node(list->chunk_capacity);
@@ -338,7 +337,7 @@ static void unrolled_cleanup(void *data)
     list->total_elements = 0;
 }
 
-Container create_unrolled_linkedlist_8()
+Container create_unrolled_linkedlist(size_t chunk_capacity)
 {
     Container container = {0};
 
@@ -351,7 +350,7 @@ Container create_unrolled_linkedlist_8()
     list->head = NULL;
     list->tail = NULL;
     list->total_elements = 0;
-    list->chunk_capacity = 8;
+    list->chunk_capacity = chunk_capacity;
 
     container.data = list;
     container.element_size = sizeof(int);
@@ -363,112 +362,34 @@ Container create_unrolled_linkedlist_8()
     container.cleanup = unrolled_cleanup;
 
     return container;
+}
+
+Container create_unrolled_linkedlist_8()
+{
+    return create_unrolled_linkedlist(8);
 }
 
 Container create_unrolled_linkedlist_16()
 {
-    Container container = {0};
-
-    UnrolledLinkedList *list = malloc(sizeof(UnrolledLinkedList));
-    if (!list)
-    {
-        return container;
-    }
-
-    list->head = NULL;
-    list->tail = NULL;
-    list->total_elements = 0;
-    list->chunk_capacity = 16;
-
-    container.data = list;
-    container.element_size = sizeof(int);
-    container.read = unrolled_read;
-    container.write = unrolled_write;
-    container.insert = unrolled_insert;
-    container.delete = unrolled_delete;
-    container.init = unrolled_init;
-    container.cleanup = unrolled_cleanup;
-
-    return container;
+    return create_unrolled_linkedlist(16);
 }
 
 Container create_unrolled_linkedlist_32()
 {
-    Container container = {0};
-
-    UnrolledLinkedList *list = malloc(sizeof(UnrolledLinkedList));
-    if (!list)
-    {
-        return container;
-    }
-
-    list->head = NULL;
-    list->tail = NULL;
-    list->total_elements = 0;
-    list->chunk_capacity = 32;
-
-    container.data = list;
-    container.element_size = sizeof(int);
-    container.read = unrolled_read;
-    container.write = unrolled_write;
-    container.insert = unrolled_insert;
-    container.delete = unrolled_delete;
-    container.init = unrolled_init;
-    container.cleanup = unrolled_cleanup;
-
-    return container;
+    return create_unrolled_linkedlist(32);
 }
 
 Container create_unrolled_linkedlist_64()
 {
-    Container container = {0};
-
-    UnrolledLinkedList *list = malloc(sizeof(UnrolledLinkedList));
-    if (!list)
-    {
-        return container;
-    }
-
-    list->head = NULL;
-    list->tail = NULL;
-    list->total_elements = 0;
-    list->chunk_capacity = 64;
-
-    container.data = list;
-    container.element_size = sizeof(int);
-    container.read = unrolled_read;
-    container.write = unrolled_write;
-    container.insert = unrolled_insert;
-    container.delete = unrolled_delete;
-    container.init = unrolled_init;
-    container.cleanup = unrolled_cleanup;
-
-    return container;
+    return create_unrolled_linkedlist(64);
 }
 
 Container create_unrolled_linkedlist_128()
 {
-    Container container = {0};
+    return create_unrolled_linkedlist(128);
+}
 
-    UnrolledLinkedList *list = malloc(sizeof(UnrolledLinkedList));
-    if (!list)
-    {
-        return container;
-    }
-
-    list->head = NULL;
-    list->tail = NULL;
-    list->total_elements = 0;
-    list->chunk_capacity = 128;
-
-    container.data = list;
-    container.element_size = sizeof(int);
-    container.read = unrolled_read;
-    container.write = unrolled_write;
-    container.insert = unrolled_insert;
-    container.delete = unrolled_delete;
-    container.init = unrolled_init;
-    container.cleanup = unrolled_cleanup;
-
-    return container;
+Container create_unrolled_linkedlist_256()
+{
+    return create_unrolled_linkedlist(256);
 }

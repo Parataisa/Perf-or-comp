@@ -88,7 +88,6 @@ void tiered_init(void *data, size_t size, size_t element_size)
   array->chunk_count = 0;
   array->chunk_capacity = 0;
   array->total_elements = 0;
-  array->chunk_size = 0;
 
   size_t initial_chunks = (size + array->chunk_size - 1) / array->chunk_size;
   array->chunk_capacity = initial_chunks > 4 ? initial_chunks : 4;
@@ -190,8 +189,7 @@ int tiered_insert(void *data, size_t index, int value)
     return 0;
   }
 
-  // Hanlde insertion in the middle
-
+  // Handle insertion in the middle
   size_t chunk_idx, local_idx;
   if (find_chunk_and_index(array, index, &chunk_idx, &local_idx) != 0)
   {
@@ -232,8 +230,8 @@ int tiered_insert(void *data, size_t index, int value)
     if (chunk->count < chunk->capacity)
     {
       memmove(
-          &chunk->elements[0],
-          &chunk->elements[1],
+        &chunk->elements[0],
+        &chunk->elements[1],
           chunk->count * sizeof(int));
       chunk->elements[chunk->count - 1] = overflow;
       chunk->count++;
@@ -243,8 +241,8 @@ int tiered_insert(void *data, size_t index, int value)
     // This chunk is also full, continue propagation
     int next_overflow = chunk->elements[chunk->capacity - 1];
     memmove(
-        &chunk->elements[0],
-        &chunk->elements[1],
+      &chunk->elements[0],
+      &chunk->elements[1],
         chunk->count * sizeof(int));
     chunk->elements[0] = overflow;
     overflow = next_overflow;
@@ -291,8 +289,7 @@ int tiered_delete(void *data, size_t index)
   target_chunk->count--;
   array->total_elements--;
 
-  // Pull elements from subsequent chunks to fill gaps
-  for (size_t i = chunk_idx + 1; i < array->chunk_count; i++)
+  for (size_t i = chunk_idx; i < array->chunk_count - 1; i++)
   {
     TieredChunk *current = array->chunks[i];
     TieredChunk *next = array->chunks[i + 1];
@@ -342,7 +339,7 @@ Container create_tiered_array_with_size(size_t chunk_size)
     exit(1);
   }
 
-  array->chunks = 0;
+  array->chunks = NULL;
   array->chunk_count = 0;
   array->chunk_capacity = 0;
   array->total_elements = 0;
