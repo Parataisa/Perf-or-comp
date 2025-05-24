@@ -4,7 +4,7 @@ LDFLAGS =
 
 # Source files
 SRCS = benchmark.c lib/args_parser.c lib/container_registry.c
-DS_SRCS = data_structure/array_container.c data_structure/linkedlist_sequential.c data_structure/linkedlist_random.c data_structure/unrolled_linkedlist.c
+DS_SRCS = data_structure/array_container.c data_structure/linkedlist_sequential.c data_structure/linkedlist_random.c data_structure/unrolled_linkedlist.c data_structure/tiered_array.c
 OBJS = $(SRCS:.c=.o) $(DS_SRCS:.c=.o)
 
 # Target executable

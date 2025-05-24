@@ -19,3 +19,7 @@ benchmark
 *.so
 *.out
 *.exe
+DS_Store
+.DS_Store
+.idea
+.vscode

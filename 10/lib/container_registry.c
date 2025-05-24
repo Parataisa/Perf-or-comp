@@ -104,6 +104,12 @@ void init_container_registry(void)
     extern Container create_unrolled_linkedlist_32(void);
     extern Container create_unrolled_linkedlist_64(void);
     extern Container create_unrolled_linkedlist_128(void);
+    extern Container create_tiered_array_8();
+    extern Container create_tiered_array_16();
+    extern Container create_tiered_array_32();
+    extern Container create_tiered_array_64();
+    extern Container create_tiered_array_128();
+    extern Container create_tiered_array_256();
 
     // Register all available containers
     register_container("array",
@@ -137,6 +143,30 @@ void init_container_registry(void)
     register_container("unrolled_linkedlist_128",
                        "Unrolled linked list with chunked storage (128 elements per chunk)",
                        create_unrolled_linkedlist_128);
+
+    register_container("tiered_array_8",
+                       "Tiered array with 8 elements per chunk",
+                       create_tiered_array_8);
+
+    register_container("tiered_array_16",
+                       "Tiered array with 16 elements per chunk",
+                       create_tiered_array_16);
+
+    register_container("tiered_array_32",
+                       "Tiered array with 32 elements per chunk",
+                       create_tiered_array_32);
+
+    register_container("tiered_array_64",
+                       "Tiered array with 64 elements per chunk",
+                       create_tiered_array_64);
+
+    register_container("tiered_array_128",
+                       "Tiered array with 128 elements per chunk",
+                       create_tiered_array_128);
+
+    register_container("tiered_array_256",
+                       "Tiered array with 256 elements per chunk",
+                       create_tiered_array_256);
 
     printf("Registry initialization complete!\n\n");
 }
