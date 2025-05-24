@@ -21,6 +21,10 @@ typedef struct
     size_t chunk_capacity; // Default capacity for new chunks
 } UnrolledLinkedList;
 
-Container create_unrolled_linkedlist(size_t chunk_size);
+Container create_unrolled_linkedlist_8(void);
+Container create_unrolled_linkedlist_16(void);
+Container create_unrolled_linkedlist_32(void);
+Container create_unrolled_linkedlist_64(void);
+Container create_unrolled_linkedlist_128(void);
 
 #endif // UNROLLED_LINKEDLIST_H
