@@ -20,8 +20,7 @@ typedef struct
     unsigned char *operation_sequence;
     size_t sequence_length;
     size_t container_size;
-    double insert_delete_ratio;
-    double read_write_ratio;
+    double ratio;
 } Benchmark;
 
 #endif // BENCHMARK_H
