@@ -16,11 +16,11 @@ class ResultParser:
         if not log_path.exists():
             logger.warning(f"Log file not found: {log_path}")
             return None
-        
+
         try:
             with open(log_path, "r") as f:
                 content = f.read()
-            
+
             data = {
                 "container": combination["container"],
                 "size": combination["size"],
@@ -29,7 +29,7 @@ class ResultParser:
                 "test_duration": combination["test_duration"],
                 "run_id": run_id,
             }
-            
+
             # Extract benchmark metrics - updated patterns for new benchmark format
             patterns = {
                 "operations_completed": r"Operations completed: (\d+)",
@@ -40,39 +40,58 @@ class ResultParser:
                 "user_time_s": r"User time \(seconds\): ([\d\.]+)",
                 "system_time_s": r"System time \(seconds\): ([\d\.]+)",
             }
-            
+
             for key, pattern in patterns.items():
                 match = re.search(pattern, content)
                 if match:
-                    if key in ["operations_completed", "validation_checksum", "peak_memory_kb"]:
+                    if key in [
+                        "operations_completed",
+                        "validation_checksum",
+                        "peak_memory_kb",
+                    ]:
                         data[key] = int(match.group(1))
                     else:
                         data[key] = float(match.group(1))
-            
+
             # Calculate additional metrics
             if "peak_memory_kb" in data:
                 data["peak_memory_mb"] = data["peak_memory_kb"] / 1024
-            
+
             # Check for errors
             data["error"] = "ERROR" in content or "Segmentation fault" in content
-            
+
             return data
-            
+
         except Exception as e:
             logger.error(f"Failed to parse {log_path}: {e}")
             return None
-    
+
     def collect_all_results(self, combinations, logs_dir):
         """Collect results from all benchmark runs."""
         all_results = []
-        
+
         for i, combination in enumerate(combinations):
             for run_id in range(1, NUM_REPETITIONS + 1):
                 job_name = f"bench_{i:03d}_run{run_id}"
                 log_path = logs_dir / f"{job_name}.out"
-                
+
                 result = self.parse_benchmark_output(log_path, combination, run_id)
                 if result:
                     all_results.append(result)
-        
+
+        return pd.DataFrame(all_results)
+
+    def collect_local_results(self, local_results):
+        """Collect results from local benchmark runs."""
+        all_results = []
+
+        for result in local_results:
+            if result["success"] and result["result_file"]:
+                # Parse the result file
+                parsed = self.parse_benchmark_output(
+                    result["result_file"], result["combination"], result["repetition"]
+                )
+                if parsed:
+                    all_results.append(parsed)
+
         return pd.DataFrame(all_results)

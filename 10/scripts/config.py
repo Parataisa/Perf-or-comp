@@ -12,6 +12,7 @@ DATA_STRUCTURES = [
     "unrolled_32",
     "unrolled_64",
     "unrolled_128",
+    "unrolled_256",
     "tiered_array_8",
     "tiered_array_16",
     "tiered_array_32",
