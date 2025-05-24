@@ -104,12 +104,12 @@ void init_container_registry(void)
     extern Container create_unrolled_linkedlist_32(void);
     extern Container create_unrolled_linkedlist_64(void);
     extern Container create_unrolled_linkedlist_128(void);
-    extern Container create_tiered_array_8();
-    extern Container create_tiered_array_16();
-    extern Container create_tiered_array_32();
-    extern Container create_tiered_array_64();
-    extern Container create_tiered_array_128();
-    extern Container create_tiered_array_256();
+    extern Container create_tiered_array_8(void);
+    extern Container create_tiered_array_16(void);
+    extern Container create_tiered_array_32(void);
+    extern Container create_tiered_array_64(void);
+    extern Container create_tiered_array_128(void);
+    extern Container create_tiered_array_256(void);
 
     // Register all available containers
     register_container("array",

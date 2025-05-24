@@ -12,7 +12,7 @@ TEST_SRCS = test/generate_sequence_test.c
 TEST_OBJS = $(TEST_SRCS:.c=.o)
 TEST_DEPS = lib/args_parser.o lib/container_registry.o data_structure/array_container.o \
             data_structure/linkedlist_sequential.o data_structure/linkedlist_random.o \
-            data_structure/unrolled_linkedlist.o
+            data_structure/unrolled_linkedlist.o data_structure/tiered_array.o
 
 # Target executable
 TARGET = benchmark
@@ -52,6 +52,16 @@ test-unrolledlist:
 	./$(TARGET) unrolled_linkedlist_32 1000 8 0.6 3
 	./$(TARGET) unrolled_linkedlist_64 1000 8 0.6 3
 	./$(TARGET) unrolled_linkedlist_128 1000 8 0.6 3
+	./$(TARGET) unrolled_linkedlist_256 1000 8 0.6 3
+
+test-tiers:
+	./$(TARGET) tiered_array_8 1000 8 0.6 3
+	./$(TARGET) tiered_array_16 1000 16 0.6 3
+	./$(TARGET) tiered_array_32 1000 16 0.6 3
+	./$(TARGET) tiered_array_64 1000 16 0.6 3
+	./$(TARGET) tiered_array_128 1000 16 0.6 3
+	./$(TARGET) tiered_array_256 1000 16 0.6 3
+
 
 test-sequence:
 	./$(TEST_TARGET)
