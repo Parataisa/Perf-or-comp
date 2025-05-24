@@ -100,7 +100,7 @@ class PlotGenerator:
             unrolled_data = unrolled_data.copy()
             unrolled_data["chunk_size"] = (
                 unrolled_data["container"]
-                .str.extract(r"unrolled_(\d+)")
+                .str.extract(r"unrolled_linkedlist_(\d+)")
                 .astype(int)
             )
 
