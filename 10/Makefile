@@ -36,7 +36,11 @@ test-linkedlist-rand:
 	./$(TARGET) linkedlist_rand 1000 8 0.2 5
 
 test-unrolledlist:
-	./$(TARGET) unrolled_linkedlist 1000 8 0.6 5
+	./$(TARGET) unrolled_linkedlist_8 1000 8 0.6 5
+	./$(TARGET) unrolled_linkedlist_16 1000 8 0.6 5
+	./$(TARGET) unrolled_linkedlist_32 1000 8 0.6 5
+	./$(TARGET) unrolled_linkedlist_64 1000 8 0.6 5
+	./$(TARGET) unrolled_linkedlist_128 1000 8 0.6 5
 
 test-all: test-array test-linkedlist-seq test-linkedlist-rand
 

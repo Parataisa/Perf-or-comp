@@ -99,7 +99,11 @@ void init_container_registry(void)
     extern Container create_array_container(void);
     extern Container create_linkedlist_sequential(void);
     extern Container create_linkedlist_random(void);
-    extern Container create_unrolled_linkedlist(void);
+    extern Container create_unrolled_linkedlist_8(void);
+    extern Container create_unrolled_linkedlist_16(void);
+    extern Container create_unrolled_linkedlist_32(void);
+    extern Container create_unrolled_linkedlist_64(void);
+    extern Container create_unrolled_linkedlist_128(void);
 
     // Register all available containers
     register_container("array",
@@ -114,9 +118,25 @@ void init_container_registry(void)
                        "Random allocation linked list",
                        create_linkedlist_random);
 
-    register_container("unrolled_linkedlist",
-                       "Unrolled linked list with chunked storage",
-                       create_unrolled_linkedlist);
+    register_container("unrolled_linkedlist_8",
+                       "Unrolled linked list with chunked storage (8 elements per chunk)",
+                       create_unrolled_linkedlist_8);
+
+    register_container("unrolled_linkedlist_16",
+                       "Unrolled linked list with chunked storage (16 elements per chunk)",
+                       create_unrolled_linkedlist_16);
+
+    register_container("unrolled_linkedlist_32",
+                       "Unrolled linked list with chunked storage (32 elements per chunk)",
+                       create_unrolled_linkedlist_32);
+
+    register_container("unrolled_linkedlist_64",
+                       "Unrolled linked list with chunked storage (64 elements per chunk)",
+                       create_unrolled_linkedlist_64);
+
+    register_container("unrolled_linkedlist_128",
+                       "Unrolled linked list with chunked storage (128 elements per chunk)",
+                       create_unrolled_linkedlist_128);
 
     printf("Registry initialization complete!\n\n");
 }

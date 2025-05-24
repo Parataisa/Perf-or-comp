@@ -27,11 +27,8 @@ double run_benchmark(Benchmark *benchmark, double seconds)
     size_t operations_completed = 0;
     volatile int result_accumulator = 0;
 
-    // Calculate target end time in microseconds
     long long target_end_us = start_time.tv_sec * 1000000LL + start_time.tv_usec +
                               (long long)(seconds * 1000000.0);
-
-    // Initialize current_time_us properly
     long long current_time_us = start_time.tv_sec * 1000000LL + start_time.tv_usec;
 
     while (current_time_us < target_end_us)
