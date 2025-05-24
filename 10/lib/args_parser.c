@@ -219,14 +219,25 @@ void print_statistics(size_t i_count, size_t d_count, size_t length, size_t r_co
     printf("    Insert-Delete Balance: %s\n", (insert_balance == 0 && i_count == d_count) ? "✅ PERFECT" : "⚠️ IMBALANCED");
     printf("    Max Consecutive Inserts: %d %s\n", max_consecutive_inserts, (max_consecutive_inserts <= 1) ? "✅ CONSTRAINT SATISFIED" : "❌ CONSTRAINT VIOLATED");
 
-    printf("\n**Operation Sequence:**\n   ");
-    for (size_t i = 0; i < length; i++)
+    //printf("\n**Operation Sequence:**\n   ");
+    //for (size_t i = 0; i < length; i++)
+    //{
+    //    printf("%s ", get_operation_emoji_structural(sequence[i]));
+    //    if ((i + 1) % 20 == 0)
+    //        printf("\n   ");
+    //}
+    //printf("\n");
+    printf("\n**Operation Sequence (first 50 operations):**\n   ");
+    for (size_t i = 0; i < length && i < 50; i++)
     {
         printf("%s ", get_operation_emoji_structural(sequence[i]));
         if ((i + 1) % 20 == 0)
             printf("\n   ");
     }
-    printf("\n");
+    if (length > 50)
+        printf("\n   ... (total %zu operations)\n", length);
+    else
+        printf("\n");
 }
 void validate_sequence(unsigned char *sequence, size_t length,
                        size_t *r_count, size_t *w_count, size_t *i_count, size_t *d_count,

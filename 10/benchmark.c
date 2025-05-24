@@ -89,8 +89,8 @@ double run_benchmark(Benchmark *benchmark, double seconds)
             }
 
             operations_completed++;
-            printf("\rOperations completed: %zu", operations_completed);
-            fflush(stdout);
+            //printf("\rOperations completed: %zu", operations_completed);
+            //fflush(stdout);
         }
 
         gettimeofday(&current_time, NULL);
