@@ -5,8 +5,8 @@ from pathlib import Path
 # Data structures to benchmark
 DATA_STRUCTURES = [
     "array",
-    "list_seq",
-    "list_rand",
+    "linkedlist_seq",
+    "linkedlist_rand",
     "unrolled_linkedlist_8",
     "unrolled_linkedlist_16",
     "unrolled_linkedlist_32",
