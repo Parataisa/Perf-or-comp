@@ -12,8 +12,12 @@ from concurrent.futures import ProcessPoolExecutor, as_completed
 from typing import List, Tuple, Dict, Any
 
 from config import (
-    DATA_STRUCTURES, RATIOS, ELEMENT_SIZES, NUM_ELEMENTS, TEST_DURATION,
-    NUM_REPETITIONS
+    DATA_STRUCTURES,
+    RATIOS,
+    ELEMENT_SIZES,
+    NUM_ELEMENTS,
+    TEST_DURATION,
+    NUM_REPETITIONS,
 )
 
 logger = logging.getLogger(__name__)
@@ -47,19 +51,19 @@ class LocalManager:
     def estimate_memory_usage(self, num_elements, element_size):
         """Estimate memory usage in MB."""
         base_memory = num_elements * element_size / (1024 * 1024)
-        
+
         if element_size == 8:
             overhead = num_elements * 16 / (1024 * 1024)
         else:
             overhead = num_elements * (element_size + 16) / (1024 * 1024)
-        
+
         extra_space = base_memory * 0.1
         return base_memory + overhead + extra_space
 
     def should_exclude_combination(self, ds, num_elements, element_size):
         """Determine if combination should be excluded."""
         memory_mb = self.estimate_memory_usage(num_elements, element_size)
-        
+
         # More conservative limits for local execution
         if memory_mb > 8 * 1024:  # 8GB limit for local
             logger.info(
@@ -67,11 +71,11 @@ class LocalManager:
                 f"(estimated {memory_mb:.1f} MB)"
             )
             return True
-        
+
         if ds.startswith("list") and num_elements >= 1000000 and element_size >= 512:
             logger.info(f"Excluding slow combination: {ds}")
             return True
-        
+
         return False
 
     def generate_combinations(self) -> List[Dict[str, Any]]:
@@ -83,24 +87,30 @@ class LocalManager:
         """
         combinations = []
         excluded_count = 0
-        
+
         for ds, ratio, num_elem, elem_size in itertools.product(
             DATA_STRUCTURES, RATIOS, NUM_ELEMENTS, ELEMENT_SIZES
         ):
             if self.should_exclude_combination(ds, num_elem, elem_size):
                 excluded_count += 1
                 continue
-            
-            combinations.append({
-                "container": ds,
-                "size": num_elem,
-                "elem_size": elem_size,
-                "ratio": ratio,
-                "test_duration": TEST_DURATION,
-                "estimated_memory_mb": self.estimate_memory_usage(num_elem, elem_size),
-            })
-        
-        logger.info(f"Generated {len(combinations)} combinations, excluded {excluded_count}")
+
+            combinations.append(
+                {
+                    "container": ds,
+                    "size": num_elem,
+                    "elem_size": elem_size,
+                    "ratio": ratio,
+                    "test_duration": TEST_DURATION,
+                    "estimated_memory_mb": self.estimate_memory_usage(
+                        num_elem, elem_size
+                    ),
+                }
+            )
+
+        logger.info(
+            f"Generated {len(combinations)} combinations, excluded {excluded_count}"
+        )
         return combinations
 
     def get_execution_mode(self) -> Tuple[bool, int]:
@@ -124,23 +134,22 @@ class LocalManager:
                 print("Invalid choice. Please enter 1 or 2.")
 
         # Get number of parallel workers
-        max_workers = min(self.max_workers, 8)  # Limit to 8 for safety
         print(f"\nSystem has {self.max_workers} CPU cores available.")
 
         while True:
             worker_input = input(
-                f"Number of parallel workers (1-{max_workers}, default: {max_workers}): "
+                f"Number of parallel workers (1-{self.max_workers}, default: {8}): "
             ).strip()
 
             if not worker_input:
-                return True, max_workers
+                return True, self.max_workers
 
             try:
                 num_workers = int(worker_input)
-                if 1 <= num_workers <= max_workers:
+                if 1 <= num_workers <= self.max_workers:
                     return True, num_workers
                 else:
-                    print(f"Please enter a number between 1 and {max_workers}.")
+                    print(f"Please enter a number between 1 and {self.max_workers}.")
             except ValueError:
                 print("Please enter a valid number.")
 
@@ -160,19 +169,19 @@ class LocalManager:
         # Generate unique filename for this run
         timestamp = int(time.time() * 1000000)  # microseconds for uniqueness
         result_file = (
-            self.results_dir / 
-            f"{combination['container']}_{combination['size']}_{combination['elem_size']}_"
+            self.results_dir
+            / f"{combination['container']}_{combination['size']}_{combination['elem_size']}_"
             f"{combination['ratio']}_{repetition}_{timestamp}.txt"
         )
 
         # Prepare command: $BENCHMARK_EXE $container $size $elem_size $RATIO $TEST_DURATION
         cmd = [
-            str(self.executable_path), 
-            combination['container'],
-            str(combination['size']),
-            str(combination['elem_size']),
-            str(combination['ratio']),
-            str(combination['test_duration'])
+            str(self.executable_path),
+            combination["container"],
+            str(combination["size"]),
+            str(combination["elem_size"]),
+            str(combination["ratio"]),
+            str(combination["test_duration"]),
         ]
 
         logger.debug(f"Running: {' '.join(cmd)}")
@@ -191,7 +200,7 @@ class LocalManager:
                 f.write(f"Timestamp: {time.ctime()}\n")
                 f.write("----------------------------------------\n")
                 f.flush()
-                
+
                 # Run with /usr/bin/time if available, otherwise just run normally
                 if os.path.exists("/usr/bin/time"):
                     time_cmd = ["/usr/bin/time", "-v"] + cmd
@@ -210,7 +219,7 @@ class LocalManager:
                         timeout=300,
                         text=True,
                     )
-                
+
                 f.write("----------------------------------------\n")
                 f.write(f"Benchmark completed at: {time.ctime()}\n")
 
@@ -265,7 +274,9 @@ class LocalManager:
                 "error": str(e),
             }
 
-    def run_sequential(self, combinations: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+    def run_sequential(
+        self, combinations: List[Dict[str, Any]]
+    ) -> List[Dict[str, Any]]:
         """Run benchmarks sequentially."""
         total_runs = len(combinations) * NUM_REPETITIONS
         results = []
