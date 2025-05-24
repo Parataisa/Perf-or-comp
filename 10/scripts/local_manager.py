@@ -4,6 +4,7 @@ import os
 import sys
 import subprocess
 import multiprocessing as mp
+import platform
 from pathlib import Path
 import logging
 import time
@@ -37,6 +38,8 @@ class LocalManager:
         self.results_dir = results_dir
         self.executable_path = executable_path
         self.max_workers = mp.cpu_count()
+        self.is_macos = platform.system() == "Darwin"
+        self.is_linux = platform.system() == "Linux"
 
         # Ensure results directory exists
         self.results_dir.mkdir(parents=True, exist_ok=True)
@@ -47,6 +50,14 @@ class LocalManager:
 
         if not os.access(self.executable_path, os.X_OK):
             raise PermissionError(f"File is not executable: {self.executable_path}")
+
+        # Check for GNU time on macOS (installed via brew install gnu-time)
+        self.gnu_time_path = None
+        if self.is_macos:
+            for path in ["/usr/local/bin/gtime", "/opt/homebrew/bin/gtime"]:
+                if os.path.exists(path):
+                    self.gnu_time_path = path
+                    break
 
     def estimate_memory_usage(self, num_elements, element_size):
         """Estimate memory usage in MB."""
@@ -138,7 +149,7 @@ class LocalManager:
 
         while True:
             worker_input = input(
-                f"Number of parallel workers (1-{self.max_workers}, default: {8}): "
+                f"Number of parallel workers (1-{self.max_workers}, default: {min(self.max_workers, 8)}): "
             ).strip()
 
             if not worker_input:
@@ -152,6 +163,29 @@ class LocalManager:
                     print(f"Please enter a number between 1 and {self.max_workers}.")
             except ValueError:
                 print("Please enter a valid number.")
+
+    def get_time_command(self, cmd):
+        """
+        Get the appropriate time command for the current platform.
+
+        Args:
+            cmd: The command to time
+
+        Returns:
+            Tuple of (time_cmd, use_stderr_for_time)
+        """
+        if self.is_linux and os.path.exists("/usr/bin/time"):
+            # Linux with GNU time
+            return ["/usr/bin/time", "-v"] + cmd, True
+        elif self.is_macos and self.gnu_time_path:
+            # macOS with GNU time installed via brew
+            return [self.gnu_time_path, "-v"] + cmd, True
+        elif self.is_macos and os.path.exists("/usr/bin/time"):
+            # macOS with built-in time (limited output)
+            return ["/usr/bin/time", "-l"] + cmd, True
+        else:
+            # No time command available, just run the benchmark
+            return cmd, False
 
     def run_single_benchmark(
         self, combination: Dict[str, Any], repetition: int
@@ -184,7 +218,10 @@ class LocalManager:
             str(combination["test_duration"]),
         ]
 
-        logger.debug(f"Running: {' '.join(cmd)}")
+        # Get the appropriate time command
+        time_cmd, use_stderr_for_time = self.get_time_command(cmd)
+
+        logger.debug(f"Running: {' '.join(time_cmd)}")
 
         start_time = time.time()
 
@@ -198,22 +235,29 @@ class LocalManager:
                 f.write(f"Ratio: {combination['ratio']}\n")
                 f.write(f"Test Duration: {combination['test_duration']} seconds\n")
                 f.write(f"Timestamp: {time.ctime()}\n")
+                f.write(f"Platform: {platform.system()} {platform.release()}\n")
                 f.write("----------------------------------------\n")
                 f.flush()
 
-                # Run with /usr/bin/time if available, otherwise just run normally
-                if os.path.exists("/usr/bin/time"):
-                    time_cmd = ["/usr/bin/time", "-v"] + cmd
+                if use_stderr_for_time:
+                    # Run with time command, capture stderr separately for time output
                     result = subprocess.run(
                         time_cmd,
                         stdout=f,
-                        stderr=subprocess.STDOUT,  # Combine stderr with stdout
+                        stderr=subprocess.PIPE,
                         timeout=300,  # 5 minute timeout
                         text=True,
                     )
+
+                    # Write time output to file
+                    if result.stderr:
+                        f.write("\n--- Time Command Output ---\n")
+                        f.write(result.stderr)
+                        f.write("--- End Time Output ---\n")
                 else:
+                    # No time command available, just run the benchmark
                     result = subprocess.run(
-                        cmd,
+                        time_cmd,  # This is just cmd when no time command
                         stdout=f,
                         stderr=subprocess.STDOUT,
                         timeout=300,
@@ -241,16 +285,17 @@ class LocalManager:
                     "error": None,
                 }
             else:
-                logger.error(
-                    f"✗ {combination['container']} failed with exit code {result.returncode}"
+                error_msg = (
+                    result.stderr if result.stderr else f"Exit code {result.returncode}"
                 )
+                logger.error(f"✗ {combination['container']} failed: {error_msg}")
                 return {
                     "combination": combination,
                     "repetition": repetition,
                     "result_file": result_file,  # Keep file for error analysis
                     "execution_time": execution_time,
                     "success": False,
-                    "error": f"Exit code {result.returncode}",
+                    "error": error_msg,
                 }
 
         except subprocess.TimeoutExpired:
@@ -365,6 +410,19 @@ class LocalManager:
 
         logger.info(f"Generated {len(combinations)} combinations")
         logger.info(f"Total runs: {len(combinations) * NUM_REPETITIONS}")
+
+        # Print platform info
+        logger.info(f"Platform: {platform.system()} {platform.release()}")
+        if self.is_macos:
+            if self.gnu_time_path:
+                logger.info(f"Using GNU time: {self.gnu_time_path}")
+            else:
+                logger.info("Using macOS built-in time (limited memory info)")
+                logger.info(
+                    "For better memory statistics, install GNU time: brew install gnu-time"
+                )
+        elif self.is_linux:
+            logger.info("Using Linux GNU time")
 
         # Get execution mode from user
         is_parallel, num_workers = self.get_execution_mode()

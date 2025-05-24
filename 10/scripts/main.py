@@ -6,6 +6,7 @@ from pathlib import Path
 import logging
 import time
 import datetime
+import shutil
 
 from config import DATA_STRUCTURES, NUM_REPETITIONS
 from slurm_manager import SlurmManager
@@ -77,10 +78,24 @@ def setup_directories(base_dir, is_local=False):
     else:
         directories["local_results"] = base_dir / "local_results"
 
-    for directory in directories.values():
-        directory.mkdir(parents=True, exist_ok=True)
+    for name, diretory_path in directories.items():
+        if name == "base":
+            diretory_path.mkdir(parents=True, exist_ok=True)
+            logger.info(f"Base directory created: {diretory_path}")
+            continue
 
-    logger.info(f"Working directory: {base_dir}")
+        if diretory_path.exists():
+            logger.info(f"Clearing contents of existing directory: {diretory_path}")
+            for item in diretory_path.iterdir():
+                if item.is_dir():
+                    shutil.rmtree(item)
+                else:
+                    item.unlink()
+
+        diretory_path.mkdir(parents=True, exist_ok=True)
+        logger.info(f"Directory created: {diretory_path}")
+
+    logger.info("All necessary directories have been set up.")
     return directories
 
 
