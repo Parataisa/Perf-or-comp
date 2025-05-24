@@ -24,79 +24,90 @@ double run_benchmark(Benchmark *benchmark, double seconds)
 
     size_t current_size = benchmark->container_size;
     size_t current_index = 0;
-    size_t safe_index = current_index % current_size;
     size_t operations_completed = 0;
     volatile int result_accumulator = 0;
 
-    double elapsed = 0;
-    while (elapsed < seconds * 1000.0)
+    // Calculate target end time in microseconds
+    long long target_end_us = start_time.tv_sec * 1000000LL + start_time.tv_usec +
+                              (long long)(seconds * 1000000.0);
+
+    // Initialize current_time_us properly
+    long long current_time_us = start_time.tv_sec * 1000000LL + start_time.tv_usec;
+
+    while (current_time_us < target_end_us)
     {
-        unsigned char op = benchmark->operation_sequence[operations_completed % benchmark->sequence_length];
+        // Run a batch of operations before checking time again
+        size_t batch_size = 32;
+        for (size_t i = 0; i < batch_size && current_time_us < target_end_us; i++)
+        {
+            unsigned char op = benchmark->operation_sequence[operations_completed % benchmark->sequence_length];
 
-        switch (op)
-        {
-        case 0: // Read
-        {
-            safe_index = current_index % current_size;
-            int value = container->read(container->data, safe_index);
-            result_accumulator += value;
-            current_index = get_next_index(current_index, current_size);
-        }
-        break;
+            if (current_size == 0)
+                current_size = 1;
+            size_t safe_index = current_index % current_size;
 
-        case 1: // Write
-        {
-            safe_index = current_index % current_size;
-            int value = rand() % 10000;
-            container->write(container->data, safe_index, value);
-            current_index = get_next_index(current_index, current_size);
-        }
-        break;
-
-        case 2: // Insert
-        {
-            safe_index = current_index % current_size;
-            int value = rand() % 10000;
-            int success = container->insert(container->data, safe_index, value);
-            if (success == 0)
+            switch (op)
             {
-                current_size++;
-            }
-            current_index = get_next_index(current_index, current_size);
-        }
-        break;
-
-        case 3: // Delete
-        {
-            safe_index = current_index % current_size;
-            int success = container->delete(container->data, safe_index);
-            if (success == 0)
+            case 0: // Read
             {
-                current_size--;
+                int value = container->read(container->data, safe_index);
+                result_accumulator += value;
+                current_index = (current_index + 1) % current_size;
             }
-            current_index = current_index % current_size;
-        }
-        break;
+            break;
+
+            case 1: // Write
+            {
+                int value = rand() % 10000;
+                container->write(container->data, safe_index, value);
+                current_index = (current_index + 1) % current_size;
+            }
+            break;
+
+            case 2: // Insert
+            {
+                int value = rand() % 10000;
+                int success = container->insert(container->data, safe_index, value);
+                if (success == 0)
+                {
+                    current_size++;
+                }
+                current_index = (current_index + 1) % current_size;
+            }
+            break;
+
+            case 3: // Delete
+            {
+                if (current_size > 1)
+                {
+                    int success = container->delete(container->data, safe_index);
+                    if (success == 0)
+                    {
+                        current_size--;
+                    }
+                }
+                current_index = current_index % current_size;
+            }
+            break;
+            }
+
+            operations_completed++;
+            printf("\rOperations completed: %zu", operations_completed);
+            fflush(stdout);
         }
 
-        operations_completed++;
-
-        if (operations_completed % 1000 == 0)
-        {
-            gettimeofday(&current_time, NULL);
-            elapsed = (current_time.tv_sec - start_time.tv_sec) * 1000.0;
-            elapsed += (current_time.tv_usec - start_time.tv_usec) / 1000.0;
-        }
+        gettimeofday(&current_time, NULL);
+        current_time_us = current_time.tv_sec * 1000000LL + current_time.tv_usec;
     }
-
-    gettimeofday(&current_time, NULL);
-    elapsed = (current_time.tv_sec - start_time.tv_sec) * 1000.0;
-    elapsed += (current_time.tv_usec - start_time.tv_usec) / 1000.0;
+    printf("\n");
+    double elapsed = (current_time.tv_sec - start_time.tv_sec) +
+                     (current_time.tv_usec - start_time.tv_usec) / 1000000.0;
 
     printf("Validation checksum: %d\n", result_accumulator);
+    printf("Actual benchmark time: %.3f seconds (target: %.1f)\n", elapsed, seconds);
     container->cleanup(container->data);
 
-    return (double)operations_completed / (elapsed / 1000.0);
+    return (double)operations_completed / elapsed;
 }
 
 int main(int argc, char *argv[])
@@ -123,12 +134,7 @@ int main(int argc, char *argv[])
 
     printf("\nRunning benchmark for %.1f seconds on container with %zu elements of size %zu bytes\n",
            args.benchmark_seconds, args.num_elements, args.element_size);
-    printf("Operation mix: %.1f%% Insert/Delete, %.1f%% Read/Write\n",
-           args.ins_del_ratio * 100.0,
-           (1.0 - args.ins_del_ratio) * 100.0);
-    printf("Within Read/Write: %.1f%% Read, %.1f%% Write\n",
-           args.read_ratio * 100.0,
-           (1.0 - args.read_ratio) * 100.0);
+    printf("Insert/Delete to Read/Write ratio: %.2f\n", args.ratio);
 
     double ops_per_second = run_benchmark(&benchmark, args.benchmark_seconds);
 

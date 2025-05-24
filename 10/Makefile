@@ -27,16 +27,16 @@ clean:
 
 # Test targets
 test-array:
-	./$(TARGET) array 1000 8388608 0.5 3
+	./$(TARGET) array 1000 1000 0.5 5
 
 test-linkedlist-seq:
-	./$(TARGET) linkedlist_seq 1000 8 0.2 3
+	./$(TARGET) linkedlist_seq 1000 8 0.2 5 
 
 test-linkedlist-rand:
-	./$(TARGET) linkedlist_rand 1000 8 0.2 3
+	./$(TARGET) linkedlist_rand 1000 8 0.2 5
 
 test-unrolledlist:
-	./$(TARGET) unrolled_linkedlist 1000 8 0.6 3
+	./$(TARGET) unrolled_linkedlist 1000 8 0.6 5
 
 test-all: test-array test-linkedlist-seq test-linkedlist-rand
 

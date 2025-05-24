@@ -124,13 +124,13 @@ static void array_cleanup(void *data)
     printf("Array size: %zu\n", array->size);
     printf("Array capacity: %zu\n", array->capacity);
     printf("Array current position: %zu\n", array->current_pos);
-    printf("Array elements: ");
-    for (size_t i = 0; i < array->size; i++)
-    {
-        printf("%d ", *((int *)((char *)array->elements + (i * array->element_size))));
-    }
-    printf("\n");
-
+    // printf("Array elements: ");
+    // for (size_t i = 0; i < array->size; i++)
+    //{
+    //     printf("%d ", *((int *)((char *)array->elements + (i * array->element_size))));
+    // }
+    // printf("\n");
+    //
     if (array->elements != NULL)
     {
         free(array->elements);
