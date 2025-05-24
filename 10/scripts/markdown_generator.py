@@ -47,7 +47,7 @@ class MarkdownGenerator:
 
         # Calculate mean performance for each data structure
         perf_ranking = (
-            success_df.groupby("data_structure")
+            success_df.groupby("container")
             .agg({"ops_per_second": ["mean", "std", "count"]})
             .round(2)
         )
@@ -75,7 +75,7 @@ class MarkdownGenerator:
         # Group by configuration
         detailed = (
             success_df.groupby(
-                ["data_structure", "num_elements", "element_size", "ins_del_ratio"]
+                ["container", "size", "elem_size", "ratio"]
             )
             .agg(
                 {
@@ -92,7 +92,9 @@ class MarkdownGenerator:
 
         # Flatten column names
         detailed.columns = [f"{col[1]}_{col[0]}" for col in detailed.columns]
-        detailed = detailed.reset_index()
+        
+        # Reset index with drop=False to avoid column name conflicts
+        detailed = detailed.reset_index(drop=False)
 
         # Rename columns for clarity
         column_mapping = {
@@ -117,25 +119,25 @@ class MarkdownGenerator:
 
         # Unrolled linked lists
         unrolled_data = success_df[
-            success_df["data_structure"].str.startswith("unrolled")
+            success_df["container"].str.startswith("unrolled")
         ]
         if not unrolled_data.empty:
             unrolled_data = unrolled_data.copy()
             unrolled_data["chunk_size"] = (
-                unrolled_data["data_structure"]
+                unrolled_data["container"]
                 .str.extract(r"unrolled_(\d+)")
                 .astype(int)
             )
 
             chunk_analysis = (
-                unrolled_data.groupby(["chunk_size", "num_elements"])
+                unrolled_data.groupby(["chunk_size", "size"])
                 .agg({"ops_per_second": "mean"})
                 .round(2)
                 .reset_index()
             )
 
             pivot_unrolled = chunk_analysis.pivot(
-                index="chunk_size", columns="num_elements", values="ops_per_second"
+                index="chunk_size", columns="size", values="ops_per_second"
             )
 
             sections.append(
@@ -147,24 +149,24 @@ class MarkdownGenerator:
             )
 
         # Tiered arrays
-        tiered_data = success_df[success_df["data_structure"].str.startswith("tiered")]
+        tiered_data = success_df[success_df["container"].str.startswith("tiered")]
         if not tiered_data.empty:
             tiered_data = tiered_data.copy()
             tiered_data["chunk_size"] = (
-                tiered_data["data_structure"]
+                tiered_data["container"]
                 .str.extract(r"tiered_array_(\d+)")
                 .astype(int)
             )
 
             chunk_analysis = (
-                tiered_data.groupby(["chunk_size", "num_elements"])
+                tiered_data.groupby(["chunk_size", "size"])
                 .agg({"ops_per_second": "mean"})
                 .round(2)
                 .reset_index()
             )
 
             pivot_tiered = chunk_analysis.pivot(
-                index="chunk_size", columns="num_elements", values="ops_per_second"
+                index="chunk_size", columns="size", values="ops_per_second"
             )
 
             sections.append(
@@ -191,14 +193,14 @@ class MarkdownGenerator:
 
         # Calculate performance impact of instruction mix
         mix_impact = (
-            success_df.groupby(["data_structure", "ins_del_ratio"])
+            success_df.groupby(["container", "ratio"])
             .agg({"ops_per_second": "mean"})
             .round(2)
             .reset_index()
         )
 
         pivot_mix = mix_impact.pivot(
-            index="data_structure", columns="ins_del_ratio", values="ops_per_second"
+            index="container", columns="ratio", values="ops_per_second"
         )
 
         # Calculate performance degradation
@@ -244,16 +246,16 @@ class MarkdownGenerator:
         best = success_df.loc[success_df["ops_per_second"].idxmax()]
         worst = success_df.loc[success_df["ops_per_second"].idxmin()]
 
-        best_config = f"""- **Data Structure**: {best['data_structure']}
-- **Elements**: {best['num_elements']:,}
-- **Element Size**: {best['element_size']} bytes
-- **Ins/Del Ratio**: {best['ins_del_ratio']*100:.1f}%
+        best_config = f"""- **Data Structure**: {best['container']}
+- **Elements**: {best['size']:,}
+- **Element Size**: {best['elem_size']} bytes
+- **Ins/Del Ratio**: {best['ratio']*100:.1f}%
 - **Performance**: {best['ops_per_second']:,.0f} ops/sec"""
 
-        worst_config = f"""- **Data Structure**: {worst['data_structure']}
-- **Elements**: {worst['num_elements']:,}
-- **Element Size**: {worst['element_size']} bytes
-- **Ins/Del Ratio**: {worst['ins_del_ratio']*100:.1f}%
+        worst_config = f"""- **Data Structure**: {worst['container']}
+- **Elements**: {worst['size']:,}
+- **Element Size**: {worst['elem_size']} bytes
+- **Ins/Del Ratio**: {worst['ratio']*100:.1f}%
 - **Performance**: {worst['ops_per_second']:,.0f} ops/sec"""
 
         speedup = best["ops_per_second"] / worst["ops_per_second"]
