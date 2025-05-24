@@ -2,28 +2,29 @@
 #define UNROLLED_LINKEDLIST_H
 
 #include <stddef.h>
-#include "lib/benchmark.h"
+#include "benchmark.h"
 
-#define CHUNK_SIZE 32 // Define the default chunk size
+#define DEFAULT_CHUNK_SIZE 32
 
-typedef struct Chunk {
-    void *data;           // Pointer to the array of integers
-    size_t size;        // Current number of elements in the chunk
-    struct Chunk *next; // Pointer to the next chunk
-} Chunk;
+typedef struct UnrolledNode UnrolledNode;
 
-typedef struct UnrolledLinkedList {
-    Chunk *head;       // Pointer to the first chunk
-    size_t chunk_count; // Number of chunks in the list
+typedef struct UnrolledNode
+{
+    int *elements;             // Array of elements in this chunk
+    size_t count;              // Current number of elements
+    size_t capacity;           // Maximum elements this chunk can hold
+    struct UnrolledNode *next; // Pointer to next chunk
+    struct UnrolledNode *prev; // Pointer to previous chunk
+} UnrolledNode;
+
+typedef struct
+{
+    UnrolledNode *head;    // First chunk in the list
+    UnrolledNode *tail;    // Last chunk in the list
+    size_t total_elements; // Total elements across all chunks
+    size_t chunk_capacity; // Default capacity for new chunks
 } UnrolledLinkedList;
 
-// Function declarations
-UnrolledLinkedList* create_unrolled_linkedlist();
-void read_unrolled(void *data, size_t index);
-void write_unrolled(void *data, size_t index, int value);
-int insert_unrolled(void *data, size_t index, int value);
-void delete_unrolled(void *data, size_t index);
-void traverse_unrolled(UnrolledLinkedList *list);
-void free_unrolled_linkedlist(UnrolledLinkedList *list);
+Container create_unrolled_linkedlist(size_t chunk_size);
 
 #endif // UNROLLED_LINKEDLIST_H

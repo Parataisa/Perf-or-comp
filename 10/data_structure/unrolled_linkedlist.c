@@ -3,188 +3,193 @@
 #include <string.h>
 #include "unrolled_linkedlist.h"
 
-typedef struct UnrolledNode {
-    int *elements;             
-    size_t count;              
-    size_t chunk_size;         
-    struct UnrolledNode *next; 
-    struct UnrolledNode *prev; 
-} UnrolledNode;
+static UnrolledNode *create_node(size_t capacity)
+{
+    UnrolledNode *node = malloc(sizeof(UnrolledNode));
+    if (!node)
+        return NULL;
 
-typedef struct {
-    UnrolledNode *head;
-    UnrolledNode *tail;
-    size_t total_elements;
-    size_t chunk_size;
-    size_t element_size;
-} UnrolledLinkedList;
-
-UnrolledNode* create_node(size_t chunk_size) {
-    UnrolledNode *node = (UnrolledNode*)malloc(sizeof(UnrolledNode));
-    if (!node) return NULL;
-    
-    node->elements = (int*)calloc(chunk_size, sizeof(int));
-    if (!node->elements) {
+    node->elements = calloc(capacity, sizeof(int));
+    if (!node->elements)
+    {
         free(node);
         return NULL;
     }
-    
+
     node->count = 0;
-    node->chunk_size = chunk_size;
+    node->capacity = capacity;
     node->next = NULL;
     node->prev = NULL;
-    
+
     return node;
 }
 
-static void free_node(UnrolledNode *node) {
-    if (node) {
+static void free_node(UnrolledNode *node)
+{
+    if (node)
+    {
         free(node->elements);
         free(node);
     }
 }
 
-UnrolledNode* find_node_and_index(UnrolledLinkedList *list, size_t index, size_t *local_index) {
-    if (index >= list->total_elements) return NULL;
-    
+static UnrolledNode *find_node_by_index(UnrolledLinkedList *list, size_t index, size_t *local_index)
+{
+    if (index >= list->total_elements)
+        return NULL;
+
     UnrolledNode *current = list->head;
-    size_t accumulated = 0;
-    
-    while (current) {
-        if (accumulated + current->count > index) {
-            *local_index = index - accumulated;
+    size_t cumulative = 0;
+
+    while (current)
+    {
+        if (cumulative + current->count > index)
+        {
+            *local_index = index - cumulative;
             return current;
         }
-        accumulated += current->count;
+        cumulative += current->count;
         current = current->next;
     }
-    
+
     return NULL;
 }
 
-void split_node(UnrolledLinkedList *list, UnrolledNode *node) {
-    if (node->count < node->chunk_size) return;
-    
-    UnrolledNode *new_node = create_node(node->chunk_size);
-    if (!new_node) return;
-    
-    // Move half of the elements to the new node
-    size_t split_point = node->count / 2;
-    new_node->count = node->count - split_point;
-    
-    memcpy(new_node->elements, &node->elements[split_point], 
-           new_node->count * sizeof(int));
-    
-    node->count = split_point;
-    
-    // Update links
+static void split_node_if_full(UnrolledLinkedList *list, UnrolledNode *node)
+{
+    if (node->count < node->capacity)
+        return;
+
+    UnrolledNode *new_node = create_node(node->capacity);
+    if (!new_node)
+        return;
+
+    size_t mid = node->count / 2;
+    size_t move_count = node->count - mid;
+
+    memcpy(new_node->elements, &node->elements[mid], move_count * sizeof(int));
+    new_node->count = move_count;
+    node->count = mid;
+
     new_node->next = node->next;
     new_node->prev = node;
-    
-    if (node->next) {
+
+    if (node->next)
+    {
         node->next->prev = new_node;
-    } else {
+    }
+    else
+    {
         list->tail = new_node;
     }
-    
+
     node->next = new_node;
 }
 
-void merge_nodes(UnrolledLinkedList *list, UnrolledNode *node) {
-    if (!node || !node->next) return;
-    
-    // Only merge if combined size fits in one chunk
-    if (node->count + node->next->count > node->chunk_size) return;
-    
-    UnrolledNode *next = node->next;
-    
-    // Copy elements from next node
-    memcpy(&node->elements[node->count], next->elements, 
-           next->count * sizeof(int));
-    
-    node->count += next->count;
-    
-    // Update links
-    node->next = next->next;
-    if (next->next) {
-        next->next->prev = node;
-    } else {
+static void merge_nodes_if_sparse(UnrolledLinkedList *list, UnrolledNode *node)
+{
+    if (!node || !node->next)
+        return;
+
+    size_t threshold = node->capacity / 4;
+    if (node->count > threshold || node->next->count > threshold)
+        return;
+
+    if (node->count + node->next->count > node->capacity)
+        return;
+
+    UnrolledNode *next_node = node->next;
+
+    memcpy(&node->elements[node->count], next_node->elements,
+           next_node->count * sizeof(int));
+    node->count += next_node->count;
+
+    node->next = next_node->next;
+    if (next_node->next)
+    {
+        next_node->next->prev = node;
+    }
+    else
+    {
         list->tail = node;
     }
-    
-    free_node(next);
+
+    free_node(next_node);
 }
 
-void unrolled_init(void *data, size_t size, size_t element_size) {
-    UnrolledLinkedList *list = (UnrolledLinkedList*)data;
-    
+static void unrolled_init(void *data, size_t size, size_t element_size)
+{
+    UnrolledLinkedList *list = (UnrolledLinkedList *)data;
+
     list->head = NULL;
     list->tail = NULL;
     list->total_elements = 0;
-    list->element_size = element_size;
-    
-    // Pre-allocate nodes for initial size
-    if (size > 0) {
-        size_t nodes_needed = (size + list->chunk_size - 1) / list->chunk_size;
-        UnrolledNode *prev = NULL;
-        
-        for (size_t i = 0; i < nodes_needed; i++) {
-            UnrolledNode *node = create_node(list->chunk_size);
-            if (!node) break;
-            
-            if (!list->head) {
-                list->head = node;
-            } else {
-                prev->next = node;
-                node->prev = prev;
+
+    if (size > 0)
+    {
+        size_t nodes_needed = (size + list->chunk_capacity - 1) / list->chunk_capacity;
+
+        for (size_t i = 0; i < nodes_needed; i++)
+        {
+            UnrolledNode *node = create_node(list->chunk_capacity);
+            if (!node)
+                break;
+
+            size_t remaining = size - list->total_elements;
+            size_t elements_in_node = (remaining > list->chunk_capacity) ? list->chunk_capacity : remaining;
+
+            memset(node->elements, 0, elements_in_node * sizeof(int));
+            node->count = elements_in_node;
+            list->total_elements += elements_in_node;
+
+            if (!list->head)
+            {
+                list->head = list->tail = node;
             }
-            
-            // Fill node with elements
-            size_t elements_to_add = (i == nodes_needed - 1) ? 
-                                   (size % list->chunk_size ? size % list->chunk_size : list->chunk_size) : 
-                                   list->chunk_size;
-            
-            for (size_t j = 0; j < elements_to_add; j++) {
-                node->elements[j] = 0;
+            else
+            {
+                list->tail->next = node;
+                node->prev = list->tail;
+                list->tail = node;
             }
-            node->count = elements_to_add;
-            
-            prev = node;
-            list->tail = node;
         }
-        
-        list->total_elements = size;
     }
 }
 
-int unrolled_read(void *data, size_t index) {
-    UnrolledLinkedList *list = (UnrolledLinkedList*)data;
+static int unrolled_read(void *data, size_t index)
+{
+    UnrolledLinkedList *list = (UnrolledLinkedList *)data;
     size_t local_index;
-    
-    UnrolledNode *node = find_node_and_index(list, index, &local_index);
-    if (!node) return -1;
-    
+
+    UnrolledNode *node = find_node_by_index(list, index, &local_index);
+    if (!node)
+        return -1;
+
     return node->elements[local_index];
 }
 
-void unrolled_write(void *data, size_t index, int value) {
-    UnrolledLinkedList *list = (UnrolledLinkedList*)data;
+static void unrolled_write(void *data, size_t index, int value)
+{
+    UnrolledLinkedList *list = (UnrolledLinkedList *)data;
     size_t local_index;
-    
-    UnrolledNode *node = find_node_and_index(list, index, &local_index);
-    if (!node) return;
-    
+
+    UnrolledNode *node = find_node_by_index(list, index, &local_index);
+    if (!node)
+        return;
+
     node->elements[local_index] = value;
 }
 
-int unrolled_insert(void *data, size_t index, int value) {
-    UnrolledLinkedList *list = (UnrolledLinkedList*)data;
-    
-    // Handle empty list
-    if (!list->head) {
-        UnrolledNode *node = create_node(list->chunk_size);
-        if (!node) return -1;
-        
+static int unrolled_insert(void *data, size_t index, int value)
+{
+    UnrolledLinkedList *list = (UnrolledLinkedList *)data;
+
+    if (!list->head)
+    {
+        UnrolledNode *node = create_node(list->chunk_capacity);
+        if (!node)
+            return -1;
+
         node->elements[0] = value;
         node->count = 1;
         list->head = list->tail = node;
@@ -192,133 +197,150 @@ int unrolled_insert(void *data, size_t index, int value) {
         return 0;
     }
 
-    if (index >= list->total_elements) {
-        UnrolledNode *node = list->tail;
-        
-        if (node->count < node->chunk_size) {
-            node->elements[node->count++] = value;
-        } else {
-            // Need new node
-            UnrolledNode *new_node = create_node(list->chunk_size);
-            if (!new_node) return -1;
-            
+    if (index >= list->total_elements)
+    {
+        UnrolledNode *last = list->tail;
+
+        if (last->count < last->capacity)
+        {
+            last->elements[last->count++] = value;
+        }
+        else
+        {
+            UnrolledNode *new_node = create_node(list->chunk_capacity);
+            if (!new_node)
+                return -1;
+
             new_node->elements[0] = value;
             new_node->count = 1;
-            new_node->prev = node;
-            node->next = new_node;
+            new_node->prev = last;
+            last->next = new_node;
             list->tail = new_node;
         }
-        
+
         list->total_elements++;
         return 0;
     }
-    
+
     size_t local_index;
-    UnrolledNode *node = find_node_and_index(list, index, &local_index);
-    if (!node) return -1;
-    
-    if (node->count < node->chunk_size) {
-        memmove(&node->elements[local_index + 1], 
-                &node->elements[local_index], 
+    UnrolledNode *node = find_node_by_index(list, index, &local_index);
+    if (!node)
+        return -1;
+
+    if (node->count < node->capacity)
+    {
+        memmove(&node->elements[local_index + 1],
+                &node->elements[local_index],
                 (node->count - local_index) * sizeof(int));
-        
         node->elements[local_index] = value;
         node->count++;
         list->total_elements++;
         return 0;
     }
-    
-    split_node(list, node);
-    
-    if (local_index >= node->count) {
+
+    split_node_if_full(list, node);
+
+    if (local_index >= node->count)
+    {
         local_index -= node->count;
         node = node->next;
     }
-    
-    memmove(&node->elements[local_index + 1], 
-            &node->elements[local_index], 
+
+    memmove(&node->elements[local_index + 1],
+            &node->elements[local_index],
             (node->count - local_index) * sizeof(int));
-    
     node->elements[local_index] = value;
     node->count++;
     list->total_elements++;
-    
+
     return 0;
 }
 
-static int unrolled_delete(void *data, size_t index) {
-    UnrolledLinkedList *list = (UnrolledLinkedList*)data;
-    
-    if (index >= list->total_elements) return -1;
-    
+static int unrolled_delete(void *data, size_t index)
+{
+    UnrolledLinkedList *list = (UnrolledLinkedList *)data;
+
+    if (index >= list->total_elements)
+        return -1;
+
     size_t local_index;
-    UnrolledNode *node = find_node_and_index(list, index, &local_index);
-    if (!node) return -1;
-    
-    memmove(&node->elements[local_index], 
-            &node->elements[local_index + 1], 
+    UnrolledNode *node = find_node_by_index(list, index, &local_index);
+    if (!node)
+        return -1;
+
+    memmove(&node->elements[local_index],
+            &node->elements[local_index + 1],
             (node->count - local_index - 1) * sizeof(int));
-    
+
     node->count--;
     list->total_elements--;
-    
-    if (node->count == 0) {
-        if (node->prev) {
+
+    if (node->count == 0)
+    {
+        if (node->prev)
+        {
             node->prev->next = node->next;
-        } else {
+        }
+        else
+        {
             list->head = node->next;
         }
-        
-        if (node->next) {
+
+        if (node->next)
+        {
             node->next->prev = node->prev;
-        } else {
+        }
+        else
+        {
             list->tail = node->prev;
         }
-        
+
         free_node(node);
-    } else if (node->count < node->chunk_size / 4) {
-        merge_nodes(list, node);
     }
-    
+    else
+    {
+        merge_nodes_if_sparse(list, node);
+    }
+
     return 0;
 }
 
-static void unrolled_cleanup(void *data) {
-    UnrolledLinkedList *list = (UnrolledLinkedList*)data;
-    
+static void unrolled_cleanup(void *data)
+{
+    UnrolledLinkedList *list = (UnrolledLinkedList *)data;
+
     UnrolledNode *current = list->head;
-    while (current) {
+    while (current)
+    {
         UnrolledNode *next = current->next;
         free_node(current);
         current = next;
     }
-    
-    list->head = NULL;
-    list->tail = NULL;
+
+    list->head = list->tail = NULL;
     list->total_elements = 0;
 }
 
-Container create_unrolled_linkedlist(size_t chunk_size) {
-    Container container;
-    UnrolledLinkedList *list = (UnrolledLinkedList*)malloc(sizeof(UnrolledLinkedList));
-    
-    if (!list) {
-        container.data = NULL;
+Container create_unrolled_linkedlist(size_t chunk_size)
+{
+    Container container = {0};
+
+    if (chunk_size == 0 || chunk_size > 1024)
+    {
         return container;
     }
-    
-    if (chunk_size == 0 || chunk_size > 1024) {
-        free(list);
-        container.data = NULL;
+
+    UnrolledLinkedList *list = malloc(sizeof(UnrolledLinkedList));
+    if (!list)
+    {
         return container;
     }
-    
-    list->chunk_size = chunk_size;
+
     list->head = NULL;
     list->tail = NULL;
     list->total_elements = 0;
-    list->element_size = sizeof(int);
-    
+    list->chunk_capacity = chunk_size;
+
     container.data = list;
     container.element_size = sizeof(int);
     container.read = unrolled_read;
@@ -327,6 +349,6 @@ Container create_unrolled_linkedlist(size_t chunk_size) {
     container.delete = unrolled_delete;
     container.init = unrolled_init;
     container.cleanup = unrolled_cleanup;
-    
+
     return container;
 }

@@ -1,5 +1,5 @@
 CC = gcc
-CFLAGS = -Wall -O2 -I. -Idata_structure
+CFLAGS = -Wall -O2 -I. -Idata_structure -Ilib
 LDFLAGS = 
 
 # Source files
@@ -34,6 +34,9 @@ test-linkedlist-seq:
 
 test-linkedlist-rand:
 	./$(TARGET) linkedlist_rand 1000 8 0.2 0.5 1
+
+test-unrolledlist:
+	./$(TARGET) unrolled_linkedlist 1000 8 0.2 0.5 1
 
 test-all: test-array test-linkedlist-seq test-linkedlist-rand
 

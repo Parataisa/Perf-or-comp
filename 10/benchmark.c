@@ -4,9 +4,9 @@
 #include <time.h>
 #include <sys/time.h>
 #include <stdbool.h>
-#include "lib/benchmark.h"
-#include "lib/args_parser.h"
-#include "lib/container_registry.h"
+#include "benchmark.h"
+#include "args_parser.h"
+#include "container_registry.h"
 
 size_t get_next_index(size_t current, size_t size)
 {
@@ -59,7 +59,7 @@ double run_benchmark(Benchmark *benchmark, double seconds)
             int value = rand() % 10000;
             int success = container->insert(container->data, safe_index, value);
             if (success == 0)
-            { // Assuming 0 return value means success
+            {
                 current_size++;
             }
             current_index = get_next_index(current_index, current_size);

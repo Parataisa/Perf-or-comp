@@ -9,9 +9,14 @@ void register_container(const char *name, const char *description,
                         Container (*create_function)(void))
 {
     ContainerFactory *factory = malloc(sizeof(ContainerFactory));
+    if (!factory)
+    {
+        fprintf(stderr, "Failed to allocate memory for container factory\n");
+        return;
+    }
 
     factory->name = strdup(name);
-    factory->description = description ? strdup(description) : NULL;
+    factory->description = description ? strdup(description) : strdup("No description");
     factory->create_function = create_function;
     factory->next = NULL;
 
@@ -23,20 +28,35 @@ void register_container(const char *name, const char *description,
     {
         ContainerFactory *current = registry_head;
         while (current->next)
+        {
             current = current->next;
+        }
         current->next = factory;
     }
+
+    printf("Registered container: %s\n", name);
 }
 
 Container *create_container_by_name(const char *name)
 {
     ContainerFactory *current = registry_head;
+
     while (current)
     {
         if (strcmp(current->name, name) == 0)
         {
             Container *container = malloc(sizeof(Container));
+            if (!container)
+                return NULL;
+
             *container = current->create_function();
+
+            if (!container->data)
+            {
+                free(container);
+                return NULL;
+            }
+
             return container;
         }
         current = current->next;
@@ -47,43 +67,82 @@ Container *create_container_by_name(const char *name)
 
 void list_available_containers(void)
 {
-    printf("Available containers:\n");
-    printf("%-20s | %s\n", "NAME", "DESCRIPTION");
-    printf("--------------------+-------------------------\n");
+    printf("\n**Available Container Types**\n");
+    printf("═══════════════════════════════════════════════════════════\n");
+    printf("%-25s | %-30s\n", "CONTAINER NAME", "DESCRIPTION");
+    printf("─────────────────────────┼────────────────────────────────\n");
 
-    ContainerFactory *current = registry_head;
-    while (current)
+    if (!registry_head)
     {
-        printf("%-20s | %s\n", current->name,
-               current->description ? current->description : "");
-        current = current->next;
+        printf("%-25s | %-30s\n", "No containers", "Registry is empty");
     }
+    else
+    {
+        ContainerFactory *current = registry_head;
+        while (current)
+        {
+            printf("%-25s | %-30s\n",
+                   current->name,
+                   current->description ? current->description : "No description");
+            current = current->next;
+        }
+    }
+
+    printf("═══════════════════════════════════════════════════════════\n\n");
 }
 
 void init_container_registry(void)
 {
-    extern Container create_array_container();
-    extern Container create_linkedlist_sequential();
-    extern Container create_linkedlist_random();
-    extern Container create_unrolled_linkedlist();
+    printf("Initializing container registry...\n");
 
-    register_container("array", "Dynamic array container", create_array_container);
-    register_container("linkedlist_seq", "Linked list with sequential allocation", create_linkedlist_sequential);
-    register_container("linkedlist_rand", "Linked list with random allocation", create_linkedlist_random);
-    register_container("unrolled_linkedlist", "Unrolled linked list container", create_unrolled_linkedlist);
+    // Forward declarations for container creators
+    extern Container create_array_container(void);
+    extern Container create_linkedlist_sequential(void);
+    extern Container create_linkedlist_random(void);
+    extern Container create_unrolled_linkedlist(void);
+
+    // Register all available containers
+    register_container("array",
+                       "Dynamic array with O(1) access",
+                       create_array_container);
+
+    register_container("linkedlist_seq",
+                       "Sequential linked list implementation",
+                       create_linkedlist_sequential);
+
+    register_container("linkedlist_rand",
+                       "Random allocation linked list",
+                       create_linkedlist_random);
+
+    register_container("unrolled_linkedlist",
+                       "Unrolled linked list with chunked storage",
+                       create_unrolled_linkedlist);
+
+    printf("Registry initialization complete!\n\n");
 }
 
 void cleanup_container_registry(void)
 {
+    printf("Cleaning up container registry...\n");
+
     ContainerFactory *current = registry_head;
+    int count = 0;
+
     while (current)
     {
         ContainerFactory *next = current->next;
+
         free((void *)current->name);
         if (current->description)
+        {
             free((void *)current->description);
+        }
+
         free(current);
         current = next;
+        count++;
     }
+
     registry_head = NULL;
+    printf("Cleaned up %d container registrations\n", count);
 }

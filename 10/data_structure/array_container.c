@@ -1,7 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#include "lib/benchmark.h"
+#include "benchmark.h"
 #include <stdint.h>
 
 typedef struct
