@@ -1,4 +1,3 @@
-#include <_stdio.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -158,15 +157,14 @@ void tiered_write(void *data, size_t index, int value)
   array->chunks[chunk_idx]->elements[local_idx] = value;
 }
 
-
 int tiered_insert(void *data, size_t index, int value)
 {
   TieredArray *array = (TieredArray *)data;
 
-  // Handle insertion at the end 
+  // Handle insertion at the end
   if (index >= array->total_elements)
   {
-    // Find last chunk or create new one 
+    // Find last chunk or create new one
     TieredChunk *last_chunk = array->chunks[array->chunk_count - 1];
     if (!last_chunk || last_chunk->count >= last_chunk->capacity)
     {
@@ -192,7 +190,7 @@ int tiered_insert(void *data, size_t index, int value)
     return 0;
   }
 
-  // Hanlde insertion in the middle 
+  // Hanlde insertion in the middle
 
   size_t chunk_idx, local_idx;
   if (find_chunk_and_index(array, index, &chunk_idx, &local_idx) != 0)
@@ -203,15 +201,13 @@ int tiered_insert(void *data, size_t index, int value)
 
   TieredChunk *target_chunk = array->chunks[chunk_idx];
 
-
-  // If chunk has space, insert directly 
-  if(target_chunk->count < target_chunk->capacity)
+  // If chunk has space, insert directly
+  if (target_chunk->count < target_chunk->capacity)
   {
     memmove(
-      &target_chunk->elements[local_idx + 1],
-      &target_chunk->elements[local_idx],
-      (target_chunk->count - local_idx) * sizeof(int)
-    );
+        &target_chunk->elements[local_idx + 1],
+        &target_chunk->elements[local_idx],
+        (target_chunk->count - local_idx) * sizeof(int));
 
     target_chunk->elements[local_idx] = value;
     target_chunk->count++;
@@ -219,29 +215,26 @@ int tiered_insert(void *data, size_t index, int value)
     return 0;
   }
 
-
-  // Chunk is full, need to shift elements or create new chunk 
+  // Chunk is full, need to shift elements or create new chunk
   // For simplicity, we'll shift elements to the right through chunks
   int overflow = target_chunk->elements[target_chunk->capacity - 1];
 
   memmove(
-    &target_chunk->elements[local_idx + 1],
-    &target_chunk->elements[local_idx],
-    (target_chunk->count - local_idx) * sizeof(int)
-  );
+      &target_chunk->elements[local_idx + 1],
+      &target_chunk->elements[local_idx],
+      (target_chunk->count - local_idx) * sizeof(int));
 
   target_chunk->elements[local_idx] = value;
 
   for (size_t i = chunk_idx; i < array->chunk_count; i++)
   {
-    TieredChunk *chunk = array->chunks[i]; 
+    TieredChunk *chunk = array->chunks[i];
     if (chunk->count < chunk->capacity)
     {
       memmove(
-        &chunk->elements[0],
-        &chunk->elements[1],
-        chunk->count * sizeof(int)
-      ); 
+          &chunk->elements[0],
+          &chunk->elements[1],
+          chunk->count * sizeof(int));
       chunk->elements[chunk->count - 1] = overflow;
       chunk->count++;
       array->total_elements++;
@@ -250,15 +243,14 @@ int tiered_insert(void *data, size_t index, int value)
     // This chunk is also full, continue propagation
     int next_overflow = chunk->elements[chunk->capacity - 1];
     memmove(
-        &chunk->elements[0], 
+        &chunk->elements[0],
         &chunk->elements[1],
-        chunk->count * sizeof(int) 
-    );
+        chunk->count * sizeof(int));
     chunk->elements[0] = overflow;
     overflow = next_overflow;
   }
 
-  // All chunks are full, need a new chunk for overflow 
+  // All chunks are full, need a new chunk for overflow
   if (expand_chunk_array(array) != 0)
   {
     fprintf(stderr, "Error: Failed to expand chunk array\n");
@@ -272,16 +264,16 @@ int tiered_insert(void *data, size_t index, int value)
     return -1;
   }
 
-    new_chunk->elements[0] = overflow;
-    new_chunk->count = 1;
-    array->chunks[array->chunk_count++] = new_chunk;
-    array->total_elements++;
-    return 0;
+  new_chunk->elements[0] = overflow;
+  new_chunk->count = 1;
+  array->chunks[array->chunk_count++] = new_chunk;
+  array->total_elements++;
+  return 0;
 }
 
 int tiered_delete(void *data, size_t index)
 {
- TieredArray *array = (TieredArray *)data;
+  TieredArray *array = (TieredArray *)data;
   size_t chunk_idx, local_idx;
   if (find_chunk_and_index(array, index, &chunk_idx, &local_idx) != 0)
   {
@@ -291,16 +283,15 @@ int tiered_delete(void *data, size_t index)
 
   TieredChunk *target_chunk = array->chunks[chunk_idx];
 
-  // Remove element from chunk 
+  // Remove element from chunk
   memmove(
-    &target_chunk->elements[local_idx],
-    &target_chunk->elements[local_idx + 1],
-    (target_chunk->count - local_idx - 1) * sizeof(int)
-  ); 
+      &target_chunk->elements[local_idx],
+      &target_chunk->elements[local_idx + 1],
+      (target_chunk->count - local_idx - 1) * sizeof(int));
   target_chunk->count--;
   array->total_elements--;
 
-  // Pull elements from subsequent chunks to fill gaps 
+  // Pull elements from subsequent chunks to fill gaps
   for (size_t i = chunk_idx + 1; i < array->chunk_count; i++)
   {
     TieredChunk *current = array->chunks[i];
@@ -310,17 +301,16 @@ int tiered_delete(void *data, size_t index)
     {
       current->elements[current->count++] = next->elements[0];
       memmove(
-        &next->elements[0],
-        &next->elements[1],
-        (next->count - 1) * sizeof(int)
-      );
+          &next->elements[0],
+          &next->elements[1],
+          (next->count - 1) * sizeof(int));
       next->count--;
     }
   }
 
-  // Remove empty chunks from the end 
+  // Remove empty chunks from the end
   while (array->chunk_count > 0 && array->chunks[array->chunk_count - 1]->count == 0)
-  { 
+  {
     free_chunk(array->chunks[array->chunk_count - 1]);
     array->chunk_count--;
   }
@@ -356,6 +346,7 @@ Container create_tiered_array_with_size(size_t chunk_size)
   array->chunk_count = 0;
   array->chunk_capacity = 0;
   array->total_elements = 0;
+  array->chunk_size = chunk_size;
 
   container.data = array;
   container.element_size = sizeof(int);
@@ -377,7 +368,7 @@ Container create_tiered_array_8()
 Container create_tiered_array_16()
 {
   return create_tiered_array_with_size(16);
-} 
+}
 
 Container create_tiered_array_32()
 {
@@ -387,14 +378,14 @@ Container create_tiered_array_32()
 Container create_tiered_array_64()
 {
   return create_tiered_array_with_size(64);
-} 
+}
 
 Container create_tiered_array_128()
 {
   return create_tiered_array_with_size(128);
-} 
+}
 
 Container create_tiered_array_256()
 {
   return create_tiered_array_with_size(256);
-} 
+}
