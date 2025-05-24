@@ -62,8 +62,14 @@ test-tiers:
 	./$(TARGET) tiered_array_128 1000 16 0.6 3
 	./$(TARGET) tiered_array_256 1000 16 0.6 3
 
+test-all:
+	./$(TARGET) array 1000 8 1.0 1
+	./$(TARGET) linkedlist_seq 1000 8 0.2 1
+	./$(TARGET) linkedlist_rand 1000 8 0.2 1
+	./$(TARGET) unrolled_linkedlist_8 1000 8 0.6 1
+	./$(TARGET) tiered_array_8 1000 8 0.6 1
 
 test-sequence:
 	./$(TEST_TARGET)
 
-.PHONY: all clean test-array test-linkedlist-seq test-linkedlist-rand test-unrolledlist test-sequence
+.PHONY: all clean test-array test-linkedlist-seq test-linkedlist-rand test-unrolledlist test-sequence test-all
