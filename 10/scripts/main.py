@@ -102,11 +102,18 @@ def get_user_configuration():
 
     if config["run_benchmarks"]:
         # Ask for executable path
+        default_exe_path = Path.cwd().parent / "benchmark"
         while True:
-            exe_path_str = input("\nEnter path to benchmark executable: ").strip()
-            if not exe_path_str:
-                print("Executable path cannot be empty.")
-                continue
+            exe_path_str = input(
+                f"\nEnter path to benchmark executable ({default_exe_path}): "
+            ).strip()
+            if not exe_path_str or exe_path_str == default_exe_path:
+                config["executable_path"] = default_exe_path
+                if not config["executable_path"].exists():
+                    print(f"Default executable path does not exist: {default_exe_path}")
+                    print("Please enter a valid path to an executable file.")
+                    continue
+                break
             exe_path = Path(exe_path_str)
             if exe_path.exists() and os.access(exe_path, os.X_OK):
                 config["executable_path"] = exe_path
@@ -116,7 +123,7 @@ def get_user_configuration():
             else:
                 print(f"File is not executable: {exe_path}")
             print("Please enter a valid path to an executable file.")
-    else:  # Generate from existing results
+    else:
         # Ask for path to raw_results.csv
         default_csv_path = config["output_dir"] / "results" / "raw_results.csv"
         while True:
@@ -358,4 +365,4 @@ def main():
 
 if __name__ == "__main__":
     main()
-# 
+#
