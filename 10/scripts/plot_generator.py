@@ -119,6 +119,12 @@ class PlotGenerator:
             if col in success_df.columns:
                 success_df[col] = pd.to_numeric(success_df[col], errors="coerce")
 
+        #if "random_access" exists, coerce to int else default to 0
+        if "random_access" in success_df.columns:
+            success_df["random_access"] = pd.to_numeric(success_df["random_access"], errors="coerce").fillna(0).astype(int)
+        else:
+            success_df["random_access"] = 0
+
         return success_df.dropna(subset=["ops_per_second", "element_size"])
 
     def create_performance_comparison_unified_bars(self, df: pd.DataFrame):
@@ -127,8 +133,10 @@ class PlotGenerator:
             logger.warning("No data for unified performance comparison bars.")
             return
 
+        success_df["structure_access"] = success_df["data_structure"] + success_df["random_access"].map({0: " (seq)", 1: " (rand)"})
+        
         agg_df = (
-            success_df.groupby(["data_structure", "num_elements"])["ops_per_second"]
+            success_df.groupby(["structure_access", "num_elements"])["ops_per_second"]
             .mean()
             .reset_index()
         )
@@ -137,13 +145,13 @@ class PlotGenerator:
             return
 
         unique_num_elements = sorted(agg_df["num_elements"].unique())
-        plot_hue_order = self._get_plot_order(agg_df["data_structure"].unique())
+        plot_hue_order = self._get_plot_order(agg_df["structure_access"].unique())
 
         fig, ax = plt.subplots(figsize=(18, 10))
         sns.barplot(
             x="num_elements",
             y="ops_per_second",
-            hue="data_structure",
+            hue="structure_access",
             data=agg_df,
             order=unique_num_elements,
             hue_order=plot_hue_order,
@@ -171,21 +179,30 @@ class PlotGenerator:
             logger.warning("No data for baseline comparison.")
             return
 
+        # Construct combined label and a flag for baseline comparison
+        success_df["structure_access"] = success_df["data_structure"] + success_df["random_access"].map({0: " (seq)", 1: " (rand)"})
+        success_df["is_array"] = success_df["data_structure"] == "array"
+
+        # Group on structure_access
         perf_agg = (
-            success_df.groupby(["data_structure", "num_elements"])["ops_per_second"]
+            success_df.groupby(["structure_access", "num_elements", "is_array"])["ops_per_second"]
             .mean()
             .reset_index()
         )
-        array_perf = perf_agg[perf_agg["data_structure"] == "array"].copy()
+
+        # Baseline: only the array rows
+        array_perf = perf_agg[perf_agg["is_array"]].copy()
         if array_perf.empty:
             logger.warning("No 'array' data for baseline. Skipping plot.")
             return
 
+        # Drop is_array for cleaner merge
         array_perf = array_perf.rename(
             columns={"ops_per_second": "array_ops_per_second"}
-        ).drop(columns=["data_structure"])
+        ).drop(columns=["is_array", "structure_access"])
 
-        comparison_df = perf_agg[perf_agg["data_structure"] != "array"].copy()
+        # Comparison: everything else
+        comparison_df = perf_agg[~perf_agg["is_array"]].copy()
         comparison_df = pd.merge(
             comparison_df, array_perf, on=["num_elements"], how="left"
         )
@@ -197,13 +214,14 @@ class PlotGenerator:
         comparison_df["speedup_vs_array"] = (
             comparison_df["ops_per_second"] / comparison_df["array_ops_per_second"]
         )
-        plot_hue_order = self._get_plot_order(comparison_df["data_structure"].unique())
+
+        plot_hue_order = sorted(comparison_df["structure_access"].unique())
 
         fig, ax = plt.subplots(figsize=(14, 8))
         sns.barplot(
             x="num_elements",
             y="speedup_vs_array",
-            hue="data_structure",
+            hue="structure_access",
             data=comparison_df,
             palette=self.palette,
             ax=ax,
@@ -214,11 +232,12 @@ class PlotGenerator:
         ax.set_ylabel("Speedup vs. 'array' (Higher is Better)", fontsize=14)
         ax.axhline(1.0, color="red", linestyle="--", label="Baseline ('array')")
         ax.tick_params(axis="x", rotation=45)
-        ax.legend(  # Legend title is "Data Structure"
+        ax.legend(
             bbox_to_anchor=(1.02, 1), loc="upper left"
         )
         ax.grid(True, axis="y", linestyle="--", alpha=0.7)
         self.save_plot("performance_vs_baseline_array", fig=fig)
+    
 
     def create_performance_heatmap(
         self,
@@ -230,7 +249,9 @@ class PlotGenerator:
         if success_df.empty:
             logger.warning("No data for performance heatmap.")
             return
-
+        
+        success_df["structure_access"] = success_df["data_structure"] + success_df["random_access"].map({0: " (seq)", 1: " (rand)"})
+        
         filtered_df = success_df
         title_suffix_parts = []
 
@@ -273,7 +294,7 @@ class PlotGenerator:
             return
 
         heatmap_data = (
-            filtered_df.groupby(["data_structure", "num_elements"])["ops_per_second"]
+            filtered_df.groupby(["structure_access", "num_elements"])["ops_per_second"]
             .mean()
             .unstack()
             .fillna(0)
@@ -297,7 +318,7 @@ class PlotGenerator:
         )
         plt.title(f"Performance Heatmap{title_suffix}", fontsize=16)
         plt.xlabel("Number of Elements", fontsize=14)
-        plt.ylabel("Data Structure", fontsize=14)
+        plt.ylabel("Data Structure + access type", fontsize=14)
         plt.xticks(rotation=45, ha="right")
         plt.yticks(rotation=0)
 
@@ -338,7 +359,7 @@ class PlotGenerator:
 
         plot_data = (
             filtered_df.groupby(
-                ["data_structure", "num_elements", "element_size"]
+                ["data_structure", "num_elements", "element_size", "random_access"]
             )[  # element_size is sizeofelement
                 "ops_per_second"
             ]
@@ -389,7 +410,9 @@ class PlotGenerator:
         if success_df.empty:
             logger.warning("No data for categorized performance bars.")
             return
-
+        
+        success_df["structure_access"] = success_df["data_structure"] + success_df["random_access"].map({0: " (seq)", 1: " (rand)"})
+        
         ds_categories = {
             "Basic": ["array", "linkedlist_seq", "linkedlist_rand"],
             "Unrolled": [
@@ -439,12 +462,12 @@ class PlotGenerator:
                 continue
 
             perf_data = (
-                cat_data.groupby(["data_structure", "num_elements"])["ops_per_second"]
+                cat_data.groupby(["structure_access", "num_elements"])["ops_per_second"]
                 .mean()
                 .reset_index()
             )
             pivot_data = perf_data.pivot(
-                index="num_elements", columns="data_structure", values="ops_per_second"
+                index="num_elements", columns="structure_access", values="ops_per_second"
             )
             if pivot_data.empty:
                 ax.set_title(f"{category} (No Pivot Data)")
@@ -463,7 +486,16 @@ class PlotGenerator:
             ]
 
             if not pivot_data_to_plot.empty:
-                pivot_data_to_plot.plot(kind="bar", ax=ax, width=0.8, color=plot_colors)
+                melted = pivot_data_to_plot.reset_index().melt(id_vars="num_elements", var_name="structure_access", value_name="ops_per_second")
+                sns.barplot(
+                    data=melted,
+                    x="num_elements",
+                    y="ops_per_second",
+                    hue="structure_access",
+                    ax=ax,
+                    palette="tab20",
+                )
+
                 plot_made = True
             else:
                 ax.set_title(f"{category} (No Data after ordering)")

@@ -8,16 +8,44 @@
 #include "args_parser.h"
 #include "container_registry.h"
 
+
 size_t get_next_index(size_t current, size_t size)
 {
     return (current + 1) % (size > 0 ? size : 1);
 }
 
-double run_benchmark(Benchmark *benchmark, double seconds)
+int *create_random_indices(size_t length) {
+    int *random_indices = malloc(length * sizeof(int));
+
+    if (random_indices == NULL) {
+        fprintf(stderr, "Failed to allocate memory for random indices");
+        exit(EXIT_FAILURE);
+    }
+    for (int i = 0; i < length; i++) random_indices[i] = i;
+    srand(time(NULL));
+    
+    //shuffle indices
+    for (int i = length - 1; i > 0; i--) {
+        int j = rand() % (i+1);
+        int tmp = random_indices[j];
+        random_indices[j] = random_indices[i];
+        random_indices[i] = tmp;
+    }
+
+    return random_indices;
+}
+
+double run_benchmark(Benchmark *benchmark, double seconds, int randomize_access)
 {
     Container *container = &benchmark->container;
 
     container->init(container->data, benchmark->container_size, benchmark->container.element_size);
+
+    //if flag is set randomize the indices that get accessed by the benchmark
+    int *random_indices = NULL;
+    if (randomize_access){
+        random_indices = create_random_indices(benchmark->container_size);
+    }
 
     struct timeval start_time, current_time;
     gettimeofday(&start_time, NULL);
@@ -41,7 +69,11 @@ double run_benchmark(Benchmark *benchmark, double seconds)
 
             if (current_size == 0)
                 current_size = 1;
+            
             size_t safe_index = current_index % current_size;
+            if (randomize_access && random_indices) {
+                safe_index = random_indices[current_index] % current_size;
+            }
 
             switch (op)
             {
@@ -104,6 +136,10 @@ double run_benchmark(Benchmark *benchmark, double seconds)
     printf("Actual benchmark time: %.3f seconds (target: %.1f)\n", elapsed, seconds);
     container->cleanup(container->data);
 
+    #ifdef _RANDOM_ACCESS
+    free(random_indices);
+    #endif
+
     return (double)operations_completed / elapsed;
 }
 
@@ -133,7 +169,7 @@ int main(int argc, char *argv[])
            args.benchmark_seconds, args.num_elements, args.element_size);
     printf("Insert/Delete to Read/Write ratio: %.2f\n", args.ratio);
 
-    double ops_per_second = run_benchmark(&benchmark, args.benchmark_seconds);
+    double ops_per_second = run_benchmark(&benchmark, args.benchmark_seconds, args.randomize_access);
 
     printf("\nBenchmark Results:\n");
     printf("Operations per second: %.2f\n", ops_per_second);

@@ -9,7 +9,7 @@ from pathlib import Path
 import json
 
 from config import (
-    DATA_STRUCTURES, RATIOS, ELEMENT_SIZES, NUM_ELEMENTS, TEST_DURATION,
+    DATA_STRUCTURES, RATIOS, ELEMENT_SIZES, NUM_ELEMENTS, TEST_DURATION, RANDOM_ACCESS,
     SLURM_PARTITION, SLURM_CPUS_PER_TASK, SLURM_MEMORY, SLURM_TIME_LIMIT,
     NUM_REPETITIONS
 )
@@ -57,8 +57,8 @@ class SlurmManager:
         combinations = []
         excluded_count = 0
         
-        for ds, ratio, num_elem, elem_size in itertools.product(
-            DATA_STRUCTURES, RATIOS, NUM_ELEMENTS, ELEMENT_SIZES
+        for ds, ratio, num_elem, elem_size, random_access in itertools.product(
+            DATA_STRUCTURES, RATIOS, NUM_ELEMENTS, ELEMENT_SIZES, RANDOM_ACCESS
         ):
             if self.should_exclude_combination(ds, num_elem, elem_size):
                 excluded_count += 1
@@ -71,6 +71,7 @@ class SlurmManager:
                 "ratio": ratio,
                 "test_duration": TEST_DURATION,
                 "estimated_memory_mb": self.estimate_memory_usage(num_elem, elem_size),
+                "random_access": random_access,
             })
         
         logger.info(f"Generated {len(combinations)} combinations, excluded {excluded_count}")
@@ -106,6 +107,7 @@ echo "Size: {combination['size']}"
 echo "Element Size: {combination['elem_size']} bytes"
 echo "Ratio: {combination['ratio']}"
 echo "Test Duration: {combination['test_duration']} seconds"
+echo "Random Acess: {combination['random_access']}"
 echo "Timestamp: $(date)"
 echo "----------------------------------------"
 
@@ -114,7 +116,8 @@ echo "----------------------------------------"
     {combination['size']} \\
     {combination['elem_size']} \\
     {combination['ratio']} \\
-    {combination['test_duration']}
+    {combination['test_duration']} \\
+    {combination['random_access']}
 
 echo "----------------------------------------"
 echo "Benchmark completed at: $(date)"

@@ -11,6 +11,7 @@ typedef struct
     size_t element_size;      // Size of each element in bytes
     double ratio;             // Ratio of insert/delete operations to read/write operations
     double benchmark_seconds; // Duration of benchmark in seconds
+    int randomize_access;     // Randomize the access pattern of the benchmark
 } BenchmarkArgs;
 
 int parse_benchmark_args(int argc, char *argv[], BenchmarkArgs *args);

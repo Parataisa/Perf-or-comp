@@ -19,6 +19,7 @@ from config import (
     NUM_ELEMENTS,
     TEST_DURATION,
     NUM_REPETITIONS,
+    RANDOM_ACCESS,
 )
 
 logger = logging.getLogger(__name__)
@@ -99,8 +100,8 @@ class LocalManager:
         combinations = []
         excluded_count = 0
 
-        for ds, ratio, num_elem, elem_size in itertools.product(
-            DATA_STRUCTURES, RATIOS, NUM_ELEMENTS, ELEMENT_SIZES
+        for ds, ratio, num_elem, elem_size, random_access in itertools.product(
+            DATA_STRUCTURES, RATIOS, NUM_ELEMENTS, ELEMENT_SIZES, RANDOM_ACCESS
         ):
             if self.should_exclude_combination(ds, num_elem, elem_size):
                 excluded_count += 1
@@ -116,6 +117,7 @@ class LocalManager:
                     "estimated_memory_mb": self.estimate_memory_usage(
                         num_elem, elem_size
                     ),
+                    "random_access": random_access,
                 }
             )
 
@@ -205,7 +207,7 @@ class LocalManager:
         result_file = (
             self.results_dir
             / f"{combination['container']}_{combination['size']}_{combination['elem_size']}_"
-            f"{combination['ratio']}_{repetition}_{timestamp}.txt"
+            f"{combination['ratio']}_{combination['random_access']}_{repetition}_{timestamp}.txt"
         )
 
         # Prepare command: $BENCHMARK_EXE $container $size $elem_size $RATIO $TEST_DURATION
@@ -216,6 +218,7 @@ class LocalManager:
             str(combination["elem_size"]),
             str(combination["ratio"]),
             str(combination["test_duration"]),
+            str(combination["random_access"]),
         ]
 
         # Get the appropriate time command
@@ -234,6 +237,7 @@ class LocalManager:
                 f.write(f"Element Size: {combination['elem_size']} bytes\n")
                 f.write(f"Ratio: {combination['ratio']}\n")
                 f.write(f"Test Duration: {combination['test_duration']} seconds\n")
+                f.write(f"Random Access: {combination['random_access']}")
                 f.write(f"Timestamp: {time.ctime()}\n")
                 f.write(f"Platform: {platform.system()} {platform.release()}\n")
                 f.write("----------------------------------------\n")

@@ -142,7 +142,7 @@ int parse_benchmark_args(int argc, char *argv[], BenchmarkArgs *args)
 
     if (argc < 5)
     {
-        printf("Usage: %s <container_type> <num_elements> <element_size> <read_ratio> [benchmark_seconds]\n", argv[0]);
+        printf("Usage: %s <container_type> <num_elements> <element_size> <read_ratio> [benchmark_seconds] [randomize_access]\n", argv[0]);
         printf("       %s --list-containers\n", argv[0]);
         return 1;
     }
@@ -154,6 +154,7 @@ int parse_benchmark_args(int argc, char *argv[], BenchmarkArgs *args)
     args->element_size = strtoul(argv[3], NULL, 10);
     args->ratio = strtod(argv[4], NULL);
     args->benchmark_seconds = (argc > 4) ? strtod(argv[5], NULL) : 5.0;
+    args->randomize_access = (argc > 5) ? strtoul(argv[6], NULL, 10) : 0;
 
     return 0;
 }

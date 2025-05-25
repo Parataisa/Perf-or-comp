@@ -22,10 +22,11 @@ DATA_STRUCTURES = [
 ]
 
 # Benchmark parameters - RATIO represents ins_del ratio
-RATIOS = [0.0]#, 0.01, 0.10, 0.50]  # ins_del ratios
-ELEMENT_SIZES = [8]#, 512, 8 * 1024 * 1024]
-NUM_ELEMENTS = [10]#, 1000, 100000, 10000000]
+RATIOS = [0.0, 0.01, 0.10, 0.50]  # ins_del ratios
+ELEMENT_SIZES = [8 ]#, 512, 8 * 1024 * 1024]
+NUM_ELEMENTS = [10] #, 1000, 100000, 10000000]
 TEST_DURATION = 3.0  # seconds
+RANDOM_ACCESS = [0, 1]
 
 # SLURM configuration
 SLURM_PARTITION = "lva"

@@ -27,6 +27,7 @@ class ResultParser:
                 "elem_size": combination["elem_size"],
                 "ratio": combination["ratio"],
                 "test_duration": combination["test_duration"],
+                "random_access" : combination["random_access"],
                 "run_id": run_id,
             }
             
