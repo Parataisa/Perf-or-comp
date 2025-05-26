@@ -418,15 +418,30 @@ def plot_performance_heatmap_by_ratio(df):
     plt.close()
 
 def plot_ratio_impact_summary(df):
-    containers = sort_containers(df['container'].unique())
+    all_containers = sort_containers(df['container'].unique())
     ratios = sorted(df['ratio'].unique())
     
-    fig, axes = plt.subplots(2, 3, figsize=(18, 12))
+    key_containers = []
+    for container in all_containers:
+        if container in ['array', 'linkedlist_seq', 'linkedlist_rand']:
+            key_containers.append(container)
+        elif container.startswith('unrolled_linkedlist') and container.endswith(('32', '64', '128')):
+            key_containers.append(container)
+        elif container.startswith('tiered_array') and container.endswith(('32', '64', '128')):
+            key_containers.append(container)
     
-    for idx, container in enumerate(containers[:6]): 
-        row = idx // 3
-        col = idx % 3
-        ax = axes[row, col]
+    n_containers = len(key_containers)
+    ncols = 3
+    nrows = (n_containers + ncols - 1) // ncols
+    
+    fig, axes = plt.subplots(nrows, ncols, figsize=(20, 5*nrows))
+    
+    if nrows == 1:
+        axes = axes.reshape(1, -1)
+    axes_flat = axes.flatten() if n_containers > 1 else [axes]
+    
+    for idx, container in enumerate(key_containers):
+        ax = axes_flat[idx]
         
         container_df = df[df['container'] == container]
         
@@ -450,10 +465,8 @@ def plot_ratio_impact_summary(df):
         ax.grid(True, alpha=0.3)
         ax.set_ylim(bottom=0)
     
-    for idx in range(len(containers), 6):
-        row = idx // 3
-        col = idx % 3
-        axes[row, col].set_visible(False)
+    for idx in range(n_containers, len(axes_flat)):
+        axes_flat[idx].set_visible(False)
     
     fig.suptitle('Ratio Impact Summary: Performance Degradation by Container', fontsize=16)
     plt.tight_layout()
