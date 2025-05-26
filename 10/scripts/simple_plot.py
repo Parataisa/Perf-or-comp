@@ -9,7 +9,7 @@ CSV_NAME = "results.csv"
 
 
 PLOT_STYLE = 'seaborn-v0_8-whitegrid'
-CSV_DIR = Path("results_csv")
+CSV_DIR = Path("results")
 OUTPUT_DIR = Path("plots_"+CSV_NAME[:-4])
 OUTPUT_DIR.mkdir(exist_ok=True)
 
