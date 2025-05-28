@@ -67,6 +67,12 @@
 #### Element Size vs Number of Elements Ratio 50%
 ![element_sizexnumber_of_elements_ratio50](scripts/plots_results_cluster/ratio_50_percent_element_size_analysis_results_cluster.png)
 
+**Key Insights**:
+- At 0% modification ratio, arrays more or less outperform all other structures for across all element sizes, and data sizes. After that the performance of arrays degrades significantly, while the unrolled linked list and tiered array show a more stable performance.
+- At 50% modification ratio, the performance of the unrolled linked list and tiered array starts to outperform the array, especially for larger element sizes and data sizes, but even for smaller element sizes and data sizes, the performance of the unrolled linked list and tiered array is more stable than the array, which shows a significant performance degradation.
+- The unrolled linked list seems to be the most stable structure across ratios, while the tiered array shows the second best stability across ratios.
+
+Note: Those plots are a bit packed, better view them in some kind of image viewer and switch between them to see the differences. 
 ## Key Findings
 
 ### 1. Sequential Access Dominance
