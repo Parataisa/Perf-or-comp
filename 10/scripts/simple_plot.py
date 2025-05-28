@@ -5,7 +5,7 @@ import numpy as np
 from pathlib import Path
 
 OUTPUT_TYPE = "png"  # Options: 'png', 'svg', 'pdf'
-CSV_NAME = "results.csv"
+CSV_NAME = "results_cluster.csv"
 
 
 PLOT_STYLE = 'seaborn-v0_8-whitegrid'
@@ -525,6 +525,173 @@ def plot_memory_efficiency_by_ratio(df):
     plt.savefig(OUTPUT_DIR / f"memory_efficiency_by_ratio_{CSV_NAME[:-4]}.{OUTPUT_TYPE}", bbox_inches='tight')
     plt.close()
 
+def plot_ratio_vs_element_size_grid(df):
+    ratios = sorted(df['ratio'].unique())
+    elem_sizes = sorted(df['elem_size'].unique())
+    
+    print(f"Creating {len(ratios)} separate ratio plots")
+    print(f"Element sizes available: {elem_sizes}")
+    
+    elem_size_data_sizes = {}
+    for elem_size in elem_sizes:
+        available_sizes = sorted(df[df['elem_size'] == elem_size]['size'].unique())
+        elem_size_data_sizes[elem_size] = available_sizes
+        print(f"Element {elem_size}B has data for sizes: {available_sizes}")
+    
+    all_possible_sizes = sorted(df['size'].unique())
+    size_color_map = {}
+    colors = plt.cm.Set1(np.linspace(0, 1, len(all_possible_sizes)))
+    for i, size in enumerate(all_possible_sizes):
+        size_color_map[size] = colors[i]
+    
+    for ratio in ratios:
+        ratio_df = df[df['ratio'] == ratio]
+        
+        if ratio_df.empty:
+            print(f"No data for ratio {ratio}")
+            continue
+        
+        available_elem_sizes = sorted(ratio_df['elem_size'].unique())
+        print(f"Ratio {ratio*100:.0f}% - Available element sizes: {available_elem_sizes}")
+        
+        fig, axes = plt.subplots(1, len(available_elem_sizes), 
+                                figsize=(7 * len(available_elem_sizes), 8))
+        
+        if len(available_elem_sizes) == 1:
+            axes = [axes]
+        
+        fig.suptitle(f'Performance Analysis - Insert/Delete Ratio: {ratio*100:.0f}%', fontsize=16)
+        
+        for elem_idx, elem_size in enumerate(available_elem_sizes):
+            ax = axes[elem_idx]
+            
+            elem_df = ratio_df[ratio_df['elem_size'] == elem_size]
+            
+            if elem_df.empty:
+                ax.text(0.5, 0.5, f'No Data\nfor {elem_size}B', 
+                       transform=ax.transAxes, ha='center', va='center', fontsize=12)
+                ax.set_title(f'Element Size: {elem_size}B', fontsize=12)
+                continue
+            
+            available_data_sizes = sorted(elem_df['size'].unique())
+            print(f"  Element {elem_size}B: Available data sizes: {available_data_sizes}")
+            
+            containers = sort_containers(elem_df['container'].unique())
+            
+            if len(containers) == 0:
+                ax.text(0.5, 0.5, f'No Containers\nfor {elem_size}B', 
+                       transform=ax.transAxes, ha='center', va='center', fontsize=12)
+                ax.set_title(f'Element Size: {elem_size}B', fontsize=12)
+                continue
+            
+            n_containers = len(containers)
+            n_data_sizes = len(available_data_sizes)
+            
+            container_width = 0.8
+            size_width = container_width / (n_data_sizes * 2) if n_data_sizes > 0 else 0.4  # 2 for seq/random
+            
+            x_base = np.arange(n_containers)
+            
+            bars_plotted = False
+            
+            for size_idx, data_size in enumerate(available_data_sizes):
+                size_df = elem_df[elem_df['size'] == data_size]
+                
+                if size_df.empty:
+                    continue
+                
+                agg_df = size_df.groupby(['container', 'random_access'])['ops_per_second'].mean().reset_index()
+                
+                if agg_df.empty:
+                    continue
+                
+                seq_values = []
+                rand_values = []
+                
+                for container in containers:
+                    seq_val = agg_df[(agg_df['container'] == container) & 
+                                   (agg_df['random_access'] == False)]['ops_per_second']
+                    rand_val = agg_df[(agg_df['container'] == container) & 
+                                    (agg_df['random_access'] == True)]['ops_per_second']
+                    
+                    seq_perf = seq_val.iloc[0] if not seq_val.empty else 0
+                    rand_perf = rand_val.iloc[0] if not rand_val.empty else 0
+                    
+                    seq_values.append(seq_perf)
+                    rand_values.append(rand_perf)
+                
+                if all(v == 0 for v in seq_values + rand_values):
+                    continue
+                
+                if n_data_sizes > 1:
+                    offset = (size_idx - (n_data_sizes - 1) / 2) * (size_width * 2)
+                else:
+                    offset = 0
+                x_seq = x_base + offset - size_width/2
+                x_rand = x_base + offset + size_width/2
+                
+                color = size_color_map[data_size]
+                
+                seq_label = f'{data_size:,} elem (Seq)' if elem_idx == 0 else ""
+                rand_label = f'{data_size:,} elem (Rand)' if elem_idx == 0 else ""
+                
+                min_height = 1e2
+                seq_values_plot = [max(v, min_height) if v > 0 else min_height for v in seq_values]
+                rand_values_plot = [max(v, min_height) if v > 0 else min_height for v in rand_values]
+                
+                ax.bar(x_seq, seq_values_plot, size_width, 
+                      color=color, alpha=0.9, label=seq_label, 
+                      edgecolor='black', linewidth=0.5)
+                ax.bar(x_rand, rand_values_plot, size_width, 
+                      color=color, alpha=0.5, label=rand_label,
+                      edgecolor='black', linewidth=0.5, hatch='///')
+                
+                bars_plotted = True
+                print(f"    Plotted size {data_size}: seq_max={max(seq_values):.1e}, rand_max={max(rand_values):.1e}")
+            
+            if not bars_plotted:
+                ax.text(0.5, 0.5, f'No Valid Data\nfor {elem_size}B', 
+                       transform=ax.transAxes, ha='center', va='center', fontsize=12)
+            
+            size_info = f"Data sizes: {', '.join([f'{s:,}' for s in available_data_sizes])}"
+            ax.set_title(f'Element Size: {elem_size}B\n{size_info}', fontsize=11)
+            ax.set_yscale('log')
+            ax.set_xticks(x_base)
+            ax.set_xticklabels(containers, rotation=45, ha='right', fontsize=8)
+            ax.grid(True, alpha=0.3, axis='y')
+            ax.set_ylabel('Ops/sec (Log)', fontsize=10)
+            ax.set_xlabel('Data Structure', fontsize=10)
+            
+            if bars_plotted:
+                ax.set_ylim(bottom=1e2, top=None)
+        
+        if len(available_elem_sizes) > 0:
+            all_sizes_in_plot = set()
+            for elem_size in available_elem_sizes:
+                elem_df = ratio_df[ratio_df['elem_size'] == elem_size]
+                if not elem_df.empty:
+                    all_sizes_in_plot.update(elem_df['size'].unique())
+            
+            legend_elements = []
+            for data_size in sorted(all_sizes_in_plot):
+                color = size_color_map[data_size]
+                legend_elements.append(plt.Rectangle((0,0),1,1, facecolor=color, alpha=0.9, 
+                                                   edgecolor='black', label=f'{data_size:,} elem (Seq)'))
+                legend_elements.append(plt.Rectangle((0,0),1,1, facecolor=color, alpha=0.5, 
+                                                   edgecolor='black', hatch='///', label=f'{data_size:,} elem (Rand)'))
+            
+            if legend_elements:
+                axes[0].legend(handles=legend_elements, bbox_to_anchor=(1.05, 1), 
+                              loc='upper left', fontsize=9)
+        
+        plt.tight_layout()
+        
+        output_path = OUTPUT_DIR / f"ratio_{int(ratio*100)}_percent_element_size_analysis_{CSV_NAME[:-4]}.{OUTPUT_TYPE}"
+        plt.savefig(output_path, bbox_inches='tight')
+        plt.close()
+        
+        print(f"✓ Created ratio {ratio*100:.0f}% analysis: {output_path}")
+
 def main():
     df = load_and_prepare_data(CSV_DIR / CSV_NAME)
     
@@ -548,21 +715,24 @@ def main():
     plot_relative_performance_to_array_by_ratio(df)
     print("✓ Created ratio-aware relative performance analysis")
     
-    plot_performance_scaling_by_size_and_ratio(df)
-    print("✓ Created ratio-aware performance scaling analysis")
+    #plot_performance_scaling_by_size_and_ratio(df)
+    #print("✓ Created ratio-aware performance scaling analysis")
     
     plot_element_size_impact_by_ratio(df)
     print("✓ Created ratio-aware element size impact analysis")
     
-    plot_performance_heatmap_by_ratio(df)
-    print("✓ Created ratio-aware performance heatmap")
+    #plot_performance_heatmap_by_ratio(df)
+    #print("✓ Created ratio-aware performance heatmap")
     
-    plot_ratio_impact_summary(df)
-    print("✓ Created ratio impact summary")
+    #plot_ratio_impact_summary(df)
+    #print("✓ Created ratio impact summary")
     
     plot_memory_efficiency_by_ratio(df)
     print("✓ Created ratio-aware memory efficiency analysis")
-    
+
+    plot_ratio_vs_element_size_grid(df)
+    print("✓ Created ratio vs element size grid")
+
     print(f"\nAll plots saved to {OUTPUT_DIR}/")
 
 if __name__ == "__main__":
