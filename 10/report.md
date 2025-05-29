@@ -71,6 +71,8 @@
 - At 0% modification ratio, arrays more or less outperform all other structures for across all element sizes, and data sizes. After that the performance of arrays degrades significantly, while the unrolled linked list and tiered array show a more stable performance.
 - At 50% modification ratio, the performance of the unrolled linked list and tiered array starts to outperform the array, especially for larger element sizes and data sizes, but even for smaller element sizes and data sizes, the performance of the unrolled linked list and tiered array is more stable than the array, which shows a significant performance degradation.
 - The unrolled linked list seems to be the most stable structure across ratios, while the tiered array shows the second best stability across ratios.
+- Not much is seen at the lager data size(if the run), the only thing that can be seen is that the performance of sequential access patterns is better than random access patterns, which is expected.
+- At the lager element size and number of elements, the performance for all structures hit a wall, which is probably due to memory bandwidth limitations.(The array is a bit of an outlier here, showing a more pronounced degradation)
 
 Note: Those plots are a bit packed, better view them in some kind of image viewer and switch between them to see the differences. 
 ## Key Findings
@@ -87,12 +89,10 @@ Note: Those plots are a bit packed, better view them in some kind of image viewe
 
 **Critical Threshold**: Performance degradation accelerates beyond 10% modification ratio for most structures.
 
-### 3. Size-Dependent Performance Characteristics
-**Small Data (≤1,000 elements)**: Structure overhead dominates, arrays maintain advantage.
+### 3. Tiered Array vs Unrolled Linked List
+**Performance Parity**: Both structures show similar performance characteristics, with tiered arrays slightly better at a lower modification ratio, but it drops off more quickly than the unrolled linked list as the modification ratio increases.
 
-**Medium Data (1,000-100,000 elements)**: Cache effects become significant, unrolled structures gain advantage.
-
-**Large Data (≥100,000 elements)**: Memory hierarchy effects dominate, sequential access becomes critical.
+**Memory Efficiency**: Unrolled linked lists generally show better memory efficiency across the board, especially at higher modification ratios.
 
 
 ---
