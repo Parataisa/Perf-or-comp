@@ -4,7 +4,8 @@ EXECUTABLE="./delannoy"
 OUTPUT_FILE="benchmark_results.csv"
 IMPLEMENTATIONS=(0 1 2)  # 0=recursive, 1=memoized, 2=tabular
 IMPL_NAMES=("recursive" "memoized" "tabular")
-SIZES=(5 8 10 12 15)     
+SIZES=(10 12 13 14 15 16 17 18 19 20 21 22)  # Sizes to test
+NUM_WARMUP=2
 NUM_RUNS=5               
 
 echo "Implementation,Size,Run,Runtime(s),MemoryUsage(KB)" > "$OUTPUT_FILE"
@@ -17,9 +18,16 @@ for i in "${!IMPLEMENTATIONS[@]}"; do
     
     for size in "${SIZES[@]}"; do
         echo "--- Size: $size ---"
+        if [ "$impl" -eq 0 ] && [ "$size" -gt 14 ]; then
+            echo "    Skipping benchmark for recursive implementation on size $size (too large)"
+            continue
+        fi
         
         echo "  Performing warmup run..."
-        $EXECUTABLE $size $impl > /dev/null 2>&1
+        for warmup in $(seq 1 $NUM_WARMUP); do
+            echo "    Warmup run $warmup..."
+            $EXECUTABLE $size $impl > /dev/null 2>&1
+        done
         
         total_time=0
         total_mem=0
@@ -27,14 +35,12 @@ for i in "${!IMPLEMENTATIONS[@]}"; do
         for run in $(seq 1 $NUM_RUNS); do
             echo "  Run $run of $NUM_RUNS..."
             
-            output=$(/usr/bin/time -f "%e:%M" $EXECUTABLE $size $impl +t 2>&1)
+            memory_output=$(/usr/bin/time -f "%M" $EXECUTABLE $size $impl +t 2>&1)
             
-            verification=$(echo "$output" | grep "Verification")
-            app_time=$(echo "$output" | grep "Time taken" | awk '{print $3}')
-            metrics=$(echo "$output" | tail -n 1)
+            runtime=$(echo "$memory_output" | grep "Time taken:" | awk '{print $3}')
             
-            runtime=$(echo $metrics | cut -d':' -f1)
-            memory=$(echo $metrics | cut -d':' -f2)
+            memory=$(echo "$memory_output" | tail -n1)
+            verification=$(echo "$memory_output" | grep "Verification")
             
             total_time=$(echo "$total_time + $runtime" | bc)
             total_mem=$(echo "$total_mem + $memory" | bc)

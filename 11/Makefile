@@ -1,5 +1,5 @@
 CC = gcc
-CFLAGS = -Wall -Wextra -O3
+CFLAGS = -Wall -Wextra -O0
 
 all: delannoy
 
@@ -7,7 +7,7 @@ delannoy: delannoy.c
 	$(CC) $(CFLAGS) -o delannoy delannoy.c
 
 run_test: delannoy
-	./benchmark.sh
+	bash ./benchmark.sh
 clean:
 	rm -f delannoy
 
