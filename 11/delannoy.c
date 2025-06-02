@@ -63,37 +63,34 @@ dn delannoy_memo(dn x, dn y)
 
 dn delannoy_tabular(dn x, dn y)
 {
-    dn **table = (dn **)malloc((x + 1) * sizeof(dn *));
-    for (dn i = 0; i <= x; i++)
+    if (x == 0 || y == 0)
     {
-        table[i] = (dn *)malloc((y + 1) * sizeof(dn));
+        return 1;
     }
 
-    for (dn i = 0; i <= x; i++)
-    {
-        table[i][0] = 1;
-    }
+    dn *dp = (dn *)malloc((y + 1) * sizeof(dn));
+
     for (dn j = 0; j <= y; j++)
     {
-        table[0][j] = 1;
+        dp[j] = 1;
     }
 
     for (dn i = 1; i <= x; i++)
     {
+        dn diagonal = 1;
+
         for (dn j = 1; j <= y; j++)
         {
-            table[i][j] = table[i - 1][j] + table[i - 1][j - 1] + table[i][j - 1];
+            dn temp = dp[j];     // Save D(i-1, j) before overwriting
+            dp[j] = dp[j]        // D(i-1, j)
+                    + diagonal   // D(i-1, j-1)
+                    + dp[j - 1]; // D(i, j-1)
+            diagonal = temp;     // Update diagonal for next j
         }
     }
 
-    dn result = table[x][y];
-
-    for (dn i = 0; i <= x; i++)
-    {
-        free(table[i]);
-    }
-    free(table);
-
+    dn result = dp[y];
+    free(dp);
     return result;
 }
 
@@ -104,19 +101,21 @@ dn DELANNOY_RESULTS[] = {
 
 int NUM_RESULTS = sizeof(DELANNOY_RESULTS) / sizeof(dn);
 
-int main(int argc, char **argv) {
-	if(argc<2) {
-		printf("Usage: delannoy N [+t]\n");
-		exit(-1);
-	}
+int main(int argc, char **argv)
+{
+    if (argc < 2)
+    {
+        printf("Usage: delannoy N [+t]\n");
+        exit(-1);
+    }
 
     int n = atoi(argv[1]);
-    if (n >= NUM_RESULTS) {
-		printf("N too large (can only check up to %d)\n", NUM_RESULTS);
+    if (n >= NUM_RESULTS)
+    {
+        printf("N too large (can only check up to %d)\n", NUM_RESULTS);
         exit(-1);
     }
     int function_type = atoi(argv[2]);
-
 
     dn result = 0;
     struct timespec start, end;

@@ -8,6 +8,7 @@ delannoy: delannoy.c
 
 run_test: delannoy
 	bash ./benchmark.sh
+	
 clean:
 	rm -f delannoy
 
