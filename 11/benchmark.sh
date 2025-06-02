@@ -4,7 +4,7 @@ EXECUTABLE="./delannoy"
 OUTPUT_FILE="benchmark_results.csv"
 IMPLEMENTATIONS=(0 1 2)  # 0=recursive, 1=memoized, 2=tabular
 IMPL_NAMES=("recursive" "memoized" "tabular")
-SIZES=(10 12 13 14 15 16 17 18 19 20 21 22)  # Sizes to test
+SIZES=(1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22)  # Sizes to test
 NUM_WARMUP=2
 NUM_RUNS=5               
 
@@ -50,7 +50,7 @@ for i in "${!IMPLEMENTATIONS[@]}"; do
             echo "    Runtime: ${runtime}s, Memory: ${memory}KB, $verification"
         done
         
-        avg_time=$(echo "scale=6; $total_time / $NUM_RUNS" | bc)
+        avg_time=$(echo "scale=9; $total_time / $NUM_RUNS" | bc)
         avg_mem=$(echo "scale=2; $total_mem / $NUM_RUNS" | bc)
         
         echo "$impl_name,$size,Average,$avg_time,$avg_mem" >> "$OUTPUT_FILE"
