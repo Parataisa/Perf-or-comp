@@ -1,0 +1,142 @@
+Memory/cache profiling results (5 repetitions each)
+===================================================
+Profiling: L1-dcache-load-misses,L1-dcache-loads
+
+ Performance counter stats for '/scratch/cb761240/exercise_12/lua-5.4.7/src/lua /scratch/cb761240/exercise_12/fib.lua' (3 runs):
+
+         1,274,613      L1-dcache-load-misses:u   #    0.00% of all L1-dcache accesses  ( +- 27.02% )
+    59,524,816,430      L1-dcache-loads:u                                             ( +-  0.46% )
+
+            38.378 +- 0.173 seconds time elapsed  ( +-  0.45% )
+
+
+Profiling: L1-dcache-prefetch-misses,L1-dcache-prefetches
+
+ Performance counter stats for '/scratch/cb761240/exercise_12/lua-5.4.7/src/lua /scratch/cb761240/exercise_12/fib.lua' (3 runs):
+
+           147,847      L1-dcache-prefetch-misses:u                                     ( +-  6.60% )
+     1,596,783,948      L1-dcache-prefetches:u                                        ( +-  3.49% )
+
+            38.717 +- 0.349 seconds time elapsed  ( +-  0.90% )
+
+
+Profiling: L1-dcache-store-misses,L1-dcache-stores
+
+ Performance counter stats for '/scratch/cb761240/exercise_12/lua-5.4.7/src/lua /scratch/cb761240/exercise_12/fib.lua' (3 runs):
+
+            21,096      L1-dcache-store-misses:u                                      ( +-237.98% )
+    29,579,565,561      L1-dcache-stores:u                                            ( +-  0.00% )
+
+            38.488 +- 0.137 seconds time elapsed  ( +-  0.36% )
+
+
+Profiling: L1-icache-load-misses,L1-icache-loads
+
+ Performance counter stats for '/scratch/cb761240/exercise_12/lua-5.4.7/src/lua /scratch/cb761240/exercise_12/fib.lua' (3 runs):
+
+         2,496,050      L1-icache-load-misses:u   #    0.00% of all L1-icache accesses  ( +-  4.64% )
+    96,914,732,890      L1-icache-loads:u                                             ( +-  0.00% )
+
+           38.2211 +- 0.0514 seconds time elapsed  ( +-  0.13% )
+
+
+Profiling: LLC-load-misses,LLC-loads
+
+ Performance counter stats for '/scratch/cb761240/exercise_12/lua-5.4.7/src/lua /scratch/cb761240/exercise_12/fib.lua' (3 runs):
+
+             3,384      LLC-load-misses:u         #   16.00% of all LL-cache accesses  ( +- 18.98% )
+            28,228      LLC-loads:u                                                   ( +- 12.61% )
+
+            38.284 +- 0.106 seconds time elapsed  ( +-  0.28% )
+
+
+Profiling: LLC-prefetch-misses,LLC-prefetches
+
+ Performance counter stats for '/scratch/cb761240/exercise_12/lua-5.4.7/src/lua /scratch/cb761240/exercise_12/fib.lua' (3 runs):
+
+             2,128      LLC-prefetch-misses:u                                         ( +- 13.75% )
+            17,631      LLC-prefetches:u                                              ( +- 26.71% )
+
+            38.506 +- 0.126 seconds time elapsed  ( +-  0.33% )
+
+
+Profiling: LLC-store-misses,LLC-stores
+
+ Performance counter stats for '/scratch/cb761240/exercise_12/lua-5.4.7/src/lua /scratch/cb761240/exercise_12/fib.lua' (3 runs):
+
+               623      LLC-store-misses:u                                            ( +- 14.30% )
+            16,933      LLC-stores:u                                                  ( +-410.30% )
+
+           38.2266 +- 0.0274 seconds time elapsed  ( +-  0.07% )
+
+
+Profiling: branch-misses,branches
+
+ Performance counter stats for '/scratch/cb761240/exercise_12/lua-5.4.7/src/lua /scratch/cb761240/exercise_12/fib.lua' (3 runs):
+
+       613,090,059      branch-misses:u           #    1.68% of all branches          ( +-  1.48% )
+    35,935,505,386      branches:u                                                    ( +-  0.76% )
+
+            38.577 +- 0.177 seconds time elapsed  ( +-  0.46% )
+
+
+Profiling: dTLB-load-misses,dTLB-loads
+
+ Performance counter stats for '/scratch/cb761240/exercise_12/lua-5.4.7/src/lua /scratch/cb761240/exercise_12/fib.lua' (3 runs):
+
+         2,473,760      dTLB-load-misses:u        #    0.00% of all dTLB cache accesses  ( +- 28.06% )
+    61,156,494,225      dTLB-loads:u                                                  ( +-  0.89% )
+
+            38.653 +- 0.365 seconds time elapsed  ( +-  0.94% )
+
+
+Profiling: dTLB-store-misses,dTLB-stores
+
+ Performance counter stats for '/scratch/cb761240/exercise_12/lua-5.4.7/src/lua /scratch/cb761240/exercise_12/fib.lua' (3 runs):
+
+               266      dTLB-store-misses:u                                           ( +- 23.75% )
+    29,579,565,654      dTLB-stores:u                                                 ( +-  0.00% )
+
+            38.497 +- 0.121 seconds time elapsed  ( +-  0.31% )
+
+
+Profiling: iTLB-load-misses,iTLB-loads
+
+ Performance counter stats for '/scratch/cb761240/exercise_12/lua-5.4.7/src/lua /scratch/cb761240/exercise_12/fib.lua' (3 runs):
+
+         6,894,264      iTLB-load-misses:u        #    0.00% of all iTLB cache accesses  ( +- 29.22% )
+   266,424,819,443      iTLB-loads:u                                                  ( +-  0.31% )
+
+            38.471 +- 0.163 seconds time elapsed  ( +-  0.42% )
+
+
+Profiling: node-load-misses,node-loads
+
+ Performance counter stats for '/scratch/cb761240/exercise_12/lua-5.4.7/src/lua /scratch/cb761240/exercise_12/fib.lua' (3 runs):
+
+               277      node-load-misses:u                                            ( +- 52.36% )
+             5,946      node-loads:u                                                  ( +- 16.39% )
+
+            38.805 +- 0.170 seconds time elapsed  ( +-  0.44% )
+
+
+Profiling: node-prefetch-misses,node-prefetches
+
+ Performance counter stats for '/scratch/cb761240/exercise_12/lua-5.4.7/src/lua /scratch/cb761240/exercise_12/fib.lua' (3 runs):
+
+               881      node-prefetch-misses:u                                        ( +- 25.42% )
+             2,760      node-prefetches:u                                             ( +- 19.84% )
+
+            38.411 +- 0.182 seconds time elapsed  ( +-  0.47% )
+
+
+Profiling: node-store-misses,node-stores
+
+ Performance counter stats for '/scratch/cb761240/exercise_12/lua-5.4.7/src/lua /scratch/cb761240/exercise_12/fib.lua' (3 runs):
+
+                 0      node-store-misses:u                                         
+               229      node-stores:u                                                 ( +- 16.57% )
+
+           38.2231 +- 0.0798 seconds time elapsed  ( +-  0.21% )
+
+

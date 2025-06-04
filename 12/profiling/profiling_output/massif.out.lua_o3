@@ -1,0 +1,2553 @@
+desc: (none)
+cmd: ./src/lua ../lua/fib.lua
+time_unit: i
+#-----------
+snapshot=0
+#-----------
+time=0
+mem_heap_B=0
+mem_heap_extra_B=0
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=1
+#-----------
+time=600608
+mem_heap_B=27679
+mem_heap_extra_B=4881
+mem_stacks_B=0
+heap_tree=detailed
+n4: 27679 (heap allocation functions) malloc/new/new[], --alloc-fns, etc.
+ n4: 21193 0x4012F9B: luaM_malloc_ (lmem.c:206)
+  n1: 10305 0x40121C8: luaC_newobjdt (lgc.c:260)
+   n6: 10305 0x40121C8: luaC_newobj (lgc.c:271)
+    n1: 7097 0x401937B: createstrobj (lstring.c:148)
+     n3: 7097 0x401937B: internshrstr (lstring.c:209)
+      n5: 6436 0x40196D2: luaS_new (lstring.c:254)
+       n2: 4470 0x4008A63: auxsetstr (lapi.c:831)
+        n5: 4219 0x40239D4: luaL_setfuncs (lauxlib.c:953)
+         n0: 1524 in 9 places, all below massif's threshold (1.00%)
+         n1: 1002 0x402E57A: luaopen_math (lmathlib.c:769)
+          n1: 1002 0x400E895: precallC (ldo.c:529)
+           n1: 1002 0x400E895: luaD_precall (ldo.c:595)
+            n1: 1002 0x400EC7C: ccall (ldo.c:635)
+             n1: 1002 0x400EC7C: luaD_callnoyield (ldo.c:655)
+              n1: 1002 0x400AF6A: lua_callk (lapi.c:1020)
+               n1: 1002 0x40242CB: luaL_requiref (lauxlib.c:991)
+                n1: 1002 0x4024613: luaL_openlibs (linit.c:61)
+                 n1: 1002 0x4008240: pmain (lua.c:643)
+                  n1: 1002 0x400E895: precallC (ldo.c:529)
+                   n1: 1002 0x400E895: luaD_precall (ldo.c:595)
+                    n1: 1002 0x400EC7C: ccall (ldo.c:635)
+                     n1: 1002 0x400EC7C: luaD_callnoyield (ldo.c:655)
+                      n1: 1002 0x400D8EA: luaD_rawrunprotected (ldo.c:144)
+                       n1: 1002 0x400F05D: luaD_pcall (ldo.c:957)
+                        n1: 1002 0x400B047: lua_pcallk (lapi.c:1064)
+                         n0: 1002 0x40076B6: main (lua.c:682)
+         n1: 762 0x402A023: luaopen_base (lbaselib.c:540)
+          n1: 762 0x400E895: precallC (ldo.c:529)
+           n1: 762 0x400E895: luaD_precall (ldo.c:595)
+            n1: 762 0x400EC7C: ccall (ldo.c:635)
+             n1: 762 0x400EC7C: luaD_callnoyield (ldo.c:655)
+              n1: 762 0x400AF6A: lua_callk (lapi.c:1020)
+               n1: 762 0x40242CB: luaL_requiref (lauxlib.c:991)
+                n1: 762 0x4024613: luaL_openlibs (linit.c:61)
+                 n1: 762 0x4008240: pmain (lua.c:643)
+                  n1: 762 0x400E895: precallC (ldo.c:529)
+                   n1: 762 0x400E895: luaD_precall (ldo.c:595)
+                    n1: 762 0x400EC7C: ccall (ldo.c:635)
+                     n1: 762 0x400EC7C: luaD_callnoyield (ldo.c:655)
+                      n1: 762 0x400D8EA: luaD_rawrunprotected (ldo.c:144)
+                       n1: 762 0x400F05D: luaD_pcall (ldo.c:957)
+                        n1: 762 0x400B047: lua_pcallk (lapi.c:1064)
+                         n0: 762 0x40076B6: main (lua.c:682)
+         n1: 485 0x402B9E5: luaopen_debug (ldblib.c:480)
+          n1: 485 0x400E895: precallC (ldo.c:529)
+           n1: 485 0x400E895: luaD_precall (ldo.c:595)
+            n1: 485 0x400EC7C: ccall (ldo.c:635)
+             n1: 485 0x400EC7C: luaD_callnoyield (ldo.c:655)
+              n1: 485 0x400AF6A: lua_callk (lapi.c:1020)
+               n1: 485 0x40242CB: luaL_requiref (lauxlib.c:991)
+                n1: 485 0x4024613: luaL_openlibs (linit.c:61)
+                 n1: 485 0x4008240: pmain (lua.c:643)
+                  n1: 485 0x400E895: precallC (ldo.c:529)
+                   n1: 485 0x400E895: luaD_precall (ldo.c:595)
+                    n1: 485 0x400EC7C: ccall (ldo.c:635)
+                     n1: 485 0x400EC7C: luaD_callnoyield (ldo.c:655)
+                      n1: 485 0x400D8EA: luaD_rawrunprotected (ldo.c:144)
+                       n1: 485 0x400F05D: luaD_pcall (ldo.c:957)
+                        n1: 485 0x400B047: lua_pcallk (lapi.c:1064)
+                         n0: 485 0x40076B6: main (lua.c:682)
+         n1: 446 0x40341D5: luaopen_string (lstrlib.c:1870)
+          n1: 446 0x400E895: precallC (ldo.c:529)
+           n1: 446 0x400E895: luaD_precall (ldo.c:595)
+            n1: 446 0x400EC7C: ccall (ldo.c:635)
+             n1: 446 0x400EC7C: luaD_callnoyield (ldo.c:655)
+              n1: 446 0x400AF6A: lua_callk (lapi.c:1020)
+               n1: 446 0x40242CB: luaL_requiref (lauxlib.c:991)
+                n1: 446 0x4024613: luaL_openlibs (linit.c:61)
+                 n1: 446 0x4008240: pmain (lua.c:643)
+                  n1: 446 0x400E895: precallC (ldo.c:529)
+                   n1: 446 0x400E895: luaD_precall (ldo.c:595)
+                    n1: 446 0x400EC7C: ccall (ldo.c:635)
+                     n1: 446 0x400EC7C: luaD_callnoyield (ldo.c:655)
+                      n1: 446 0x400D8EA: luaD_rawrunprotected (ldo.c:144)
+                       n1: 446 0x400F05D: luaD_pcall (ldo.c:957)
+                        n1: 446 0x400B047: lua_pcallk (lapi.c:1064)
+                         n0: 446 0x40076B6: main (lua.c:682)
+        n0: 251 in 8 places, all below massif's threshold (1.00%)
+       n1: 764 0x401ADB0: luaT_init (ltm.c:50)
+        n1: 764 0x40187B9: f_luaopen (lstate.c:237)
+         n1: 764 0x400D8EA: luaD_rawrunprotected (ldo.c:144)
+          n1: 764 0x4018AFB: lua_newstate (lstate.c:407)
+           n1: 764 0x402453E: luaL_newstate (lauxlib.c:1109)
+            n0: 764 0x400765D: main (lua.c:673)
+       n1: 640 0x402754C: luaX_init (llex.c:75)
+        n1: 640 0x40187C1: f_luaopen (lstate.c:238)
+         n1: 640 0x400D8EA: luaD_rawrunprotected (ldo.c:144)
+          n1: 640 0x4018AFB: lua_newstate (lstate.c:407)
+           n1: 640 0x402453E: luaL_newstate (lauxlib.c:1109)
+            n0: 640 0x400765D: main (lua.c:673)
+       n1: 422 0x400A45B: auxgetstr (lapi.c:641)
+        n1: 422 0x400A45B: lua_getfield (lapi.c:691)
+         n0: 422 in 3 places, all below massif's threshold (1.00%)
+       n0: 140 in 1 place, below massif's threshold (1.00%)
+      n2: 511 0x4027CA2: luaX_newstring (llex.c:136)
+       n1: 475 0x4028A77: llex (llex.c:545)
+        n1: 475 0x4028E61: luaX_next (llex.c:572)
+         n0: 475 in 8 places, all below massif's threshold (1.00%)
+       n0: 36 in 1 place, below massif's threshold (1.00%)
+      n0: 150 in 4 places, all below massif's threshold (1.00%)
+    n2: 1176 0x4019CD2: luaH_new (ltable.c:627)
+     n1: 1008 0x400A700: lua_createtable (lapi.c:765)
+      n0: 1008 in 16 places, all below massif's threshold (1.00%)
+     n0: 168 in 3 places, all below massif's threshold (1.00%)
+    n2: 768 0x400FEC2: luaF_newproto (lfunc.c:241)
+     n1: 640 0x40168FF: addprototype (lparser.c:709)
+      n2: 640 0x40168FF: body (lparser.c:994)
+       n1: 512 0x4015A4A: funcstat (lparser.c:1788)
+        n1: 512 0x4015A4A: statement (lparser.c:1876)
+         n1: 512 0x40185EE: statlist (lparser.c:806)
+          n1: 512 0x40185EE: mainfunc (lparser.c:1936)
+           n1: 512 0x40185EE: luaY_parser (lparser.c:1960)
+            n1: 512 0x400D7E5: f_parser (ldo.c:1002)
+             n1: 512 0x400D8EA: luaD_rawrunprotected (ldo.c:144)
+              n1: 512 0x400F05D: luaD_pcall (ldo.c:957)
+               n1: 512 0x400F17D: luaD_protectedparser (ldo.c:1019)
+                n1: 512 0x400B141: lua_load (lapi.c:1094)
+                 n1: 512 0x4023332: luaL_loadfilex (lauxlib.c:815)
+                  n1: 512 0x4008693: handle_script (lua.c:262)
+                   n1: 512 0x4008693: pmain (lua.c:654)
+                    n1: 512 0x400E895: precallC (ldo.c:529)
+                     n1: 512 0x400E895: luaD_precall (ldo.c:595)
+                      n1: 512 0x400EC7C: ccall (ldo.c:635)
+                       n1: 512 0x400EC7C: luaD_callnoyield (ldo.c:655)
+                        n1: 512 0x400D8EA: luaD_rawrunprotected (ldo.c:144)
+                         n1: 512 0x400F05D: luaD_pcall (ldo.c:957)
+                          n1: 512 0x400B047: lua_pcallk (lapi.c:1064)
+                           n0: 512 0x40076B6: main (lua.c:682)
+       n0: 128 in 1 place, below massif's threshold (1.00%)
+     n0: 128 in 1 place, below massif's threshold (1.00%)
+    n1: 496 0x40195FA: createstrobj (lstring.c:148)
+     n1: 496 0x40195FA: luaS_createlngstrobj (lstring.c:158)
+      n1: 496 0x40195FA: luaS_newlstr (lstring.c:229)
+       n0: 496 in 2 places, all below massif's threshold (1.00%)
+    n0: 432 in 3 places, all below massif's threshold (1.00%)
+    n1: 336 0x400FA15: luaF_newCclosure (lfunc.c:28)
+     n1: 336 0x400A1E8: lua_pushcclosure (lapi.c:589)
+      n0: 336 in 2 places, all below massif's threshold (1.00%)
+  n1: 9096 0x401A934: setnodevector (ltable.c:492)
+   n1: 9096 0x401A934: setnodevector (ltable.c:480)
+    n2: 9096 0x401A934: luaH_resize (ltable.c:560)
+     n7: 5256 0x400A74C: lua_createtable (lapi.c:769)
+      n1: 1536 0x402E569: luaopen_math (lmathlib.c:769)
+       n1: 1536 0x400E895: precallC (ldo.c:529)
+        n1: 1536 0x400E895: luaD_precall (ldo.c:595)
+         n1: 1536 0x400EC7C: ccall (ldo.c:635)
+          n1: 1536 0x400EC7C: luaD_callnoyield (ldo.c:655)
+           n1: 1536 0x400AF6A: lua_callk (lapi.c:1020)
+            n1: 1536 0x40242CB: luaL_requiref (lauxlib.c:991)
+             n1: 1536 0x4024613: luaL_openlibs (linit.c:61)
+              n1: 1536 0x4008240: pmain (lua.c:643)
+               n1: 1536 0x400E895: precallC (ldo.c:529)
+                n1: 1536 0x400E895: luaD_precall (ldo.c:595)
+                 n1: 1536 0x400EC7C: ccall (ldo.c:635)
+                  n1: 1536 0x400EC7C: luaD_callnoyield (ldo.c:655)
+                   n1: 1536 0x400D8EA: luaD_rawrunprotected (ldo.c:144)
+                    n1: 1536 0x400F05D: luaD_pcall (ldo.c:957)
+                     n1: 1536 0x400B047: lua_pcallk (lapi.c:1064)
+                      n0: 1536 0x40076B6: main (lua.c:682)
+      n0: 1032 in 8 places, all below massif's threshold (1.00%)
+      n1: 768 0x402B9D4: luaopen_debug (ldblib.c:480)
+       n1: 768 0x400E895: precallC (ldo.c:529)
+        n1: 768 0x400E895: luaD_precall (ldo.c:595)
+         n1: 768 0x400EC7C: ccall (ldo.c:635)
+          n1: 768 0x400EC7C: luaD_callnoyield (ldo.c:655)
+           n1: 768 0x400AF6A: lua_callk (lapi.c:1020)
+            n1: 768 0x40242CB: luaL_requiref (lauxlib.c:991)
+             n1: 768 0x4024613: luaL_openlibs (linit.c:61)
+              n1: 768 0x4008240: pmain (lua.c:643)
+               n1: 768 0x400E895: precallC (ldo.c:529)
+                n1: 768 0x400E895: luaD_precall (ldo.c:595)
+                 n1: 768 0x400EC7C: ccall (ldo.c:635)
+                  n1: 768 0x400EC7C: luaD_callnoyield (ldo.c:655)
+                   n1: 768 0x400D8EA: luaD_rawrunprotected (ldo.c:144)
+                    n1: 768 0x400F05D: luaD_pcall (ldo.c:957)
+                     n1: 768 0x400B047: lua_pcallk (lapi.c:1064)
+                      n0: 768 0x40076B6: main (lua.c:682)
+      n1: 768 0x40341C4: luaopen_string (lstrlib.c:1870)
+       n1: 768 0x400E895: precallC (ldo.c:529)
+        n1: 768 0x400E895: luaD_precall (ldo.c:595)
+         n1: 768 0x400EC7C: ccall (ldo.c:635)
+          n1: 768 0x400EC7C: luaD_callnoyield (ldo.c:655)
+           n1: 768 0x400AF6A: lua_callk (lapi.c:1020)
+            n1: 768 0x40242CB: luaL_requiref (lauxlib.c:991)
+             n1: 768 0x4024613: luaL_openlibs (linit.c:61)
+              n1: 768 0x4008240: pmain (lua.c:643)
+               n1: 768 0x400E895: precallC (ldo.c:529)
+                n1: 768 0x400E895: luaD_precall (ldo.c:595)
+                 n1: 768 0x400EC7C: ccall (ldo.c:635)
+                  n1: 768 0x400EC7C: luaD_callnoyield (ldo.c:655)
+                   n1: 768 0x400D8EA: luaD_rawrunprotected (ldo.c:144)
+                    n1: 768 0x400F05D: luaD_pcall (ldo.c:957)
+                     n1: 768 0x400B047: lua_pcallk (lapi.c:1064)
+                      n0: 768 0x40076B6: main (lua.c:682)
+      n1: 384 0x402D394: luaopen_io (liolib.c:833)
+       n1: 384 0x400E895: precallC (ldo.c:529)
+        n1: 384 0x400E895: luaD_precall (ldo.c:595)
+         n1: 384 0x400EC7C: ccall (ldo.c:635)
+          n1: 384 0x400EC7C: luaD_callnoyield (ldo.c:655)
+           n1: 384 0x400AF6A: lua_callk (lapi.c:1020)
+            n1: 384 0x40242CB: luaL_requiref (lauxlib.c:991)
+             n1: 384 0x4024613: luaL_openlibs (linit.c:61)
+              n1: 384 0x4008240: pmain (lua.c:643)
+               n1: 384 0x400E895: precallC (ldo.c:529)
+                n1: 384 0x400E895: luaD_precall (ldo.c:595)
+                 n1: 384 0x400EC7C: ccall (ldo.c:635)
+                  n1: 384 0x400EC7C: luaD_callnoyield (ldo.c:655)
+                   n1: 384 0x400D8EA: luaD_rawrunprotected (ldo.c:144)
+                    n1: 384 0x400F05D: luaD_pcall (ldo.c:957)
+                     n1: 384 0x400B047: lua_pcallk (lapi.c:1064)
+                      n0: 384 0x40076B6: main (lua.c:682)
+      n1: 384 0x4030204: luaopen_os (loslib.c:427)
+       n1: 384 0x400E895: precallC (ldo.c:529)
+        n1: 384 0x400E895: luaD_precall (ldo.c:595)
+         n1: 384 0x400EC7C: ccall (ldo.c:635)
+          n1: 384 0x400EC7C: luaD_callnoyield (ldo.c:655)
+           n1: 384 0x400AF6A: lua_callk (lapi.c:1020)
+            n1: 384 0x40242CB: luaL_requiref (lauxlib.c:991)
+             n1: 384 0x4024613: luaL_openlibs (linit.c:61)
+              n1: 384 0x4008240: pmain (lua.c:643)
+               n1: 384 0x400E895: precallC (ldo.c:529)
+                n1: 384 0x400E895: luaD_precall (ldo.c:595)
+                 n1: 384 0x400EC7C: ccall (ldo.c:635)
+                  n1: 384 0x400EC7C: luaD_callnoyield (ldo.c:655)
+                   n1: 384 0x400D8EA: luaD_rawrunprotected (ldo.c:144)
+                    n1: 384 0x400F05D: luaD_pcall (ldo.c:957)
+                     n1: 384 0x400B047: lua_pcallk (lapi.c:1064)
+                      n0: 384 0x40076B6: main (lua.c:682)
+      n1: 384 0x40341E4: createmetatable (lstrlib.c:1854)
+       n1: 384 0x40341E4: luaopen_string (lstrlib.c:1871)
+        n1: 384 0x400E895: precallC (ldo.c:529)
+         n1: 384 0x400E895: luaD_precall (ldo.c:595)
+          n1: 384 0x400EC7C: ccall (ldo.c:635)
+           n1: 384 0x400EC7C: luaD_callnoyield (ldo.c:655)
+            n1: 384 0x400AF6A: lua_callk (lapi.c:1020)
+             n1: 384 0x40242CB: luaL_requiref (lauxlib.c:991)
+              n1: 384 0x4024613: luaL_openlibs (linit.c:61)
+               n1: 384 0x4008240: pmain (lua.c:643)
+                n1: 384 0x400E895: precallC (ldo.c:529)
+                 n1: 384 0x400E895: luaD_precall (ldo.c:595)
+                  n1: 384 0x400EC7C: ccall (ldo.c:635)
+                   n1: 384 0x400EC7C: luaD_callnoyield (ldo.c:655)
+                    n1: 384 0x400D8EA: luaD_rawrunprotected (ldo.c:144)
+                     n1: 384 0x400F05D: luaD_pcall (ldo.c:957)
+                      n1: 384 0x400B047: lua_pcallk (lapi.c:1064)
+                       n0: 384 0x40076B6: main (lua.c:682)
+     n1: 3840 0x401A550: rehash (ltable.c:616)
+      n3: 3840 0x401A550: luaH_newkey (ltable.c:688)
+       n1: 2304 0x401D0F9: luaV_finishset (lvm.c:342)
+        n3: 2304 0x4008A97: auxsetstr (lapi.c:840)
+         n1: 1536 0x4024613: luaL_openlibs (linit.c:61)
+          n1: 1536 0x4008240: pmain (lua.c:643)
+           n1: 1536 0x400E895: precallC (ldo.c:529)
+            n1: 1536 0x400E895: luaD_precall (ldo.c:595)
+             n1: 1536 0x400EC7C: ccall (ldo.c:635)
+              n1: 1536 0x400EC7C: luaD_callnoyield (ldo.c:655)
+               n1: 1536 0x400D8EA: luaD_rawrunprotected (ldo.c:144)
+                n1: 1536 0x400F05D: luaD_pcall (ldo.c:957)
+                 n1: 1536 0x400B047: lua_pcallk (lapi.c:1064)
+                  n0: 1536 0x40076B6: main (lua.c:682)
+         n0: 384 in 3 places, all below massif's threshold (1.00%)
+         n1: 384 0x40242E8: luaL_requiref (lauxlib.c:993)
+          n1: 384 0x4024613: luaL_openlibs (linit.c:61)
+           n1: 384 0x4008240: pmain (lua.c:643)
+            n1: 384 0x400E895: precallC (ldo.c:529)
+             n1: 384 0x400E895: luaD_precall (ldo.c:595)
+              n1: 384 0x400EC7C: ccall (ldo.c:635)
+               n1: 384 0x400EC7C: luaD_callnoyield (ldo.c:655)
+                n1: 384 0x400D8EA: luaD_rawrunprotected (ldo.c:144)
+                 n1: 384 0x400F05D: luaD_pcall (ldo.c:957)
+                  n1: 384 0x400B047: lua_pcallk (lapi.c:1064)
+                   n0: 384 0x40076B6: main (lua.c:682)
+       n1: 1536 0x40247B2: addk (lcode.c:562)
+        n1: 1536 0x40255FE: luaK_intK (lcode.c:588)
+         n1: 1536 0x40255FE: luaK_int (lcode.c:676)
+          n1: 1536 0x40255FE: luaK_int (lcode.c:672)
+           n1: 1536 0x4025B0E: discharge2reg (lcode.c:853)
+            n1: 1536 0x4025BB9: exp2reg (lcode.c:916)
+             n1: 1536 0x4017783: explist (lparser.c:1017)
+              n1: 1536 0x4017783: funcargs (lparser.c:1036)
+               n1: 1536 0x401782F: suffixedexp (lparser.c:1131)
+                n1: 1536 0x4016EB3: simpleexp (lparser.c:1187)
+                 n1: 1536 0x4016EB3: subexpr (lparser.c:1271)
+                  n1: 1536 0x40179FD: expr (lparser.c:1291)
+                   n1: 1536 0x40179FD: explist (lparser.c:1015)
+                    n1: 1536 0x40179FD: restassign (lparser.c:1392)
+                     n1: 1536 0x4017B12: restassign (lparser.c:1386)
+                      n1: 1536 0x40164B1: exprstat (lparser.c:1802)
+                       n1: 1536 0x40164B1: statement (lparser.c:1907)
+                        n1: 1536 0x40185EE: statlist (lparser.c:806)
+                         n1: 1536 0x40185EE: mainfunc (lparser.c:1936)
+                          n1: 1536 0x40185EE: luaY_parser (lparser.c:1960)
+                           n1: 1536 0x400D7E5: f_parser (ldo.c:1002)
+                            n1: 1536 0x400D8EA: luaD_rawrunprotected (ldo.c:144)
+                             n1: 1536 0x400F05D: luaD_pcall (ldo.c:957)
+                              n1: 1536 0x400F17D: luaD_protectedparser (ldo.c:1019)
+                               n1: 1536 0x400B141: lua_load (lapi.c:1094)
+                                n1: 1536 0x4023332: luaL_loadfilex (lauxlib.c:815)
+                                 n1: 1536 0x4008693: handle_script (lua.c:262)
+                                  n1: 1536 0x4008693: pmain (lua.c:654)
+                                   n1: 1536 0x400E895: precallC (ldo.c:529)
+                                    n1: 1536 0x400E895: luaD_precall (ldo.c:595)
+                                     n1: 1536 0x400EC7C: ccall (ldo.c:635)
+                                      n1: 1536 0x400EC7C: luaD_callnoyield (ldo.c:655)
+                                       n1: 1536 0x400D8EA: luaD_rawrunprotected (ldo.c:144)
+                                        n1: 1536 0x400F05D: luaD_pcall (ldo.c:957)
+                                         n1: 1536 0x400B047: lua_pcallk (lapi.c:1064)
+                                          n0: 1536 0x40076B6: main (lua.c:682)
+       n0: 0 in 1 place, below massif's threshold (1.00%)
+  n2: 1792 0x4018B9F: luaE_extendCI (lstate.c:108)
+   n1: 1600 0x400E990: prepCallInfo (ldo.c:504)
+    n1: 1600 0x400E990: luaD_precall (ldo.c:604)
+     n1: 1600 0x401E7E0: luaV_execute (lvm.c:1682)
+      n1: 1600 0x400EC95: ccall (ldo.c:637)
+       n1: 1600 0x400EC95: luaD_callnoyield (ldo.c:655)
+        n1: 1600 0x400D8EA: luaD_rawrunprotected (ldo.c:144)
+         n1: 1600 0x400F05D: luaD_pcall (ldo.c:957)
+          n1: 1600 0x400B047: lua_pcallk (lapi.c:1064)
+           n1: 1600 0x4007C30: docall (lua.c:161)
+            n1: 1600 0x4008746: handle_script (lua.c:265)
+             n1: 1600 0x4008746: pmain (lua.c:654)
+              n1: 1600 0x400E895: precallC (ldo.c:529)
+               n1: 1600 0x400E895: luaD_precall (ldo.c:595)
+                n1: 1600 0x400EC7C: ccall (ldo.c:635)
+                 n1: 1600 0x400EC7C: luaD_callnoyield (ldo.c:655)
+                  n1: 1600 0x400D8EA: luaD_rawrunprotected (ldo.c:144)
+                   n1: 1600 0x400F05D: luaD_pcall (ldo.c:957)
+                    n1: 1600 0x400B047: lua_pcallk (lapi.c:1064)
+                     n0: 1600 0x40076B6: main (lua.c:682)
+   n0: 192 in 1 place, below massif's threshold (1.00%)
+  n0: 0 in 2 places, all below massif's threshold (1.00%)
+ n4: 4862 0x4012DDE: luaM_realloc_ (lmem.c:180)
+  n1: 2048 0x40191CA: luaS_resize (lstring.c:91)
+   n1: 2048 0x40193F6: growstrtab (lstring.c:182)
+    n1: 2048 0x40193F6: internshrstr (lstring.c:206)
+     n1: 2048 0x40196D2: luaS_new (lstring.c:254)
+      n1: 2048 0x400A45B: auxgetstr (lapi.c:641)
+       n1: 2048 0x400A45B: lua_getfield (lapi.c:691)
+        n1: 2048 0x4024246: luaL_requiref (lauxlib.c:986)
+         n1: 2048 0x4024613: luaL_openlibs (linit.c:61)
+          n1: 2048 0x4008240: pmain (lua.c:643)
+           n1: 2048 0x400E895: precallC (ldo.c:529)
+            n1: 2048 0x400E895: luaD_precall (ldo.c:595)
+             n1: 2048 0x400EC7C: ccall (ldo.c:635)
+              n1: 2048 0x400EC7C: luaD_callnoyield (ldo.c:655)
+               n1: 2048 0x400D8EA: luaD_rawrunprotected (ldo.c:144)
+                n1: 2048 0x400F05D: luaD_pcall (ldo.c:957)
+                 n1: 2048 0x400B047: lua_pcallk (lapi.c:1064)
+                  n0: 2048 0x40076B6: main (lua.c:682)
+  n1: 1360 0x400D9C4: luaD_reallocstack (ldo.c:220)
+   n1: 1360 0x400EA3F: luaD_precall (ldo.c:603)
+    n1: 1360 0x401E7E0: luaV_execute (lvm.c:1682)
+     n1: 1360 0x400EC95: ccall (ldo.c:637)
+      n1: 1360 0x400EC95: luaD_callnoyield (ldo.c:655)
+       n1: 1360 0x400D8EA: luaD_rawrunprotected (ldo.c:144)
+        n1: 1360 0x400F05D: luaD_pcall (ldo.c:957)
+         n1: 1360 0x400B047: lua_pcallk (lapi.c:1064)
+          n1: 1360 0x4007C30: docall (lua.c:161)
+           n1: 1360 0x4008746: handle_script (lua.c:265)
+            n1: 1360 0x4008746: pmain (lua.c:654)
+             n1: 1360 0x400E895: precallC (ldo.c:529)
+              n1: 1360 0x400E895: luaD_precall (ldo.c:595)
+               n1: 1360 0x400EC7C: ccall (ldo.c:635)
+                n1: 1360 0x400EC7C: luaD_callnoyield (ldo.c:655)
+                 n1: 1360 0x400D8EA: luaD_rawrunprotected (ldo.c:144)
+                  n1: 1360 0x400F05D: luaD_pcall (ldo.c:957)
+                   n1: 1360 0x400B047: lua_pcallk (lapi.c:1064)
+                    n0: 1360 0x40076B6: main (lua.c:682)
+  n1: 1358 0x4012E4A: luaM_saferealloc_ (lmem.c:194)
+   n3: 1358 0x4012E4A: luaM_shrinkvector_ (lmem.c:134)
+    n1: 504 0x40154DC: close_func (lparser.c:764)
+     n0: 504 in 2 places, all below massif's threshold (1.00%)
+    n0: 502 in 4 places, all below massif's threshold (1.00%)
+    n1: 352 0x401557D: close_func (lparser.c:770)
+     n1: 352 0x4016B04: body (lparser.c:1008)
+      n0: 352 in 2 places, all below massif's threshold (1.00%)
+  n0: 96 in 3 places, all below massif's threshold (1.00%)
+ n1: 1624 0x40188FF: lua_newstate (lstate.c:364)
+  n1: 1624 0x402453E: luaL_newstate (lauxlib.c:1109)
+   n0: 1624 0x400765D: main (lua.c:673)
+ n0: 0 in 2 places, all below massif's threshold (1.00%)
+#-----------
+snapshot=2
+#-----------
+time=75873606379
+mem_heap_B=29310
+mem_heap_extra_B=4930
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=3
+#-----------
+time=75874255334
+mem_heap_B=31351
+mem_heap_extra_B=8745
+mem_stacks_B=0
+heap_tree=peak
+n5: 31351 (heap allocation functions) malloc/new/new[], --alloc-fns, etc.
+ n4: 24225 0x4012F9B: luaM_malloc_ (lmem.c:206)
+  n1: 15449 0x40121C8: luaC_newobjdt (lgc.c:260)
+   n7: 15449 0x40121C8: luaC_newobj (lgc.c:271)
+    n1: 7097 0x401937B: createstrobj (lstring.c:148)
+     n3: 7097 0x401937B: internshrstr (lstring.c:209)
+      n5: 6436 0x40196D2: luaS_new (lstring.c:254)
+       n2: 4470 0x4008A63: auxsetstr (lapi.c:831)
+        n5: 4219 0x40239D4: luaL_setfuncs (lauxlib.c:953)
+         n0: 1524 in 9 places, all below massif's threshold (1.00%)
+         n1: 1002 0x402E57A: luaopen_math (lmathlib.c:769)
+          n1: 1002 0x400E895: precallC (ldo.c:529)
+           n1: 1002 0x400E895: luaD_precall (ldo.c:595)
+            n1: 1002 0x400EC7C: ccall (ldo.c:635)
+             n1: 1002 0x400EC7C: luaD_callnoyield (ldo.c:655)
+              n1: 1002 0x400AF6A: lua_callk (lapi.c:1020)
+               n1: 1002 0x40242CB: luaL_requiref (lauxlib.c:991)
+                n1: 1002 0x4024613: luaL_openlibs (linit.c:61)
+                 n1: 1002 0x4008240: pmain (lua.c:643)
+                  n1: 1002 0x400E895: precallC (ldo.c:529)
+                   n1: 1002 0x400E895: luaD_precall (ldo.c:595)
+                    n1: 1002 0x400EC7C: ccall (ldo.c:635)
+                     n1: 1002 0x400EC7C: luaD_callnoyield (ldo.c:655)
+                      n1: 1002 0x400D8EA: luaD_rawrunprotected (ldo.c:144)
+                       n1: 1002 0x400F05D: luaD_pcall (ldo.c:957)
+                        n1: 1002 0x400B047: lua_pcallk (lapi.c:1064)
+                         n0: 1002 0x40076B6: main (lua.c:682)
+         n1: 762 0x402A023: luaopen_base (lbaselib.c:540)
+          n1: 762 0x400E895: precallC (ldo.c:529)
+           n1: 762 0x400E895: luaD_precall (ldo.c:595)
+            n1: 762 0x400EC7C: ccall (ldo.c:635)
+             n1: 762 0x400EC7C: luaD_callnoyield (ldo.c:655)
+              n1: 762 0x400AF6A: lua_callk (lapi.c:1020)
+               n1: 762 0x40242CB: luaL_requiref (lauxlib.c:991)
+                n1: 762 0x4024613: luaL_openlibs (linit.c:61)
+                 n1: 762 0x4008240: pmain (lua.c:643)
+                  n1: 762 0x400E895: precallC (ldo.c:529)
+                   n1: 762 0x400E895: luaD_precall (ldo.c:595)
+                    n1: 762 0x400EC7C: ccall (ldo.c:635)
+                     n1: 762 0x400EC7C: luaD_callnoyield (ldo.c:655)
+                      n1: 762 0x400D8EA: luaD_rawrunprotected (ldo.c:144)
+                       n1: 762 0x400F05D: luaD_pcall (ldo.c:957)
+                        n1: 762 0x400B047: lua_pcallk (lapi.c:1064)
+                         n0: 762 0x40076B6: main (lua.c:682)
+         n1: 485 0x402B9E5: luaopen_debug (ldblib.c:480)
+          n1: 485 0x400E895: precallC (ldo.c:529)
+           n1: 485 0x400E895: luaD_precall (ldo.c:595)
+            n1: 485 0x400EC7C: ccall (ldo.c:635)
+             n1: 485 0x400EC7C: luaD_callnoyield (ldo.c:655)
+              n1: 485 0x400AF6A: lua_callk (lapi.c:1020)
+               n1: 485 0x40242CB: luaL_requiref (lauxlib.c:991)
+                n1: 485 0x4024613: luaL_openlibs (linit.c:61)
+                 n1: 485 0x4008240: pmain (lua.c:643)
+                  n1: 485 0x400E895: precallC (ldo.c:529)
+                   n1: 485 0x400E895: luaD_precall (ldo.c:595)
+                    n1: 485 0x400EC7C: ccall (ldo.c:635)
+                     n1: 485 0x400EC7C: luaD_callnoyield (ldo.c:655)
+                      n1: 485 0x400D8EA: luaD_rawrunprotected (ldo.c:144)
+                       n1: 485 0x400F05D: luaD_pcall (ldo.c:957)
+                        n1: 485 0x400B047: lua_pcallk (lapi.c:1064)
+                         n0: 485 0x40076B6: main (lua.c:682)
+         n1: 446 0x40341D5: luaopen_string (lstrlib.c:1870)
+          n1: 446 0x400E895: precallC (ldo.c:529)
+           n1: 446 0x400E895: luaD_precall (ldo.c:595)
+            n1: 446 0x400EC7C: ccall (ldo.c:635)
+             n1: 446 0x400EC7C: luaD_callnoyield (ldo.c:655)
+              n1: 446 0x400AF6A: lua_callk (lapi.c:1020)
+               n1: 446 0x40242CB: luaL_requiref (lauxlib.c:991)
+                n1: 446 0x4024613: luaL_openlibs (linit.c:61)
+                 n1: 446 0x4008240: pmain (lua.c:643)
+                  n1: 446 0x400E895: precallC (ldo.c:529)
+                   n1: 446 0x400E895: luaD_precall (ldo.c:595)
+                    n1: 446 0x400EC7C: ccall (ldo.c:635)
+                     n1: 446 0x400EC7C: luaD_callnoyield (ldo.c:655)
+                      n1: 446 0x400D8EA: luaD_rawrunprotected (ldo.c:144)
+                       n1: 446 0x400F05D: luaD_pcall (ldo.c:957)
+                        n1: 446 0x400B047: lua_pcallk (lapi.c:1064)
+                         n0: 446 0x40076B6: main (lua.c:682)
+        n0: 251 in 8 places, all below massif's threshold (1.00%)
+       n1: 764 0x401ADB0: luaT_init (ltm.c:50)
+        n1: 764 0x40187B9: f_luaopen (lstate.c:237)
+         n1: 764 0x400D8EA: luaD_rawrunprotected (ldo.c:144)
+          n1: 764 0x4018AFB: lua_newstate (lstate.c:407)
+           n1: 764 0x402453E: luaL_newstate (lauxlib.c:1109)
+            n0: 764 0x400765D: main (lua.c:673)
+       n1: 640 0x402754C: luaX_init (llex.c:75)
+        n1: 640 0x40187C1: f_luaopen (lstate.c:238)
+         n1: 640 0x400D8EA: luaD_rawrunprotected (ldo.c:144)
+          n1: 640 0x4018AFB: lua_newstate (lstate.c:407)
+           n1: 640 0x402453E: luaL_newstate (lauxlib.c:1109)
+            n0: 640 0x400765D: main (lua.c:673)
+       n1: 422 0x400A45B: auxgetstr (lapi.c:641)
+        n1: 422 0x400A45B: lua_getfield (lapi.c:691)
+         n0: 422 in 3 places, all below massif's threshold (1.00%)
+       n0: 140 in 1 place, below massif's threshold (1.00%)
+      n2: 511 0x4027CA2: luaX_newstring (llex.c:136)
+       n1: 475 0x4028A77: llex (llex.c:545)
+        n1: 475 0x4028E61: luaX_next (llex.c:572)
+         n0: 475 in 8 places, all below massif's threshold (1.00%)
+       n0: 36 in 1 place, below massif's threshold (1.00%)
+      n0: 150 in 4 places, all below massif's threshold (1.00%)
+    n2: 2784 0x400FA3D: luaF_newLclosure (lfunc.c:36)
+     n1: 2744 0x401E606: pushclosure (lvm.c:798)
+      n1: 2744 0x401E606: luaV_execute (lvm.c:1872)
+       n1: 2744 0x400EC95: ccall (ldo.c:637)
+        n1: 2744 0x400EC95: luaD_callnoyield (ldo.c:655)
+         n1: 2744 0x400D8EA: luaD_rawrunprotected (ldo.c:144)
+          n1: 2744 0x400F05D: luaD_pcall (ldo.c:957)
+           n1: 2744 0x400B047: lua_pcallk (lapi.c:1064)
+            n1: 2744 0x4007C30: docall (lua.c:161)
+             n1: 2744 0x4008746: handle_script (lua.c:265)
+              n1: 2744 0x4008746: pmain (lua.c:654)
+               n1: 2744 0x400E895: precallC (ldo.c:529)
+                n1: 2744 0x400E895: luaD_precall (ldo.c:595)
+                 n1: 2744 0x400EC7C: ccall (ldo.c:635)
+                  n1: 2744 0x400EC7C: luaD_callnoyield (ldo.c:655)
+                   n1: 2744 0x400D8EA: luaD_rawrunprotected (ldo.c:144)
+                    n1: 2744 0x400F05D: luaD_pcall (ldo.c:957)
+                     n1: 2744 0x400B047: lua_pcallk (lapi.c:1064)
+                      n0: 2744 0x40076B6: main (lua.c:682)
+     n0: 40 in 1 place, below massif's threshold (1.00%)
+    n1: 2600 0x400FB4B: newupval (lfunc.c:66)
+     n1: 2600 0x400FB4B: luaF_findupval (lfunc.c:98)
+      n1: 2600 0x401E6B6: pushclosure (lvm.c:803)
+       n1: 2600 0x401E6B6: luaV_execute (lvm.c:1872)
+        n1: 2600 0x400EC95: ccall (ldo.c:637)
+         n1: 2600 0x400EC95: luaD_callnoyield (ldo.c:655)
+          n1: 2600 0x400D8EA: luaD_rawrunprotected (ldo.c:144)
+           n1: 2600 0x400F05D: luaD_pcall (ldo.c:957)
+            n1: 2600 0x400B047: lua_pcallk (lapi.c:1064)
+             n1: 2600 0x4007C30: docall (lua.c:161)
+              n1: 2600 0x4008746: handle_script (lua.c:265)
+               n1: 2600 0x4008746: pmain (lua.c:654)
+                n1: 2600 0x400E895: precallC (ldo.c:529)
+                 n1: 2600 0x400E895: luaD_precall (ldo.c:595)
+                  n1: 2600 0x400EC7C: ccall (ldo.c:635)
+                   n1: 2600 0x400EC7C: luaD_callnoyield (ldo.c:655)
+                    n1: 2600 0x400D8EA: luaD_rawrunprotected (ldo.c:144)
+                     n1: 2600 0x400F05D: luaD_pcall (ldo.c:957)
+                      n1: 2600 0x400B047: lua_pcallk (lapi.c:1064)
+                       n0: 2600 0x40076B6: main (lua.c:682)
+    n2: 1120 0x4019CD2: luaH_new (ltable.c:627)
+     n1: 1008 0x400A700: lua_createtable (lapi.c:765)
+      n0: 1008 in 16 places, all below massif's threshold (1.00%)
+     n0: 112 in 3 places, all below massif's threshold (1.00%)
+    n2: 768 0x400FEC2: luaF_newproto (lfunc.c:241)
+     n1: 640 0x40168FF: addprototype (lparser.c:709)
+      n2: 640 0x40168FF: body (lparser.c:994)
+       n1: 512 0x4015A4A: funcstat (lparser.c:1788)
+        n1: 512 0x4015A4A: statement (lparser.c:1876)
+         n1: 512 0x40185EE: statlist (lparser.c:806)
+          n1: 512 0x40185EE: mainfunc (lparser.c:1936)
+           n1: 512 0x40185EE: luaY_parser (lparser.c:1960)
+            n1: 512 0x400D7E5: f_parser (ldo.c:1002)
+             n1: 512 0x400D8EA: luaD_rawrunprotected (ldo.c:144)
+              n1: 512 0x400F05D: luaD_pcall (ldo.c:957)
+               n1: 512 0x400F17D: luaD_protectedparser (ldo.c:1019)
+                n1: 512 0x400B141: lua_load (lapi.c:1094)
+                 n1: 512 0x4023332: luaL_loadfilex (lauxlib.c:815)
+                  n1: 512 0x4008693: handle_script (lua.c:262)
+                   n1: 512 0x4008693: pmain (lua.c:654)
+                    n1: 512 0x400E895: precallC (ldo.c:529)
+                     n1: 512 0x400E895: luaD_precall (ldo.c:595)
+                      n1: 512 0x400EC7C: ccall (ldo.c:635)
+                       n1: 512 0x400EC7C: luaD_callnoyield (ldo.c:655)
+                        n1: 512 0x400D8EA: luaD_rawrunprotected (ldo.c:144)
+                         n1: 512 0x400F05D: luaD_pcall (ldo.c:957)
+                          n1: 512 0x400B047: lua_pcallk (lapi.c:1064)
+                           n0: 512 0x40076B6: main (lua.c:682)
+       n0: 128 in 1 place, below massif's threshold (1.00%)
+     n0: 128 in 1 place, below massif's threshold (1.00%)
+    n0: 584 in 3 places, all below massif's threshold (1.00%)
+    n1: 496 0x40195FA: createstrobj (lstring.c:148)
+     n1: 496 0x40195FA: luaS_createlngstrobj (lstring.c:158)
+      n1: 496 0x40195FA: luaS_newlstr (lstring.c:229)
+       n0: 496 in 3 places, all below massif's threshold (1.00%)
+  n1: 7560 0x401A934: setnodevector (ltable.c:492)
+   n1: 7560 0x401A934: setnodevector (ltable.c:480)
+    n2: 7560 0x401A934: luaH_resize (ltable.c:560)
+     n4: 5256 0x400A74C: lua_createtable (lapi.c:769)
+      n0: 2184 in 11 places, all below massif's threshold (1.00%)
+      n1: 1536 0x402E569: luaopen_math (lmathlib.c:769)
+       n1: 1536 0x400E895: precallC (ldo.c:529)
+        n1: 1536 0x400E895: luaD_precall (ldo.c:595)
+         n1: 1536 0x400EC7C: ccall (ldo.c:635)
+          n1: 1536 0x400EC7C: luaD_callnoyield (ldo.c:655)
+           n1: 1536 0x400AF6A: lua_callk (lapi.c:1020)
+            n1: 1536 0x40242CB: luaL_requiref (lauxlib.c:991)
+             n1: 1536 0x4024613: luaL_openlibs (linit.c:61)
+              n1: 1536 0x4008240: pmain (lua.c:643)
+               n1: 1536 0x400E895: precallC (ldo.c:529)
+                n1: 1536 0x400E895: luaD_precall (ldo.c:595)
+                 n1: 1536 0x400EC7C: ccall (ldo.c:635)
+                  n1: 1536 0x400EC7C: luaD_callnoyield (ldo.c:655)
+                   n1: 1536 0x400D8EA: luaD_rawrunprotected (ldo.c:144)
+                    n1: 1536 0x400F05D: luaD_pcall (ldo.c:957)
+                     n1: 1536 0x400B047: lua_pcallk (lapi.c:1064)
+                      n0: 1536 0x40076B6: main (lua.c:682)
+      n1: 768 0x402B9D4: luaopen_debug (ldblib.c:480)
+       n1: 768 0x400E895: precallC (ldo.c:529)
+        n1: 768 0x400E895: luaD_precall (ldo.c:595)
+         n1: 768 0x400EC7C: ccall (ldo.c:635)
+          n1: 768 0x400EC7C: luaD_callnoyield (ldo.c:655)
+           n1: 768 0x400AF6A: lua_callk (lapi.c:1020)
+            n1: 768 0x40242CB: luaL_requiref (lauxlib.c:991)
+             n1: 768 0x4024613: luaL_openlibs (linit.c:61)
+              n1: 768 0x4008240: pmain (lua.c:643)
+               n1: 768 0x400E895: precallC (ldo.c:529)
+                n1: 768 0x400E895: luaD_precall (ldo.c:595)
+                 n1: 768 0x400EC7C: ccall (ldo.c:635)
+                  n1: 768 0x400EC7C: luaD_callnoyield (ldo.c:655)
+                   n1: 768 0x400D8EA: luaD_rawrunprotected (ldo.c:144)
+                    n1: 768 0x400F05D: luaD_pcall (ldo.c:957)
+                     n1: 768 0x400B047: lua_pcallk (lapi.c:1064)
+                      n0: 768 0x40076B6: main (lua.c:682)
+      n1: 768 0x40341C4: luaopen_string (lstrlib.c:1870)
+       n1: 768 0x400E895: precallC (ldo.c:529)
+        n1: 768 0x400E895: luaD_precall (ldo.c:595)
+         n1: 768 0x400EC7C: ccall (ldo.c:635)
+          n1: 768 0x400EC7C: luaD_callnoyield (ldo.c:655)
+           n1: 768 0x400AF6A: lua_callk (lapi.c:1020)
+            n1: 768 0x40242CB: luaL_requiref (lauxlib.c:991)
+             n1: 768 0x4024613: luaL_openlibs (linit.c:61)
+              n1: 768 0x4008240: pmain (lua.c:643)
+               n1: 768 0x400E895: precallC (ldo.c:529)
+                n1: 768 0x400E895: luaD_precall (ldo.c:595)
+                 n1: 768 0x400EC7C: ccall (ldo.c:635)
+                  n1: 768 0x400EC7C: luaD_callnoyield (ldo.c:655)
+                   n1: 768 0x400D8EA: luaD_rawrunprotected (ldo.c:144)
+                    n1: 768 0x400F05D: luaD_pcall (ldo.c:957)
+                     n1: 768 0x400B047: lua_pcallk (lapi.c:1064)
+                      n0: 768 0x40076B6: main (lua.c:682)
+     n1: 2304 0x401A550: rehash (ltable.c:616)
+      n2: 2304 0x401A550: luaH_newkey (ltable.c:688)
+       n1: 2304 0x401D0F9: luaV_finishset (lvm.c:342)
+        n2: 2304 0x4008A97: auxsetstr (lapi.c:840)
+         n1: 1536 0x4024613: luaL_openlibs (linit.c:61)
+          n1: 1536 0x4008240: pmain (lua.c:643)
+           n1: 1536 0x400E895: precallC (ldo.c:529)
+            n1: 1536 0x400E895: luaD_precall (ldo.c:595)
+             n1: 1536 0x400EC7C: ccall (ldo.c:635)
+              n1: 1536 0x400EC7C: luaD_callnoyield (ldo.c:655)
+               n1: 1536 0x400D8EA: luaD_rawrunprotected (ldo.c:144)
+                n1: 1536 0x400F05D: luaD_pcall (ldo.c:957)
+                 n1: 1536 0x400B047: lua_pcallk (lapi.c:1064)
+                  n0: 1536 0x40076B6: main (lua.c:682)
+         n0: 768 in 4 places, all below massif's threshold (1.00%)
+       n0: 0 in 2 places, all below massif's threshold (1.00%)
+  n2: 1216 0x4018B9F: luaE_extendCI (lstate.c:108)
+   n1: 1024 0x400E990: prepCallInfo (ldo.c:504)
+    n1: 1024 0x400E990: luaD_precall (ldo.c:604)
+     n1: 1024 0x401E7E0: luaV_execute (lvm.c:1682)
+      n1: 1024 0x400EC95: ccall (ldo.c:637)
+       n1: 1024 0x400EC95: luaD_callnoyield (ldo.c:655)
+        n1: 1024 0x400D8EA: luaD_rawrunprotected (ldo.c:144)
+         n1: 1024 0x400F05D: luaD_pcall (ldo.c:957)
+          n1: 1024 0x400B047: lua_pcallk (lapi.c:1064)
+           n1: 1024 0x4007C30: docall (lua.c:161)
+            n1: 1024 0x4008746: handle_script (lua.c:265)
+             n1: 1024 0x4008746: pmain (lua.c:654)
+              n1: 1024 0x400E895: precallC (ldo.c:529)
+               n1: 1024 0x400E895: luaD_precall (ldo.c:595)
+                n1: 1024 0x400EC7C: ccall (ldo.c:635)
+                 n1: 1024 0x400EC7C: luaD_callnoyield (ldo.c:655)
+                  n1: 1024 0x400D8EA: luaD_rawrunprotected (ldo.c:144)
+                   n1: 1024 0x400F05D: luaD_pcall (ldo.c:957)
+                    n1: 1024 0x400B047: lua_pcallk (lapi.c:1064)
+                     n0: 1024 0x40076B6: main (lua.c:682)
+   n0: 192 in 1 place, below massif's threshold (1.00%)
+  n0: 0 in 2 places, all below massif's threshold (1.00%)
+ n4: 4478 0x4012DDE: luaM_realloc_ (lmem.c:180)
+  n1: 2048 0x40191CA: luaS_resize (lstring.c:91)
+   n1: 2048 0x40193F6: growstrtab (lstring.c:182)
+    n1: 2048 0x40193F6: internshrstr (lstring.c:206)
+     n1: 2048 0x40196D2: luaS_new (lstring.c:254)
+      n1: 2048 0x400A45B: auxgetstr (lapi.c:641)
+       n1: 2048 0x400A45B: lua_getfield (lapi.c:691)
+        n1: 2048 0x4024246: luaL_requiref (lauxlib.c:986)
+         n1: 2048 0x4024613: luaL_openlibs (linit.c:61)
+          n1: 2048 0x4008240: pmain (lua.c:643)
+           n1: 2048 0x400E895: precallC (ldo.c:529)
+            n1: 2048 0x400E895: luaD_precall (ldo.c:595)
+             n1: 2048 0x400EC7C: ccall (ldo.c:635)
+              n1: 2048 0x400EC7C: luaD_callnoyield (ldo.c:655)
+               n1: 2048 0x400D8EA: luaD_rawrunprotected (ldo.c:144)
+                n1: 2048 0x400F05D: luaD_pcall (ldo.c:957)
+                 n1: 2048 0x400B047: lua_pcallk (lapi.c:1064)
+                  n0: 2048 0x40076B6: main (lua.c:682)
+  n1: 1358 0x4012E4A: luaM_saferealloc_ (lmem.c:194)
+   n2: 1358 0x4012E4A: luaM_shrinkvector_ (lmem.c:134)
+    n0: 854 in 5 places, all below massif's threshold (1.00%)
+    n1: 504 0x40154DC: close_func (lparser.c:764)
+     n0: 504 in 2 places, all below massif's threshold (1.00%)
+  n2: 976 0x400D9C4: luaD_reallocstack (ldo.c:220)
+   n1: 976 0x400DC97: luaD_shrinkstack (ldo.c:307)
+    n1: 976 0x40117AF: traversethread (lgc.c:644)
+     n1: 976 0x40117AF: propagatemark (lgc.c:670)
+      n1: 976 0x4011B27: propagateall (lgc.c:679)
+       n1: 976 0x4011B27: atomic (lgc.c:1543)
+        n1: 976 0x4012847: youngcollection (lgc.c:1261)
+         n1: 976 0x4012847: genstep (lgc.c:1461)
+          n1: 976 0x4012847: luaC_step (lgc.c:1696)
+           n1: 976 0x4020332: luaV_execute (lvm.c:1873)
+            n1: 976 0x400EC95: ccall (ldo.c:637)
+             n1: 976 0x400EC95: luaD_callnoyield (ldo.c:655)
+              n1: 976 0x400D8EA: luaD_rawrunprotected (ldo.c:144)
+               n1: 976 0x400F05D: luaD_pcall (ldo.c:957)
+                n1: 976 0x400B047: lua_pcallk (lapi.c:1064)
+                 n1: 976 0x4007C30: docall (lua.c:161)
+                  n1: 976 0x4008746: handle_script (lua.c:265)
+                   n1: 976 0x4008746: pmain (lua.c:654)
+                    n1: 976 0x400E895: precallC (ldo.c:529)
+                     n1: 976 0x400E895: luaD_precall (ldo.c:595)
+                      n1: 976 0x400EC7C: ccall (ldo.c:635)
+                       n1: 976 0x400EC7C: luaD_callnoyield (ldo.c:655)
+                        n1: 976 0x400D8EA: luaD_rawrunprotected (ldo.c:144)
+                         n1: 976 0x400F05D: luaD_pcall (ldo.c:957)
+                          n1: 976 0x400B047: lua_pcallk (lapi.c:1064)
+                           n0: 976 0x40076B6: main (lua.c:682)
+   n0: 0 in 1 place, below massif's threshold (1.00%)
+  n0: 96 in 3 places, all below massif's threshold (1.00%)
+ n1: 1624 0x40188FF: lua_newstate (lstate.c:364)
+  n1: 1624 0x402453E: luaL_newstate (lauxlib.c:1109)
+   n0: 1624 0x400765D: main (lua.c:673)
+ n1: 1024 0x4A340BC: _IO_file_doallocate (filedoalloc.c:101)
+  n1: 1024 0x4A44105: _IO_doallocbuf (genops.c:373)
+   n2: 1024 0x4A44105: _IO_doallocbuf (genops.c:368)
+    n1: 1024 0x4A42078: _IO_file_overflow@@GLIBC_2.2.5 (fileops.c:746)
+     n1: 1024 0x4A42BAA: _IO_new_file_xsputn (fileops.c:1245)
+      n1: 1024 0x4A42BAA: _IO_file_xsputn@@GLIBC_2.2.5 (fileops.c:1198)
+       n1: 1024 0x4A35917: fwrite (iofwrite.c:39)
+        n1: 1024 0x402930F: luaB_print (lbaselib.c:32)
+         n1: 1024 0x400E895: precallC (ldo.c:529)
+          n1: 1024 0x400E895: luaD_precall (ldo.c:595)
+           n1: 1024 0x401E7E0: luaV_execute (lvm.c:1682)
+            n1: 1024 0x400EC95: ccall (ldo.c:637)
+             n1: 1024 0x400EC95: luaD_callnoyield (ldo.c:655)
+              n1: 1024 0x400D8EA: luaD_rawrunprotected (ldo.c:144)
+               n1: 1024 0x400F05D: luaD_pcall (ldo.c:957)
+                n1: 1024 0x400B047: lua_pcallk (lapi.c:1064)
+                 n1: 1024 0x4007C30: docall (lua.c:161)
+                  n1: 1024 0x4008746: handle_script (lua.c:265)
+                   n1: 1024 0x4008746: pmain (lua.c:654)
+                    n1: 1024 0x400E895: precallC (ldo.c:529)
+                     n1: 1024 0x400E895: luaD_precall (ldo.c:595)
+                      n1: 1024 0x400EC7C: ccall (ldo.c:635)
+                       n1: 1024 0x400EC7C: luaD_callnoyield (ldo.c:655)
+                        n1: 1024 0x400D8EA: luaD_rawrunprotected (ldo.c:144)
+                         n1: 1024 0x400F05D: luaD_pcall (ldo.c:957)
+                          n1: 1024 0x400B047: lua_pcallk (lapi.c:1064)
+                           n0: 1024 0x40076B6: main (lua.c:682)
+    n0: 0 in 1 place, below massif's threshold (1.00%)
+ n0: 0 in 1 place, below massif's threshold (1.00%)
+#-----------
+snapshot=4
+#-----------
+time=78236106160
+mem_heap_B=30015
+mem_heap_extra_B=8281
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=5
+#-----------
+time=79748520635
+mem_heap_B=28575
+mem_heap_extra_B=7705
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=6
+#-----------
+time=81896152564
+mem_heap_B=25455
+mem_heap_extra_B=6425
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=7
+#-----------
+time=83711061876
+mem_heap_B=29775
+mem_heap_extra_B=8185
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=8
+#-----------
+time=85707447964
+mem_heap_B=25455
+mem_heap_extra_B=6425
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=9
+#-----------
+time=88369309188
+mem_heap_B=28095
+mem_heap_extra_B=7497
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=10
+#-----------
+time=89942223252
+mem_heap_B=27135
+mem_heap_extra_B=7113
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=11
+#-----------
+time=91757124700
+mem_heap_B=26415
+mem_heap_extra_B=6825
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=12
+#-----------
+time=93753518652
+mem_heap_B=27135
+mem_heap_extra_B=7113
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=13
+#-----------
+time=96052394868
+mem_heap_B=26895
+mem_heap_extra_B=7017
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=14
+#-----------
+time=98532763588
+mem_heap_B=28095
+mem_heap_extra_B=7497
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=15
+#-----------
+time=99954436520
+mem_heap_B=27615
+mem_heap_extra_B=7305
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=16
+#-----------
+time=101466855704
+mem_heap_B=27855
+mem_heap_extra_B=7401
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=17
+#-----------
+time=103160767392
+mem_heap_B=29535
+mem_heap_extra_B=8089
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=18
+#-----------
+time=104915173960
+mem_heap_B=30015
+mem_heap_extra_B=8281
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=19
+#-----------
+time=106760318916
+mem_heap_B=26175
+mem_heap_extra_B=6729
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=20
+#-----------
+time=108696217988
+mem_heap_B=28095
+mem_heap_extra_B=7497
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=21
+#-----------
+time=110722855448
+mem_heap_B=25695
+mem_heap_extra_B=6537
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=22
+#-----------
+time=112870490532
+mem_heap_B=25935
+mem_heap_extra_B=6633
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=23
+#-----------
+time=115199618120
+mem_heap_B=27615
+mem_heap_extra_B=7305
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=24
+#-----------
+time=117619491960
+mem_heap_B=30015
+mem_heap_extra_B=8281
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=25
+#-----------
+time=120220850440
+mem_heap_B=28815
+mem_heap_extra_B=7801
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=26
+#-----------
+time=123003701424
+mem_heap_B=29055
+mem_heap_extra_B=7897
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=27
+#-----------
+time=124485869236
+mem_heap_B=27375
+mem_heap_extra_B=7209
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=28
+#-----------
+time=125968037048
+mem_heap_B=25695
+mem_heap_extra_B=6537
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=29
+#-----------
+time=127510707604
+mem_heap_B=27855
+mem_heap_extra_B=7401
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=30
+#-----------
+time=129174367920
+mem_heap_B=27615
+mem_heap_extra_B=7305
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=31
+#-----------
+time=130898523116
+mem_heap_B=26175
+mem_heap_extra_B=6729
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=32
+#-----------
+time=132683181056
+mem_heap_B=28575
+mem_heap_extra_B=7705
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=33
+#-----------
+time=134498082504
+mem_heap_B=27855
+mem_heap_extra_B=7401
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=34
+#-----------
+time=136312983952
+mem_heap_B=27135
+mem_heap_extra_B=7113
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=35
+#-----------
+time=138218631652
+mem_heap_B=27135
+mem_heap_extra_B=7113
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=36
+#-----------
+time=140184774232
+mem_heap_B=25935
+mem_heap_extra_B=6633
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=37
+#-----------
+time=142150924676
+mem_heap_B=29775
+mem_heap_extra_B=8185
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=38
+#-----------
+time=144147310764
+mem_heap_B=25455
+mem_heap_extra_B=6425
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=39
+#-----------
+time=146264702340
+mem_heap_B=28815
+mem_heap_extra_B=7801
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=40
+#-----------
+time=148382086052
+mem_heap_B=27135
+mem_heap_extra_B=7113
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=41
+#-----------
+time=150650718760
+mem_heap_B=30015
+mem_heap_extra_B=8281
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=42
+#-----------
+time=152979838484
+mem_heap_B=26655
+mem_heap_extra_B=6921
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=43
+#-----------
+time=155339212735
+mem_heap_B=28575
+mem_heap_extra_B=7705
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=44
+#-----------
+time=157759083420
+mem_heap_B=27615
+mem_heap_extra_B=7305
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=45
+#-----------
+time=160209200768
+mem_heap_B=26895
+mem_heap_extra_B=7017
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=46
+#-----------
+time=162780315740
+mem_heap_B=28815
+mem_heap_extra_B=7801
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=47
+#-----------
+time=165442169100
+mem_heap_B=26415
+mem_heap_extra_B=6825
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=48
+#-----------
+time=168194776576
+mem_heap_B=29775
+mem_heap_extra_B=8185
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=49
+#-----------
+time=170523896300
+mem_heap_B=26415
+mem_heap_extra_B=6825
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=50
+#-----------
+time=170524501642
+mem_heap_B=26655
+mem_heap_extra_B=6921
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=51
+#-----------
+time=170525106984
+mem_heap_B=26895
+mem_heap_extra_B=7017
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=52
+#-----------
+time=170525712326
+mem_heap_B=27135
+mem_heap_extra_B=7113
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=53
+#-----------
+time=170526317668
+mem_heap_B=27375
+mem_heap_extra_B=7209
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=54
+#-----------
+time=170526923010
+mem_heap_B=27615
+mem_heap_extra_B=7305
+mem_stacks_B=0
+heap_tree=detailed
+n5: 27615 (heap allocation functions) malloc/new/new[], --alloc-fns, etc.
+ n3: 20489 0x4012F9B: luaM_malloc_ (lmem.c:206)
+  n1: 12609 0x40121C8: luaC_newobjdt (lgc.c:260)
+   n7: 12609 0x40121C8: luaC_newobj (lgc.c:271)
+    n1: 7097 0x401937B: createstrobj (lstring.c:148)
+     n3: 7097 0x401937B: internshrstr (lstring.c:209)
+      n5: 6436 0x40196D2: luaS_new (lstring.c:254)
+       n2: 4470 0x4008A63: auxsetstr (lapi.c:831)
+        n5: 4219 0x40239D4: luaL_setfuncs (lauxlib.c:953)
+         n0: 1524 in 9 places, all below massif's threshold (1.00%)
+         n1: 1002 0x402E57A: luaopen_math (lmathlib.c:769)
+          n1: 1002 0x400E895: precallC (ldo.c:529)
+           n1: 1002 0x400E895: luaD_precall (ldo.c:595)
+            n1: 1002 0x400EC7C: ccall (ldo.c:635)
+             n1: 1002 0x400EC7C: luaD_callnoyield (ldo.c:655)
+              n1: 1002 0x400AF6A: lua_callk (lapi.c:1020)
+               n1: 1002 0x40242CB: luaL_requiref (lauxlib.c:991)
+                n1: 1002 0x4024613: luaL_openlibs (linit.c:61)
+                 n1: 1002 0x4008240: pmain (lua.c:643)
+                  n1: 1002 0x400E895: precallC (ldo.c:529)
+                   n1: 1002 0x400E895: luaD_precall (ldo.c:595)
+                    n1: 1002 0x400EC7C: ccall (ldo.c:635)
+                     n1: 1002 0x400EC7C: luaD_callnoyield (ldo.c:655)
+                      n1: 1002 0x400D8EA: luaD_rawrunprotected (ldo.c:144)
+                       n1: 1002 0x400F05D: luaD_pcall (ldo.c:957)
+                        n1: 1002 0x400B047: lua_pcallk (lapi.c:1064)
+                         n0: 1002 0x40076B6: main (lua.c:682)
+         n1: 762 0x402A023: luaopen_base (lbaselib.c:540)
+          n1: 762 0x400E895: precallC (ldo.c:529)
+           n1: 762 0x400E895: luaD_precall (ldo.c:595)
+            n1: 762 0x400EC7C: ccall (ldo.c:635)
+             n1: 762 0x400EC7C: luaD_callnoyield (ldo.c:655)
+              n1: 762 0x400AF6A: lua_callk (lapi.c:1020)
+               n1: 762 0x40242CB: luaL_requiref (lauxlib.c:991)
+                n1: 762 0x4024613: luaL_openlibs (linit.c:61)
+                 n1: 762 0x4008240: pmain (lua.c:643)
+                  n1: 762 0x400E895: precallC (ldo.c:529)
+                   n1: 762 0x400E895: luaD_precall (ldo.c:595)
+                    n1: 762 0x400EC7C: ccall (ldo.c:635)
+                     n1: 762 0x400EC7C: luaD_callnoyield (ldo.c:655)
+                      n1: 762 0x400D8EA: luaD_rawrunprotected (ldo.c:144)
+                       n1: 762 0x400F05D: luaD_pcall (ldo.c:957)
+                        n1: 762 0x400B047: lua_pcallk (lapi.c:1064)
+                         n0: 762 0x40076B6: main (lua.c:682)
+         n1: 485 0x402B9E5: luaopen_debug (ldblib.c:480)
+          n1: 485 0x400E895: precallC (ldo.c:529)
+           n1: 485 0x400E895: luaD_precall (ldo.c:595)
+            n1: 485 0x400EC7C: ccall (ldo.c:635)
+             n1: 485 0x400EC7C: luaD_callnoyield (ldo.c:655)
+              n1: 485 0x400AF6A: lua_callk (lapi.c:1020)
+               n1: 485 0x40242CB: luaL_requiref (lauxlib.c:991)
+                n1: 485 0x4024613: luaL_openlibs (linit.c:61)
+                 n1: 485 0x4008240: pmain (lua.c:643)
+                  n1: 485 0x400E895: precallC (ldo.c:529)
+                   n1: 485 0x400E895: luaD_precall (ldo.c:595)
+                    n1: 485 0x400EC7C: ccall (ldo.c:635)
+                     n1: 485 0x400EC7C: luaD_callnoyield (ldo.c:655)
+                      n1: 485 0x400D8EA: luaD_rawrunprotected (ldo.c:144)
+                       n1: 485 0x400F05D: luaD_pcall (ldo.c:957)
+                        n1: 485 0x400B047: lua_pcallk (lapi.c:1064)
+                         n0: 485 0x40076B6: main (lua.c:682)
+         n1: 446 0x40341D5: luaopen_string (lstrlib.c:1870)
+          n1: 446 0x400E895: precallC (ldo.c:529)
+           n1: 446 0x400E895: luaD_precall (ldo.c:595)
+            n1: 446 0x400EC7C: ccall (ldo.c:635)
+             n1: 446 0x400EC7C: luaD_callnoyield (ldo.c:655)
+              n1: 446 0x400AF6A: lua_callk (lapi.c:1020)
+               n1: 446 0x40242CB: luaL_requiref (lauxlib.c:991)
+                n1: 446 0x4024613: luaL_openlibs (linit.c:61)
+                 n1: 446 0x4008240: pmain (lua.c:643)
+                  n1: 446 0x400E895: precallC (ldo.c:529)
+                   n1: 446 0x400E895: luaD_precall (ldo.c:595)
+                    n1: 446 0x400EC7C: ccall (ldo.c:635)
+                     n1: 446 0x400EC7C: luaD_callnoyield (ldo.c:655)
+                      n1: 446 0x400D8EA: luaD_rawrunprotected (ldo.c:144)
+                       n1: 446 0x400F05D: luaD_pcall (ldo.c:957)
+                        n1: 446 0x400B047: lua_pcallk (lapi.c:1064)
+                         n0: 446 0x40076B6: main (lua.c:682)
+        n0: 251 in 8 places, all below massif's threshold (1.00%)
+       n1: 764 0x401ADB0: luaT_init (ltm.c:50)
+        n1: 764 0x40187B9: f_luaopen (lstate.c:237)
+         n1: 764 0x400D8EA: luaD_rawrunprotected (ldo.c:144)
+          n1: 764 0x4018AFB: lua_newstate (lstate.c:407)
+           n1: 764 0x402453E: luaL_newstate (lauxlib.c:1109)
+            n0: 764 0x400765D: main (lua.c:673)
+       n1: 640 0x402754C: luaX_init (llex.c:75)
+        n1: 640 0x40187C1: f_luaopen (lstate.c:238)
+         n1: 640 0x400D8EA: luaD_rawrunprotected (ldo.c:144)
+          n1: 640 0x4018AFB: lua_newstate (lstate.c:407)
+           n1: 640 0x402453E: luaL_newstate (lauxlib.c:1109)
+            n0: 640 0x400765D: main (lua.c:673)
+       n1: 422 0x400A45B: auxgetstr (lapi.c:641)
+        n1: 422 0x400A45B: lua_getfield (lapi.c:691)
+         n0: 422 in 3 places, all below massif's threshold (1.00%)
+       n0: 140 in 1 place, below massif's threshold (1.00%)
+      n2: 511 0x4027CA2: luaX_newstring (llex.c:136)
+       n1: 475 0x4028A77: llex (llex.c:545)
+        n1: 475 0x4028E61: luaX_next (llex.c:572)
+         n0: 475 in 8 places, all below massif's threshold (1.00%)
+       n0: 36 in 1 place, below massif's threshold (1.00%)
+      n0: 150 in 4 places, all below massif's threshold (1.00%)
+    n2: 1384 0x400FA3D: luaF_newLclosure (lfunc.c:36)
+     n1: 1344 0x401E606: pushclosure (lvm.c:798)
+      n1: 1344 0x401E606: luaV_execute (lvm.c:1872)
+       n1: 1344 0x400EC95: ccall (ldo.c:637)
+        n1: 1344 0x400EC95: luaD_callnoyield (ldo.c:655)
+         n1: 1344 0x400D8EA: luaD_rawrunprotected (ldo.c:144)
+          n1: 1344 0x400F05D: luaD_pcall (ldo.c:957)
+           n1: 1344 0x400B047: lua_pcallk (lapi.c:1064)
+            n1: 1344 0x4007C30: docall (lua.c:161)
+             n1: 1344 0x4008746: handle_script (lua.c:265)
+              n1: 1344 0x4008746: pmain (lua.c:654)
+               n1: 1344 0x400E895: precallC (ldo.c:529)
+                n1: 1344 0x400E895: luaD_precall (ldo.c:595)
+                 n1: 1344 0x400EC7C: ccall (ldo.c:635)
+                  n1: 1344 0x400EC7C: luaD_callnoyield (ldo.c:655)
+                   n1: 1344 0x400D8EA: luaD_rawrunprotected (ldo.c:144)
+                    n1: 1344 0x400F05D: luaD_pcall (ldo.c:957)
+                     n1: 1344 0x400B047: lua_pcallk (lapi.c:1064)
+                      n0: 1344 0x40076B6: main (lua.c:682)
+     n0: 40 in 1 place, below massif's threshold (1.00%)
+    n1: 1160 0x400FB4B: newupval (lfunc.c:66)
+     n1: 1160 0x400FB4B: luaF_findupval (lfunc.c:98)
+      n1: 1160 0x401E6B6: pushclosure (lvm.c:803)
+       n1: 1160 0x401E6B6: luaV_execute (lvm.c:1872)
+        n1: 1160 0x400EC95: ccall (ldo.c:637)
+         n1: 1160 0x400EC95: luaD_callnoyield (ldo.c:655)
+          n1: 1160 0x400D8EA: luaD_rawrunprotected (ldo.c:144)
+           n1: 1160 0x400F05D: luaD_pcall (ldo.c:957)
+            n1: 1160 0x400B047: lua_pcallk (lapi.c:1064)
+             n1: 1160 0x4007C30: docall (lua.c:161)
+              n1: 1160 0x4008746: handle_script (lua.c:265)
+               n1: 1160 0x4008746: pmain (lua.c:654)
+                n1: 1160 0x400E895: precallC (ldo.c:529)
+                 n1: 1160 0x400E895: luaD_precall (ldo.c:595)
+                  n1: 1160 0x400EC7C: ccall (ldo.c:635)
+                   n1: 1160 0x400EC7C: luaD_callnoyield (ldo.c:655)
+                    n1: 1160 0x400D8EA: luaD_rawrunprotected (ldo.c:144)
+                     n1: 1160 0x400F05D: luaD_pcall (ldo.c:957)
+                      n1: 1160 0x400B047: lua_pcallk (lapi.c:1064)
+                       n0: 1160 0x40076B6: main (lua.c:682)
+    n2: 1120 0x4019CD2: luaH_new (ltable.c:627)
+     n1: 1008 0x400A700: lua_createtable (lapi.c:765)
+      n0: 1008 in 16 places, all below massif's threshold (1.00%)
+     n0: 112 in 3 places, all below massif's threshold (1.00%)
+    n2: 768 0x400FEC2: luaF_newproto (lfunc.c:241)
+     n1: 640 0x40168FF: addprototype (lparser.c:709)
+      n2: 640 0x40168FF: body (lparser.c:994)
+       n1: 512 0x4015A4A: funcstat (lparser.c:1788)
+        n1: 512 0x4015A4A: statement (lparser.c:1876)
+         n1: 512 0x40185EE: statlist (lparser.c:806)
+          n1: 512 0x40185EE: mainfunc (lparser.c:1936)
+           n1: 512 0x40185EE: luaY_parser (lparser.c:1960)
+            n1: 512 0x400D7E5: f_parser (ldo.c:1002)
+             n1: 512 0x400D8EA: luaD_rawrunprotected (ldo.c:144)
+              n1: 512 0x400F05D: luaD_pcall (ldo.c:957)
+               n1: 512 0x400F17D: luaD_protectedparser (ldo.c:1019)
+                n1: 512 0x400B141: lua_load (lapi.c:1094)
+                 n1: 512 0x4023332: luaL_loadfilex (lauxlib.c:815)
+                  n1: 512 0x4008693: handle_script (lua.c:262)
+                   n1: 512 0x4008693: pmain (lua.c:654)
+                    n1: 512 0x400E895: precallC (ldo.c:529)
+                     n1: 512 0x400E895: luaD_precall (ldo.c:595)
+                      n1: 512 0x400EC7C: ccall (ldo.c:635)
+                       n1: 512 0x400EC7C: luaD_callnoyield (ldo.c:655)
+                        n1: 512 0x400D8EA: luaD_rawrunprotected (ldo.c:144)
+                         n1: 512 0x400F05D: luaD_pcall (ldo.c:957)
+                          n1: 512 0x400B047: lua_pcallk (lapi.c:1064)
+                           n0: 512 0x40076B6: main (lua.c:682)
+       n0: 128 in 1 place, below massif's threshold (1.00%)
+     n0: 128 in 1 place, below massif's threshold (1.00%)
+    n0: 584 in 3 places, all below massif's threshold (1.00%)
+    n1: 496 0x40195FA: createstrobj (lstring.c:148)
+     n1: 496 0x40195FA: luaS_createlngstrobj (lstring.c:158)
+      n1: 496 0x40195FA: luaS_newlstr (lstring.c:229)
+       n0: 496 in 3 places, all below massif's threshold (1.00%)
+  n1: 7560 0x401A934: setnodevector (ltable.c:492)
+   n1: 7560 0x401A934: setnodevector (ltable.c:480)
+    n2: 7560 0x401A934: luaH_resize (ltable.c:560)
+     n7: 5256 0x400A74C: lua_createtable (lapi.c:769)
+      n1: 1536 0x402E569: luaopen_math (lmathlib.c:769)
+       n1: 1536 0x400E895: precallC (ldo.c:529)
+        n1: 1536 0x400E895: luaD_precall (ldo.c:595)
+         n1: 1536 0x400EC7C: ccall (ldo.c:635)
+          n1: 1536 0x400EC7C: luaD_callnoyield (ldo.c:655)
+           n1: 1536 0x400AF6A: lua_callk (lapi.c:1020)
+            n1: 1536 0x40242CB: luaL_requiref (lauxlib.c:991)
+             n1: 1536 0x4024613: luaL_openlibs (linit.c:61)
+              n1: 1536 0x4008240: pmain (lua.c:643)
+               n1: 1536 0x400E895: precallC (ldo.c:529)
+                n1: 1536 0x400E895: luaD_precall (ldo.c:595)
+                 n1: 1536 0x400EC7C: ccall (ldo.c:635)
+                  n1: 1536 0x400EC7C: luaD_callnoyield (ldo.c:655)
+                   n1: 1536 0x400D8EA: luaD_rawrunprotected (ldo.c:144)
+                    n1: 1536 0x400F05D: luaD_pcall (ldo.c:957)
+                     n1: 1536 0x400B047: lua_pcallk (lapi.c:1064)
+                      n0: 1536 0x40076B6: main (lua.c:682)
+      n0: 1032 in 8 places, all below massif's threshold (1.00%)
+      n1: 768 0x402B9D4: luaopen_debug (ldblib.c:480)
+       n1: 768 0x400E895: precallC (ldo.c:529)
+        n1: 768 0x400E895: luaD_precall (ldo.c:595)
+         n1: 768 0x400EC7C: ccall (ldo.c:635)
+          n1: 768 0x400EC7C: luaD_callnoyield (ldo.c:655)
+           n1: 768 0x400AF6A: lua_callk (lapi.c:1020)
+            n1: 768 0x40242CB: luaL_requiref (lauxlib.c:991)
+             n1: 768 0x4024613: luaL_openlibs (linit.c:61)
+              n1: 768 0x4008240: pmain (lua.c:643)
+               n1: 768 0x400E895: precallC (ldo.c:529)
+                n1: 768 0x400E895: luaD_precall (ldo.c:595)
+                 n1: 768 0x400EC7C: ccall (ldo.c:635)
+                  n1: 768 0x400EC7C: luaD_callnoyield (ldo.c:655)
+                   n1: 768 0x400D8EA: luaD_rawrunprotected (ldo.c:144)
+                    n1: 768 0x400F05D: luaD_pcall (ldo.c:957)
+                     n1: 768 0x400B047: lua_pcallk (lapi.c:1064)
+                      n0: 768 0x40076B6: main (lua.c:682)
+      n1: 768 0x40341C4: luaopen_string (lstrlib.c:1870)
+       n1: 768 0x400E895: precallC (ldo.c:529)
+        n1: 768 0x400E895: luaD_precall (ldo.c:595)
+         n1: 768 0x400EC7C: ccall (ldo.c:635)
+          n1: 768 0x400EC7C: luaD_callnoyield (ldo.c:655)
+           n1: 768 0x400AF6A: lua_callk (lapi.c:1020)
+            n1: 768 0x40242CB: luaL_requiref (lauxlib.c:991)
+             n1: 768 0x4024613: luaL_openlibs (linit.c:61)
+              n1: 768 0x4008240: pmain (lua.c:643)
+               n1: 768 0x400E895: precallC (ldo.c:529)
+                n1: 768 0x400E895: luaD_precall (ldo.c:595)
+                 n1: 768 0x400EC7C: ccall (ldo.c:635)
+                  n1: 768 0x400EC7C: luaD_callnoyield (ldo.c:655)
+                   n1: 768 0x400D8EA: luaD_rawrunprotected (ldo.c:144)
+                    n1: 768 0x400F05D: luaD_pcall (ldo.c:957)
+                     n1: 768 0x400B047: lua_pcallk (lapi.c:1064)
+                      n0: 768 0x40076B6: main (lua.c:682)
+      n1: 384 0x402D394: luaopen_io (liolib.c:833)
+       n1: 384 0x400E895: precallC (ldo.c:529)
+        n1: 384 0x400E895: luaD_precall (ldo.c:595)
+         n1: 384 0x400EC7C: ccall (ldo.c:635)
+          n1: 384 0x400EC7C: luaD_callnoyield (ldo.c:655)
+           n1: 384 0x400AF6A: lua_callk (lapi.c:1020)
+            n1: 384 0x40242CB: luaL_requiref (lauxlib.c:991)
+             n1: 384 0x4024613: luaL_openlibs (linit.c:61)
+              n1: 384 0x4008240: pmain (lua.c:643)
+               n1: 384 0x400E895: precallC (ldo.c:529)
+                n1: 384 0x400E895: luaD_precall (ldo.c:595)
+                 n1: 384 0x400EC7C: ccall (ldo.c:635)
+                  n1: 384 0x400EC7C: luaD_callnoyield (ldo.c:655)
+                   n1: 384 0x400D8EA: luaD_rawrunprotected (ldo.c:144)
+                    n1: 384 0x400F05D: luaD_pcall (ldo.c:957)
+                     n1: 384 0x400B047: lua_pcallk (lapi.c:1064)
+                      n0: 384 0x40076B6: main (lua.c:682)
+      n1: 384 0x4030204: luaopen_os (loslib.c:427)
+       n1: 384 0x400E895: precallC (ldo.c:529)
+        n1: 384 0x400E895: luaD_precall (ldo.c:595)
+         n1: 384 0x400EC7C: ccall (ldo.c:635)
+          n1: 384 0x400EC7C: luaD_callnoyield (ldo.c:655)
+           n1: 384 0x400AF6A: lua_callk (lapi.c:1020)
+            n1: 384 0x40242CB: luaL_requiref (lauxlib.c:991)
+             n1: 384 0x4024613: luaL_openlibs (linit.c:61)
+              n1: 384 0x4008240: pmain (lua.c:643)
+               n1: 384 0x400E895: precallC (ldo.c:529)
+                n1: 384 0x400E895: luaD_precall (ldo.c:595)
+                 n1: 384 0x400EC7C: ccall (ldo.c:635)
+                  n1: 384 0x400EC7C: luaD_callnoyield (ldo.c:655)
+                   n1: 384 0x400D8EA: luaD_rawrunprotected (ldo.c:144)
+                    n1: 384 0x400F05D: luaD_pcall (ldo.c:957)
+                     n1: 384 0x400B047: lua_pcallk (lapi.c:1064)
+                      n0: 384 0x40076B6: main (lua.c:682)
+      n1: 384 0x40341E4: createmetatable (lstrlib.c:1854)
+       n1: 384 0x40341E4: luaopen_string (lstrlib.c:1871)
+        n1: 384 0x400E895: precallC (ldo.c:529)
+         n1: 384 0x400E895: luaD_precall (ldo.c:595)
+          n1: 384 0x400EC7C: ccall (ldo.c:635)
+           n1: 384 0x400EC7C: luaD_callnoyield (ldo.c:655)
+            n1: 384 0x400AF6A: lua_callk (lapi.c:1020)
+             n1: 384 0x40242CB: luaL_requiref (lauxlib.c:991)
+              n1: 384 0x4024613: luaL_openlibs (linit.c:61)
+               n1: 384 0x4008240: pmain (lua.c:643)
+                n1: 384 0x400E895: precallC (ldo.c:529)
+                 n1: 384 0x400E895: luaD_precall (ldo.c:595)
+                  n1: 384 0x400EC7C: ccall (ldo.c:635)
+                   n1: 384 0x400EC7C: luaD_callnoyield (ldo.c:655)
+                    n1: 384 0x400D8EA: luaD_rawrunprotected (ldo.c:144)
+                     n1: 384 0x400F05D: luaD_pcall (ldo.c:957)
+                      n1: 384 0x400B047: lua_pcallk (lapi.c:1064)
+                       n0: 384 0x40076B6: main (lua.c:682)
+     n1: 2304 0x401A550: rehash (ltable.c:616)
+      n2: 2304 0x401A550: luaH_newkey (ltable.c:688)
+       n1: 2304 0x401D0F9: luaV_finishset (lvm.c:342)
+        n3: 2304 0x4008A97: auxsetstr (lapi.c:840)
+         n1: 1536 0x4024613: luaL_openlibs (linit.c:61)
+          n1: 1536 0x4008240: pmain (lua.c:643)
+           n1: 1536 0x400E895: precallC (ldo.c:529)
+            n1: 1536 0x400E895: luaD_precall (ldo.c:595)
+             n1: 1536 0x400EC7C: ccall (ldo.c:635)
+              n1: 1536 0x400EC7C: luaD_callnoyield (ldo.c:655)
+               n1: 1536 0x400D8EA: luaD_rawrunprotected (ldo.c:144)
+                n1: 1536 0x400F05D: luaD_pcall (ldo.c:957)
+                 n1: 1536 0x400B047: lua_pcallk (lapi.c:1064)
+                  n0: 1536 0x40076B6: main (lua.c:682)
+         n0: 384 in 3 places, all below massif's threshold (1.00%)
+         n1: 384 0x40242E8: luaL_requiref (lauxlib.c:993)
+          n1: 384 0x4024613: luaL_openlibs (linit.c:61)
+           n1: 384 0x4008240: pmain (lua.c:643)
+            n1: 384 0x400E895: precallC (ldo.c:529)
+             n1: 384 0x400E895: luaD_precall (ldo.c:595)
+              n1: 384 0x400EC7C: ccall (ldo.c:635)
+               n1: 384 0x400EC7C: luaD_callnoyield (ldo.c:655)
+                n1: 384 0x400D8EA: luaD_rawrunprotected (ldo.c:144)
+                 n1: 384 0x400F05D: luaD_pcall (ldo.c:957)
+                  n1: 384 0x400B047: lua_pcallk (lapi.c:1064)
+                   n0: 384 0x40076B6: main (lua.c:682)
+       n0: 0 in 2 places, all below massif's threshold (1.00%)
+  n0: 320 in 3 places, all below massif's threshold (1.00%)
+ n4: 4478 0x4012DDE: luaM_realloc_ (lmem.c:180)
+  n1: 2048 0x40191CA: luaS_resize (lstring.c:91)
+   n1: 2048 0x40193F6: growstrtab (lstring.c:182)
+    n1: 2048 0x40193F6: internshrstr (lstring.c:206)
+     n1: 2048 0x40196D2: luaS_new (lstring.c:254)
+      n1: 2048 0x400A45B: auxgetstr (lapi.c:641)
+       n1: 2048 0x400A45B: lua_getfield (lapi.c:691)
+        n1: 2048 0x4024246: luaL_requiref (lauxlib.c:986)
+         n1: 2048 0x4024613: luaL_openlibs (linit.c:61)
+          n1: 2048 0x4008240: pmain (lua.c:643)
+           n1: 2048 0x400E895: precallC (ldo.c:529)
+            n1: 2048 0x400E895: luaD_precall (ldo.c:595)
+             n1: 2048 0x400EC7C: ccall (ldo.c:635)
+              n1: 2048 0x400EC7C: luaD_callnoyield (ldo.c:655)
+               n1: 2048 0x400D8EA: luaD_rawrunprotected (ldo.c:144)
+                n1: 2048 0x400F05D: luaD_pcall (ldo.c:957)
+                 n1: 2048 0x400B047: lua_pcallk (lapi.c:1064)
+                  n0: 2048 0x40076B6: main (lua.c:682)
+  n1: 1358 0x4012E4A: luaM_saferealloc_ (lmem.c:194)
+   n3: 1358 0x4012E4A: luaM_shrinkvector_ (lmem.c:134)
+    n1: 504 0x40154DC: close_func (lparser.c:764)
+     n0: 504 in 2 places, all below massif's threshold (1.00%)
+    n0: 502 in 4 places, all below massif's threshold (1.00%)
+    n1: 352 0x401557D: close_func (lparser.c:770)
+     n1: 352 0x4016B04: body (lparser.c:1008)
+      n0: 352 in 2 places, all below massif's threshold (1.00%)
+  n2: 976 0x400D9C4: luaD_reallocstack (ldo.c:220)
+   n1: 976 0x400DC97: luaD_shrinkstack (ldo.c:307)
+    n1: 976 0x40117AF: traversethread (lgc.c:644)
+     n1: 976 0x40117AF: propagatemark (lgc.c:670)
+      n1: 976 0x4011B27: propagateall (lgc.c:679)
+       n1: 976 0x4011B27: atomic (lgc.c:1543)
+        n1: 976 0x4012847: youngcollection (lgc.c:1261)
+         n1: 976 0x4012847: genstep (lgc.c:1461)
+          n1: 976 0x4012847: luaC_step (lgc.c:1696)
+           n1: 976 0x4020332: luaV_execute (lvm.c:1873)
+            n1: 976 0x400EC95: ccall (ldo.c:637)
+             n1: 976 0x400EC95: luaD_callnoyield (ldo.c:655)
+              n1: 976 0x400D8EA: luaD_rawrunprotected (ldo.c:144)
+               n1: 976 0x400F05D: luaD_pcall (ldo.c:957)
+                n1: 976 0x400B047: lua_pcallk (lapi.c:1064)
+                 n1: 976 0x4007C30: docall (lua.c:161)
+                  n1: 976 0x4008746: handle_script (lua.c:265)
+                   n1: 976 0x4008746: pmain (lua.c:654)
+                    n1: 976 0x400E895: precallC (ldo.c:529)
+                     n1: 976 0x400E895: luaD_precall (ldo.c:595)
+                      n1: 976 0x400EC7C: ccall (ldo.c:635)
+                       n1: 976 0x400EC7C: luaD_callnoyield (ldo.c:655)
+                        n1: 976 0x400D8EA: luaD_rawrunprotected (ldo.c:144)
+                         n1: 976 0x400F05D: luaD_pcall (ldo.c:957)
+                          n1: 976 0x400B047: lua_pcallk (lapi.c:1064)
+                           n0: 976 0x40076B6: main (lua.c:682)
+   n0: 0 in 1 place, below massif's threshold (1.00%)
+  n0: 96 in 3 places, all below massif's threshold (1.00%)
+ n1: 1624 0x40188FF: lua_newstate (lstate.c:364)
+  n1: 1624 0x402453E: luaL_newstate (lauxlib.c:1109)
+   n0: 1624 0x400765D: main (lua.c:673)
+ n1: 1024 0x4A340BC: _IO_file_doallocate (filedoalloc.c:101)
+  n1: 1024 0x4A44105: _IO_doallocbuf (genops.c:373)
+   n2: 1024 0x4A44105: _IO_doallocbuf (genops.c:368)
+    n1: 1024 0x4A42078: _IO_file_overflow@@GLIBC_2.2.5 (fileops.c:746)
+     n1: 1024 0x4A42BAA: _IO_new_file_xsputn (fileops.c:1245)
+      n1: 1024 0x4A42BAA: _IO_file_xsputn@@GLIBC_2.2.5 (fileops.c:1198)
+       n1: 1024 0x4A35917: fwrite (iofwrite.c:39)
+        n1: 1024 0x402930F: luaB_print (lbaselib.c:32)
+         n1: 1024 0x400E895: precallC (ldo.c:529)
+          n1: 1024 0x400E895: luaD_precall (ldo.c:595)
+           n1: 1024 0x401E7E0: luaV_execute (lvm.c:1682)
+            n1: 1024 0x400EC95: ccall (ldo.c:637)
+             n1: 1024 0x400EC95: luaD_callnoyield (ldo.c:655)
+              n1: 1024 0x400D8EA: luaD_rawrunprotected (ldo.c:144)
+               n1: 1024 0x400F05D: luaD_pcall (ldo.c:957)
+                n1: 1024 0x400B047: lua_pcallk (lapi.c:1064)
+                 n1: 1024 0x4007C30: docall (lua.c:161)
+                  n1: 1024 0x4008746: handle_script (lua.c:265)
+                   n1: 1024 0x4008746: pmain (lua.c:654)
+                    n1: 1024 0x400E895: precallC (ldo.c:529)
+                     n1: 1024 0x400E895: luaD_precall (ldo.c:595)
+                      n1: 1024 0x400EC7C: ccall (ldo.c:635)
+                       n1: 1024 0x400EC7C: luaD_callnoyield (ldo.c:655)
+                        n1: 1024 0x400D8EA: luaD_rawrunprotected (ldo.c:144)
+                         n1: 1024 0x400F05D: luaD_pcall (ldo.c:957)
+                          n1: 1024 0x400B047: lua_pcallk (lapi.c:1064)
+                           n0: 1024 0x40076B6: main (lua.c:682)
+    n0: 0 in 1 place, below massif's threshold (1.00%)
+ n0: 0 in 1 place, below massif's threshold (1.00%)
+#-----------
+snapshot=55
+#-----------
+time=170527528352
+mem_heap_B=27855
+mem_heap_extra_B=7401
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=56
+#-----------
+time=170528133694
+mem_heap_B=28095
+mem_heap_extra_B=7497
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=57
+#-----------
+time=170528739036
+mem_heap_B=28335
+mem_heap_extra_B=7593
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=58
+#-----------
+time=170529344378
+mem_heap_B=28575
+mem_heap_extra_B=7705
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=59
+#-----------
+time=170529949720
+mem_heap_B=28815
+mem_heap_extra_B=7801
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=60
+#-----------
+time=170530555062
+mem_heap_B=29055
+mem_heap_extra_B=7897
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=61
+#-----------
+time=170531160404
+mem_heap_B=29295
+mem_heap_extra_B=7993
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=62
+#-----------
+time=170531765746
+mem_heap_B=29535
+mem_heap_extra_B=8089
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=63
+#-----------
+time=170532371088
+mem_heap_B=29775
+mem_heap_extra_B=8185
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=64
+#-----------
+time=170532976430
+mem_heap_B=30015
+mem_heap_extra_B=8281
+mem_stacks_B=0
+heap_tree=detailed
+n5: 30015 (heap allocation functions) malloc/new/new[], --alloc-fns, etc.
+ n3: 22889 0x4012F9B: luaM_malloc_ (lmem.c:206)
+  n1: 15009 0x40121C8: luaC_newobjdt (lgc.c:260)
+   n7: 15009 0x40121C8: luaC_newobj (lgc.c:271)
+    n1: 7097 0x401937B: createstrobj (lstring.c:148)
+     n3: 7097 0x401937B: internshrstr (lstring.c:209)
+      n5: 6436 0x40196D2: luaS_new (lstring.c:254)
+       n2: 4470 0x4008A63: auxsetstr (lapi.c:831)
+        n5: 4219 0x40239D4: luaL_setfuncs (lauxlib.c:953)
+         n0: 1524 in 9 places, all below massif's threshold (1.00%)
+         n1: 1002 0x402E57A: luaopen_math (lmathlib.c:769)
+          n1: 1002 0x400E895: precallC (ldo.c:529)
+           n1: 1002 0x400E895: luaD_precall (ldo.c:595)
+            n1: 1002 0x400EC7C: ccall (ldo.c:635)
+             n1: 1002 0x400EC7C: luaD_callnoyield (ldo.c:655)
+              n1: 1002 0x400AF6A: lua_callk (lapi.c:1020)
+               n1: 1002 0x40242CB: luaL_requiref (lauxlib.c:991)
+                n1: 1002 0x4024613: luaL_openlibs (linit.c:61)
+                 n1: 1002 0x4008240: pmain (lua.c:643)
+                  n1: 1002 0x400E895: precallC (ldo.c:529)
+                   n1: 1002 0x400E895: luaD_precall (ldo.c:595)
+                    n1: 1002 0x400EC7C: ccall (ldo.c:635)
+                     n1: 1002 0x400EC7C: luaD_callnoyield (ldo.c:655)
+                      n1: 1002 0x400D8EA: luaD_rawrunprotected (ldo.c:144)
+                       n1: 1002 0x400F05D: luaD_pcall (ldo.c:957)
+                        n1: 1002 0x400B047: lua_pcallk (lapi.c:1064)
+                         n0: 1002 0x40076B6: main (lua.c:682)
+         n1: 762 0x402A023: luaopen_base (lbaselib.c:540)
+          n1: 762 0x400E895: precallC (ldo.c:529)
+           n1: 762 0x400E895: luaD_precall (ldo.c:595)
+            n1: 762 0x400EC7C: ccall (ldo.c:635)
+             n1: 762 0x400EC7C: luaD_callnoyield (ldo.c:655)
+              n1: 762 0x400AF6A: lua_callk (lapi.c:1020)
+               n1: 762 0x40242CB: luaL_requiref (lauxlib.c:991)
+                n1: 762 0x4024613: luaL_openlibs (linit.c:61)
+                 n1: 762 0x4008240: pmain (lua.c:643)
+                  n1: 762 0x400E895: precallC (ldo.c:529)
+                   n1: 762 0x400E895: luaD_precall (ldo.c:595)
+                    n1: 762 0x400EC7C: ccall (ldo.c:635)
+                     n1: 762 0x400EC7C: luaD_callnoyield (ldo.c:655)
+                      n1: 762 0x400D8EA: luaD_rawrunprotected (ldo.c:144)
+                       n1: 762 0x400F05D: luaD_pcall (ldo.c:957)
+                        n1: 762 0x400B047: lua_pcallk (lapi.c:1064)
+                         n0: 762 0x40076B6: main (lua.c:682)
+         n1: 485 0x402B9E5: luaopen_debug (ldblib.c:480)
+          n1: 485 0x400E895: precallC (ldo.c:529)
+           n1: 485 0x400E895: luaD_precall (ldo.c:595)
+            n1: 485 0x400EC7C: ccall (ldo.c:635)
+             n1: 485 0x400EC7C: luaD_callnoyield (ldo.c:655)
+              n1: 485 0x400AF6A: lua_callk (lapi.c:1020)
+               n1: 485 0x40242CB: luaL_requiref (lauxlib.c:991)
+                n1: 485 0x4024613: luaL_openlibs (linit.c:61)
+                 n1: 485 0x4008240: pmain (lua.c:643)
+                  n1: 485 0x400E895: precallC (ldo.c:529)
+                   n1: 485 0x400E895: luaD_precall (ldo.c:595)
+                    n1: 485 0x400EC7C: ccall (ldo.c:635)
+                     n1: 485 0x400EC7C: luaD_callnoyield (ldo.c:655)
+                      n1: 485 0x400D8EA: luaD_rawrunprotected (ldo.c:144)
+                       n1: 485 0x400F05D: luaD_pcall (ldo.c:957)
+                        n1: 485 0x400B047: lua_pcallk (lapi.c:1064)
+                         n0: 485 0x40076B6: main (lua.c:682)
+         n1: 446 0x40341D5: luaopen_string (lstrlib.c:1870)
+          n1: 446 0x400E895: precallC (ldo.c:529)
+           n1: 446 0x400E895: luaD_precall (ldo.c:595)
+            n1: 446 0x400EC7C: ccall (ldo.c:635)
+             n1: 446 0x400EC7C: luaD_callnoyield (ldo.c:655)
+              n1: 446 0x400AF6A: lua_callk (lapi.c:1020)
+               n1: 446 0x40242CB: luaL_requiref (lauxlib.c:991)
+                n1: 446 0x4024613: luaL_openlibs (linit.c:61)
+                 n1: 446 0x4008240: pmain (lua.c:643)
+                  n1: 446 0x400E895: precallC (ldo.c:529)
+                   n1: 446 0x400E895: luaD_precall (ldo.c:595)
+                    n1: 446 0x400EC7C: ccall (ldo.c:635)
+                     n1: 446 0x400EC7C: luaD_callnoyield (ldo.c:655)
+                      n1: 446 0x400D8EA: luaD_rawrunprotected (ldo.c:144)
+                       n1: 446 0x400F05D: luaD_pcall (ldo.c:957)
+                        n1: 446 0x400B047: lua_pcallk (lapi.c:1064)
+                         n0: 446 0x40076B6: main (lua.c:682)
+        n0: 251 in 8 places, all below massif's threshold (1.00%)
+       n1: 764 0x401ADB0: luaT_init (ltm.c:50)
+        n1: 764 0x40187B9: f_luaopen (lstate.c:237)
+         n1: 764 0x400D8EA: luaD_rawrunprotected (ldo.c:144)
+          n1: 764 0x4018AFB: lua_newstate (lstate.c:407)
+           n1: 764 0x402453E: luaL_newstate (lauxlib.c:1109)
+            n0: 764 0x400765D: main (lua.c:673)
+       n1: 640 0x402754C: luaX_init (llex.c:75)
+        n1: 640 0x40187C1: f_luaopen (lstate.c:238)
+         n1: 640 0x400D8EA: luaD_rawrunprotected (ldo.c:144)
+          n1: 640 0x4018AFB: lua_newstate (lstate.c:407)
+           n1: 640 0x402453E: luaL_newstate (lauxlib.c:1109)
+            n0: 640 0x400765D: main (lua.c:673)
+       n1: 422 0x400A45B: auxgetstr (lapi.c:641)
+        n1: 422 0x400A45B: lua_getfield (lapi.c:691)
+         n0: 422 in 3 places, all below massif's threshold (1.00%)
+       n0: 140 in 1 place, below massif's threshold (1.00%)
+      n2: 511 0x4027CA2: luaX_newstring (llex.c:136)
+       n1: 475 0x4028A77: llex (llex.c:545)
+        n1: 475 0x4028E61: luaX_next (llex.c:572)
+         n0: 475 in 8 places, all below massif's threshold (1.00%)
+       n0: 36 in 1 place, below massif's threshold (1.00%)
+      n0: 150 in 4 places, all below massif's threshold (1.00%)
+    n2: 2584 0x400FA3D: luaF_newLclosure (lfunc.c:36)
+     n1: 2544 0x401E606: pushclosure (lvm.c:798)
+      n1: 2544 0x401E606: luaV_execute (lvm.c:1872)
+       n1: 2544 0x400EC95: ccall (ldo.c:637)
+        n1: 2544 0x400EC95: luaD_callnoyield (ldo.c:655)
+         n1: 2544 0x400D8EA: luaD_rawrunprotected (ldo.c:144)
+          n1: 2544 0x400F05D: luaD_pcall (ldo.c:957)
+           n1: 2544 0x400B047: lua_pcallk (lapi.c:1064)
+            n1: 2544 0x4007C30: docall (lua.c:161)
+             n1: 2544 0x4008746: handle_script (lua.c:265)
+              n1: 2544 0x4008746: pmain (lua.c:654)
+               n1: 2544 0x400E895: precallC (ldo.c:529)
+                n1: 2544 0x400E895: luaD_precall (ldo.c:595)
+                 n1: 2544 0x400EC7C: ccall (ldo.c:635)
+                  n1: 2544 0x400EC7C: luaD_callnoyield (ldo.c:655)
+                   n1: 2544 0x400D8EA: luaD_rawrunprotected (ldo.c:144)
+                    n1: 2544 0x400F05D: luaD_pcall (ldo.c:957)
+                     n1: 2544 0x400B047: lua_pcallk (lapi.c:1064)
+                      n0: 2544 0x40076B6: main (lua.c:682)
+     n0: 40 in 1 place, below massif's threshold (1.00%)
+    n1: 2360 0x400FB4B: newupval (lfunc.c:66)
+     n1: 2360 0x400FB4B: luaF_findupval (lfunc.c:98)
+      n1: 2360 0x401E6B6: pushclosure (lvm.c:803)
+       n1: 2360 0x401E6B6: luaV_execute (lvm.c:1872)
+        n1: 2360 0x400EC95: ccall (ldo.c:637)
+         n1: 2360 0x400EC95: luaD_callnoyield (ldo.c:655)
+          n1: 2360 0x400D8EA: luaD_rawrunprotected (ldo.c:144)
+           n1: 2360 0x400F05D: luaD_pcall (ldo.c:957)
+            n1: 2360 0x400B047: lua_pcallk (lapi.c:1064)
+             n1: 2360 0x4007C30: docall (lua.c:161)
+              n1: 2360 0x4008746: handle_script (lua.c:265)
+               n1: 2360 0x4008746: pmain (lua.c:654)
+                n1: 2360 0x400E895: precallC (ldo.c:529)
+                 n1: 2360 0x400E895: luaD_precall (ldo.c:595)
+                  n1: 2360 0x400EC7C: ccall (ldo.c:635)
+                   n1: 2360 0x400EC7C: luaD_callnoyield (ldo.c:655)
+                    n1: 2360 0x400D8EA: luaD_rawrunprotected (ldo.c:144)
+                     n1: 2360 0x400F05D: luaD_pcall (ldo.c:957)
+                      n1: 2360 0x400B047: lua_pcallk (lapi.c:1064)
+                       n0: 2360 0x40076B6: main (lua.c:682)
+    n2: 1120 0x4019CD2: luaH_new (ltable.c:627)
+     n1: 1008 0x400A700: lua_createtable (lapi.c:765)
+      n0: 1008 in 16 places, all below massif's threshold (1.00%)
+     n0: 112 in 3 places, all below massif's threshold (1.00%)
+    n2: 768 0x400FEC2: luaF_newproto (lfunc.c:241)
+     n1: 640 0x40168FF: addprototype (lparser.c:709)
+      n2: 640 0x40168FF: body (lparser.c:994)
+       n1: 512 0x4015A4A: funcstat (lparser.c:1788)
+        n1: 512 0x4015A4A: statement (lparser.c:1876)
+         n1: 512 0x40185EE: statlist (lparser.c:806)
+          n1: 512 0x40185EE: mainfunc (lparser.c:1936)
+           n1: 512 0x40185EE: luaY_parser (lparser.c:1960)
+            n1: 512 0x400D7E5: f_parser (ldo.c:1002)
+             n1: 512 0x400D8EA: luaD_rawrunprotected (ldo.c:144)
+              n1: 512 0x400F05D: luaD_pcall (ldo.c:957)
+               n1: 512 0x400F17D: luaD_protectedparser (ldo.c:1019)
+                n1: 512 0x400B141: lua_load (lapi.c:1094)
+                 n1: 512 0x4023332: luaL_loadfilex (lauxlib.c:815)
+                  n1: 512 0x4008693: handle_script (lua.c:262)
+                   n1: 512 0x4008693: pmain (lua.c:654)
+                    n1: 512 0x400E895: precallC (ldo.c:529)
+                     n1: 512 0x400E895: luaD_precall (ldo.c:595)
+                      n1: 512 0x400EC7C: ccall (ldo.c:635)
+                       n1: 512 0x400EC7C: luaD_callnoyield (ldo.c:655)
+                        n1: 512 0x400D8EA: luaD_rawrunprotected (ldo.c:144)
+                         n1: 512 0x400F05D: luaD_pcall (ldo.c:957)
+                          n1: 512 0x400B047: lua_pcallk (lapi.c:1064)
+                           n0: 512 0x40076B6: main (lua.c:682)
+       n0: 128 in 1 place, below massif's threshold (1.00%)
+     n0: 128 in 1 place, below massif's threshold (1.00%)
+    n0: 584 in 3 places, all below massif's threshold (1.00%)
+    n1: 496 0x40195FA: createstrobj (lstring.c:148)
+     n1: 496 0x40195FA: luaS_createlngstrobj (lstring.c:158)
+      n1: 496 0x40195FA: luaS_newlstr (lstring.c:229)
+       n0: 496 in 3 places, all below massif's threshold (1.00%)
+  n1: 7560 0x401A934: setnodevector (ltable.c:492)
+   n1: 7560 0x401A934: setnodevector (ltable.c:480)
+    n2: 7560 0x401A934: luaH_resize (ltable.c:560)
+     n7: 5256 0x400A74C: lua_createtable (lapi.c:769)
+      n1: 1536 0x402E569: luaopen_math (lmathlib.c:769)
+       n1: 1536 0x400E895: precallC (ldo.c:529)
+        n1: 1536 0x400E895: luaD_precall (ldo.c:595)
+         n1: 1536 0x400EC7C: ccall (ldo.c:635)
+          n1: 1536 0x400EC7C: luaD_callnoyield (ldo.c:655)
+           n1: 1536 0x400AF6A: lua_callk (lapi.c:1020)
+            n1: 1536 0x40242CB: luaL_requiref (lauxlib.c:991)
+             n1: 1536 0x4024613: luaL_openlibs (linit.c:61)
+              n1: 1536 0x4008240: pmain (lua.c:643)
+               n1: 1536 0x400E895: precallC (ldo.c:529)
+                n1: 1536 0x400E895: luaD_precall (ldo.c:595)
+                 n1: 1536 0x400EC7C: ccall (ldo.c:635)
+                  n1: 1536 0x400EC7C: luaD_callnoyield (ldo.c:655)
+                   n1: 1536 0x400D8EA: luaD_rawrunprotected (ldo.c:144)
+                    n1: 1536 0x400F05D: luaD_pcall (ldo.c:957)
+                     n1: 1536 0x400B047: lua_pcallk (lapi.c:1064)
+                      n0: 1536 0x40076B6: main (lua.c:682)
+      n0: 1032 in 8 places, all below massif's threshold (1.00%)
+      n1: 768 0x402B9D4: luaopen_debug (ldblib.c:480)
+       n1: 768 0x400E895: precallC (ldo.c:529)
+        n1: 768 0x400E895: luaD_precall (ldo.c:595)
+         n1: 768 0x400EC7C: ccall (ldo.c:635)
+          n1: 768 0x400EC7C: luaD_callnoyield (ldo.c:655)
+           n1: 768 0x400AF6A: lua_callk (lapi.c:1020)
+            n1: 768 0x40242CB: luaL_requiref (lauxlib.c:991)
+             n1: 768 0x4024613: luaL_openlibs (linit.c:61)
+              n1: 768 0x4008240: pmain (lua.c:643)
+               n1: 768 0x400E895: precallC (ldo.c:529)
+                n1: 768 0x400E895: luaD_precall (ldo.c:595)
+                 n1: 768 0x400EC7C: ccall (ldo.c:635)
+                  n1: 768 0x400EC7C: luaD_callnoyield (ldo.c:655)
+                   n1: 768 0x400D8EA: luaD_rawrunprotected (ldo.c:144)
+                    n1: 768 0x400F05D: luaD_pcall (ldo.c:957)
+                     n1: 768 0x400B047: lua_pcallk (lapi.c:1064)
+                      n0: 768 0x40076B6: main (lua.c:682)
+      n1: 768 0x40341C4: luaopen_string (lstrlib.c:1870)
+       n1: 768 0x400E895: precallC (ldo.c:529)
+        n1: 768 0x400E895: luaD_precall (ldo.c:595)
+         n1: 768 0x400EC7C: ccall (ldo.c:635)
+          n1: 768 0x400EC7C: luaD_callnoyield (ldo.c:655)
+           n1: 768 0x400AF6A: lua_callk (lapi.c:1020)
+            n1: 768 0x40242CB: luaL_requiref (lauxlib.c:991)
+             n1: 768 0x4024613: luaL_openlibs (linit.c:61)
+              n1: 768 0x4008240: pmain (lua.c:643)
+               n1: 768 0x400E895: precallC (ldo.c:529)
+                n1: 768 0x400E895: luaD_precall (ldo.c:595)
+                 n1: 768 0x400EC7C: ccall (ldo.c:635)
+                  n1: 768 0x400EC7C: luaD_callnoyield (ldo.c:655)
+                   n1: 768 0x400D8EA: luaD_rawrunprotected (ldo.c:144)
+                    n1: 768 0x400F05D: luaD_pcall (ldo.c:957)
+                     n1: 768 0x400B047: lua_pcallk (lapi.c:1064)
+                      n0: 768 0x40076B6: main (lua.c:682)
+      n1: 384 0x402D394: luaopen_io (liolib.c:833)
+       n1: 384 0x400E895: precallC (ldo.c:529)
+        n1: 384 0x400E895: luaD_precall (ldo.c:595)
+         n1: 384 0x400EC7C: ccall (ldo.c:635)
+          n1: 384 0x400EC7C: luaD_callnoyield (ldo.c:655)
+           n1: 384 0x400AF6A: lua_callk (lapi.c:1020)
+            n1: 384 0x40242CB: luaL_requiref (lauxlib.c:991)
+             n1: 384 0x4024613: luaL_openlibs (linit.c:61)
+              n1: 384 0x4008240: pmain (lua.c:643)
+               n1: 384 0x400E895: precallC (ldo.c:529)
+                n1: 384 0x400E895: luaD_precall (ldo.c:595)
+                 n1: 384 0x400EC7C: ccall (ldo.c:635)
+                  n1: 384 0x400EC7C: luaD_callnoyield (ldo.c:655)
+                   n1: 384 0x400D8EA: luaD_rawrunprotected (ldo.c:144)
+                    n1: 384 0x400F05D: luaD_pcall (ldo.c:957)
+                     n1: 384 0x400B047: lua_pcallk (lapi.c:1064)
+                      n0: 384 0x40076B6: main (lua.c:682)
+      n1: 384 0x4030204: luaopen_os (loslib.c:427)
+       n1: 384 0x400E895: precallC (ldo.c:529)
+        n1: 384 0x400E895: luaD_precall (ldo.c:595)
+         n1: 384 0x400EC7C: ccall (ldo.c:635)
+          n1: 384 0x400EC7C: luaD_callnoyield (ldo.c:655)
+           n1: 384 0x400AF6A: lua_callk (lapi.c:1020)
+            n1: 384 0x40242CB: luaL_requiref (lauxlib.c:991)
+             n1: 384 0x4024613: luaL_openlibs (linit.c:61)
+              n1: 384 0x4008240: pmain (lua.c:643)
+               n1: 384 0x400E895: precallC (ldo.c:529)
+                n1: 384 0x400E895: luaD_precall (ldo.c:595)
+                 n1: 384 0x400EC7C: ccall (ldo.c:635)
+                  n1: 384 0x400EC7C: luaD_callnoyield (ldo.c:655)
+                   n1: 384 0x400D8EA: luaD_rawrunprotected (ldo.c:144)
+                    n1: 384 0x400F05D: luaD_pcall (ldo.c:957)
+                     n1: 384 0x400B047: lua_pcallk (lapi.c:1064)
+                      n0: 384 0x40076B6: main (lua.c:682)
+      n1: 384 0x40341E4: createmetatable (lstrlib.c:1854)
+       n1: 384 0x40341E4: luaopen_string (lstrlib.c:1871)
+        n1: 384 0x400E895: precallC (ldo.c:529)
+         n1: 384 0x400E895: luaD_precall (ldo.c:595)
+          n1: 384 0x400EC7C: ccall (ldo.c:635)
+           n1: 384 0x400EC7C: luaD_callnoyield (ldo.c:655)
+            n1: 384 0x400AF6A: lua_callk (lapi.c:1020)
+             n1: 384 0x40242CB: luaL_requiref (lauxlib.c:991)
+              n1: 384 0x4024613: luaL_openlibs (linit.c:61)
+               n1: 384 0x4008240: pmain (lua.c:643)
+                n1: 384 0x400E895: precallC (ldo.c:529)
+                 n1: 384 0x400E895: luaD_precall (ldo.c:595)
+                  n1: 384 0x400EC7C: ccall (ldo.c:635)
+                   n1: 384 0x400EC7C: luaD_callnoyield (ldo.c:655)
+                    n1: 384 0x400D8EA: luaD_rawrunprotected (ldo.c:144)
+                     n1: 384 0x400F05D: luaD_pcall (ldo.c:957)
+                      n1: 384 0x400B047: lua_pcallk (lapi.c:1064)
+                       n0: 384 0x40076B6: main (lua.c:682)
+     n1: 2304 0x401A550: rehash (ltable.c:616)
+      n2: 2304 0x401A550: luaH_newkey (ltable.c:688)
+       n1: 2304 0x401D0F9: luaV_finishset (lvm.c:342)
+        n3: 2304 0x4008A97: auxsetstr (lapi.c:840)
+         n1: 1536 0x4024613: luaL_openlibs (linit.c:61)
+          n1: 1536 0x4008240: pmain (lua.c:643)
+           n1: 1536 0x400E895: precallC (ldo.c:529)
+            n1: 1536 0x400E895: luaD_precall (ldo.c:595)
+             n1: 1536 0x400EC7C: ccall (ldo.c:635)
+              n1: 1536 0x400EC7C: luaD_callnoyield (ldo.c:655)
+               n1: 1536 0x400D8EA: luaD_rawrunprotected (ldo.c:144)
+                n1: 1536 0x400F05D: luaD_pcall (ldo.c:957)
+                 n1: 1536 0x400B047: lua_pcallk (lapi.c:1064)
+                  n0: 1536 0x40076B6: main (lua.c:682)
+         n0: 384 in 3 places, all below massif's threshold (1.00%)
+         n1: 384 0x40242E8: luaL_requiref (lauxlib.c:993)
+          n1: 384 0x4024613: luaL_openlibs (linit.c:61)
+           n1: 384 0x4008240: pmain (lua.c:643)
+            n1: 384 0x400E895: precallC (ldo.c:529)
+             n1: 384 0x400E895: luaD_precall (ldo.c:595)
+              n1: 384 0x400EC7C: ccall (ldo.c:635)
+               n1: 384 0x400EC7C: luaD_callnoyield (ldo.c:655)
+                n1: 384 0x400D8EA: luaD_rawrunprotected (ldo.c:144)
+                 n1: 384 0x400F05D: luaD_pcall (ldo.c:957)
+                  n1: 384 0x400B047: lua_pcallk (lapi.c:1064)
+                   n0: 384 0x40076B6: main (lua.c:682)
+       n0: 0 in 2 places, all below massif's threshold (1.00%)
+  n0: 320 in 3 places, all below massif's threshold (1.00%)
+ n4: 4478 0x4012DDE: luaM_realloc_ (lmem.c:180)
+  n1: 2048 0x40191CA: luaS_resize (lstring.c:91)
+   n1: 2048 0x40193F6: growstrtab (lstring.c:182)
+    n1: 2048 0x40193F6: internshrstr (lstring.c:206)
+     n1: 2048 0x40196D2: luaS_new (lstring.c:254)
+      n1: 2048 0x400A45B: auxgetstr (lapi.c:641)
+       n1: 2048 0x400A45B: lua_getfield (lapi.c:691)
+        n1: 2048 0x4024246: luaL_requiref (lauxlib.c:986)
+         n1: 2048 0x4024613: luaL_openlibs (linit.c:61)
+          n1: 2048 0x4008240: pmain (lua.c:643)
+           n1: 2048 0x400E895: precallC (ldo.c:529)
+            n1: 2048 0x400E895: luaD_precall (ldo.c:595)
+             n1: 2048 0x400EC7C: ccall (ldo.c:635)
+              n1: 2048 0x400EC7C: luaD_callnoyield (ldo.c:655)
+               n1: 2048 0x400D8EA: luaD_rawrunprotected (ldo.c:144)
+                n1: 2048 0x400F05D: luaD_pcall (ldo.c:957)
+                 n1: 2048 0x400B047: lua_pcallk (lapi.c:1064)
+                  n0: 2048 0x40076B6: main (lua.c:682)
+  n1: 1358 0x4012E4A: luaM_saferealloc_ (lmem.c:194)
+   n2: 1358 0x4012E4A: luaM_shrinkvector_ (lmem.c:134)
+    n0: 854 in 5 places, all below massif's threshold (1.00%)
+    n1: 504 0x40154DC: close_func (lparser.c:764)
+     n0: 504 in 2 places, all below massif's threshold (1.00%)
+  n2: 976 0x400D9C4: luaD_reallocstack (ldo.c:220)
+   n1: 976 0x400DC97: luaD_shrinkstack (ldo.c:307)
+    n1: 976 0x40117AF: traversethread (lgc.c:644)
+     n1: 976 0x40117AF: propagatemark (lgc.c:670)
+      n1: 976 0x4011B27: propagateall (lgc.c:679)
+       n1: 976 0x4011B27: atomic (lgc.c:1543)
+        n1: 976 0x4012847: youngcollection (lgc.c:1261)
+         n1: 976 0x4012847: genstep (lgc.c:1461)
+          n1: 976 0x4012847: luaC_step (lgc.c:1696)
+           n1: 976 0x4020332: luaV_execute (lvm.c:1873)
+            n1: 976 0x400EC95: ccall (ldo.c:637)
+             n1: 976 0x400EC95: luaD_callnoyield (ldo.c:655)
+              n1: 976 0x400D8EA: luaD_rawrunprotected (ldo.c:144)
+               n1: 976 0x400F05D: luaD_pcall (ldo.c:957)
+                n1: 976 0x400B047: lua_pcallk (lapi.c:1064)
+                 n1: 976 0x4007C30: docall (lua.c:161)
+                  n1: 976 0x4008746: handle_script (lua.c:265)
+                   n1: 976 0x4008746: pmain (lua.c:654)
+                    n1: 976 0x400E895: precallC (ldo.c:529)
+                     n1: 976 0x400E895: luaD_precall (ldo.c:595)
+                      n1: 976 0x400EC7C: ccall (ldo.c:635)
+                       n1: 976 0x400EC7C: luaD_callnoyield (ldo.c:655)
+                        n1: 976 0x400D8EA: luaD_rawrunprotected (ldo.c:144)
+                         n1: 976 0x400F05D: luaD_pcall (ldo.c:957)
+                          n1: 976 0x400B047: lua_pcallk (lapi.c:1064)
+                           n0: 976 0x40076B6: main (lua.c:682)
+   n0: 0 in 1 place, below massif's threshold (1.00%)
+  n0: 96 in 3 places, all below massif's threshold (1.00%)
+ n1: 1624 0x40188FF: lua_newstate (lstate.c:364)
+  n1: 1624 0x402453E: luaL_newstate (lauxlib.c:1109)
+   n0: 1624 0x400765D: main (lua.c:673)
+ n1: 1024 0x4A340BC: _IO_file_doallocate (filedoalloc.c:101)
+  n1: 1024 0x4A44105: _IO_doallocbuf (genops.c:373)
+   n2: 1024 0x4A44105: _IO_doallocbuf (genops.c:368)
+    n1: 1024 0x4A42078: _IO_file_overflow@@GLIBC_2.2.5 (fileops.c:746)
+     n1: 1024 0x4A42BAA: _IO_new_file_xsputn (fileops.c:1245)
+      n1: 1024 0x4A42BAA: _IO_file_xsputn@@GLIBC_2.2.5 (fileops.c:1198)
+       n1: 1024 0x4A35917: fwrite (iofwrite.c:39)
+        n1: 1024 0x402930F: luaB_print (lbaselib.c:32)
+         n1: 1024 0x400E895: precallC (ldo.c:529)
+          n1: 1024 0x400E895: luaD_precall (ldo.c:595)
+           n1: 1024 0x401E7E0: luaV_execute (lvm.c:1682)
+            n1: 1024 0x400EC95: ccall (ldo.c:637)
+             n1: 1024 0x400EC95: luaD_callnoyield (ldo.c:655)
+              n1: 1024 0x400D8EA: luaD_rawrunprotected (ldo.c:144)
+               n1: 1024 0x400F05D: luaD_pcall (ldo.c:957)
+                n1: 1024 0x400B047: lua_pcallk (lapi.c:1064)
+                 n1: 1024 0x4007C30: docall (lua.c:161)
+                  n1: 1024 0x4008746: handle_script (lua.c:265)
+                   n1: 1024 0x4008746: pmain (lua.c:654)
+                    n1: 1024 0x400E895: precallC (ldo.c:529)
+                     n1: 1024 0x400E895: luaD_precall (ldo.c:595)
+                      n1: 1024 0x400EC7C: ccall (ldo.c:635)
+                       n1: 1024 0x400EC7C: luaD_callnoyield (ldo.c:655)
+                        n1: 1024 0x400D8EA: luaD_rawrunprotected (ldo.c:144)
+                         n1: 1024 0x400F05D: luaD_pcall (ldo.c:957)
+                          n1: 1024 0x400B047: lua_pcallk (lapi.c:1064)
+                           n0: 1024 0x40076B6: main (lua.c:682)
+    n0: 0 in 1 place, below massif's threshold (1.00%)
+ n0: 0 in 1 place, below massif's threshold (1.00%)
+#-----------
+snapshot=65
+#-----------
+time=170533577063
+mem_heap_B=28575
+mem_heap_extra_B=7705
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=66
+#-----------
+time=170534179250
+mem_heap_B=25455
+mem_heap_extra_B=6425
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=67
+#-----------
+time=170534784592
+mem_heap_B=25695
+mem_heap_extra_B=6537
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=68
+#-----------
+time=170535389934
+mem_heap_B=25935
+mem_heap_extra_B=6633
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=69
+#-----------
+time=170535995276
+mem_heap_B=26175
+mem_heap_extra_B=6729
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=70
+#-----------
+time=170536600618
+mem_heap_B=26415
+mem_heap_extra_B=6825
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=71
+#-----------
+time=170537205960
+mem_heap_B=26655
+mem_heap_extra_B=6921
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=72
+#-----------
+time=170537811302
+mem_heap_B=26895
+mem_heap_extra_B=7017
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=73
+#-----------
+time=170538416644
+mem_heap_B=27135
+mem_heap_extra_B=7113
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=74
+#-----------
+time=170539021986
+mem_heap_B=27375
+mem_heap_extra_B=7209
+mem_stacks_B=0
+heap_tree=detailed
+n5: 27375 (heap allocation functions) malloc/new/new[], --alloc-fns, etc.
+ n3: 20249 0x4012F9B: luaM_malloc_ (lmem.c:206)
+  n1: 12369 0x40121C8: luaC_newobjdt (lgc.c:260)
+   n7: 12369 0x40121C8: luaC_newobj (lgc.c:271)
+    n1: 7097 0x401937B: createstrobj (lstring.c:148)
+     n3: 7097 0x401937B: internshrstr (lstring.c:209)
+      n5: 6436 0x40196D2: luaS_new (lstring.c:254)
+       n2: 4470 0x4008A63: auxsetstr (lapi.c:831)
+        n5: 4219 0x40239D4: luaL_setfuncs (lauxlib.c:953)
+         n0: 1524 in 9 places, all below massif's threshold (1.00%)
+         n1: 1002 0x402E57A: luaopen_math (lmathlib.c:769)
+          n1: 1002 0x400E895: precallC (ldo.c:529)
+           n1: 1002 0x400E895: luaD_precall (ldo.c:595)
+            n1: 1002 0x400EC7C: ccall (ldo.c:635)
+             n1: 1002 0x400EC7C: luaD_callnoyield (ldo.c:655)
+              n1: 1002 0x400AF6A: lua_callk (lapi.c:1020)
+               n1: 1002 0x40242CB: luaL_requiref (lauxlib.c:991)
+                n1: 1002 0x4024613: luaL_openlibs (linit.c:61)
+                 n1: 1002 0x4008240: pmain (lua.c:643)
+                  n1: 1002 0x400E895: precallC (ldo.c:529)
+                   n1: 1002 0x400E895: luaD_precall (ldo.c:595)
+                    n1: 1002 0x400EC7C: ccall (ldo.c:635)
+                     n1: 1002 0x400EC7C: luaD_callnoyield (ldo.c:655)
+                      n1: 1002 0x400D8EA: luaD_rawrunprotected (ldo.c:144)
+                       n1: 1002 0x400F05D: luaD_pcall (ldo.c:957)
+                        n1: 1002 0x400B047: lua_pcallk (lapi.c:1064)
+                         n0: 1002 0x40076B6: main (lua.c:682)
+         n1: 762 0x402A023: luaopen_base (lbaselib.c:540)
+          n1: 762 0x400E895: precallC (ldo.c:529)
+           n1: 762 0x400E895: luaD_precall (ldo.c:595)
+            n1: 762 0x400EC7C: ccall (ldo.c:635)
+             n1: 762 0x400EC7C: luaD_callnoyield (ldo.c:655)
+              n1: 762 0x400AF6A: lua_callk (lapi.c:1020)
+               n1: 762 0x40242CB: luaL_requiref (lauxlib.c:991)
+                n1: 762 0x4024613: luaL_openlibs (linit.c:61)
+                 n1: 762 0x4008240: pmain (lua.c:643)
+                  n1: 762 0x400E895: precallC (ldo.c:529)
+                   n1: 762 0x400E895: luaD_precall (ldo.c:595)
+                    n1: 762 0x400EC7C: ccall (ldo.c:635)
+                     n1: 762 0x400EC7C: luaD_callnoyield (ldo.c:655)
+                      n1: 762 0x400D8EA: luaD_rawrunprotected (ldo.c:144)
+                       n1: 762 0x400F05D: luaD_pcall (ldo.c:957)
+                        n1: 762 0x400B047: lua_pcallk (lapi.c:1064)
+                         n0: 762 0x40076B6: main (lua.c:682)
+         n1: 485 0x402B9E5: luaopen_debug (ldblib.c:480)
+          n1: 485 0x400E895: precallC (ldo.c:529)
+           n1: 485 0x400E895: luaD_precall (ldo.c:595)
+            n1: 485 0x400EC7C: ccall (ldo.c:635)
+             n1: 485 0x400EC7C: luaD_callnoyield (ldo.c:655)
+              n1: 485 0x400AF6A: lua_callk (lapi.c:1020)
+               n1: 485 0x40242CB: luaL_requiref (lauxlib.c:991)
+                n1: 485 0x4024613: luaL_openlibs (linit.c:61)
+                 n1: 485 0x4008240: pmain (lua.c:643)
+                  n1: 485 0x400E895: precallC (ldo.c:529)
+                   n1: 485 0x400E895: luaD_precall (ldo.c:595)
+                    n1: 485 0x400EC7C: ccall (ldo.c:635)
+                     n1: 485 0x400EC7C: luaD_callnoyield (ldo.c:655)
+                      n1: 485 0x400D8EA: luaD_rawrunprotected (ldo.c:144)
+                       n1: 485 0x400F05D: luaD_pcall (ldo.c:957)
+                        n1: 485 0x400B047: lua_pcallk (lapi.c:1064)
+                         n0: 485 0x40076B6: main (lua.c:682)
+         n1: 446 0x40341D5: luaopen_string (lstrlib.c:1870)
+          n1: 446 0x400E895: precallC (ldo.c:529)
+           n1: 446 0x400E895: luaD_precall (ldo.c:595)
+            n1: 446 0x400EC7C: ccall (ldo.c:635)
+             n1: 446 0x400EC7C: luaD_callnoyield (ldo.c:655)
+              n1: 446 0x400AF6A: lua_callk (lapi.c:1020)
+               n1: 446 0x40242CB: luaL_requiref (lauxlib.c:991)
+                n1: 446 0x4024613: luaL_openlibs (linit.c:61)
+                 n1: 446 0x4008240: pmain (lua.c:643)
+                  n1: 446 0x400E895: precallC (ldo.c:529)
+                   n1: 446 0x400E895: luaD_precall (ldo.c:595)
+                    n1: 446 0x400EC7C: ccall (ldo.c:635)
+                     n1: 446 0x400EC7C: luaD_callnoyield (ldo.c:655)
+                      n1: 446 0x400D8EA: luaD_rawrunprotected (ldo.c:144)
+                       n1: 446 0x400F05D: luaD_pcall (ldo.c:957)
+                        n1: 446 0x400B047: lua_pcallk (lapi.c:1064)
+                         n0: 446 0x40076B6: main (lua.c:682)
+        n0: 251 in 8 places, all below massif's threshold (1.00%)
+       n1: 764 0x401ADB0: luaT_init (ltm.c:50)
+        n1: 764 0x40187B9: f_luaopen (lstate.c:237)
+         n1: 764 0x400D8EA: luaD_rawrunprotected (ldo.c:144)
+          n1: 764 0x4018AFB: lua_newstate (lstate.c:407)
+           n1: 764 0x402453E: luaL_newstate (lauxlib.c:1109)
+            n0: 764 0x400765D: main (lua.c:673)
+       n1: 640 0x402754C: luaX_init (llex.c:75)
+        n1: 640 0x40187C1: f_luaopen (lstate.c:238)
+         n1: 640 0x400D8EA: luaD_rawrunprotected (ldo.c:144)
+          n1: 640 0x4018AFB: lua_newstate (lstate.c:407)
+           n1: 640 0x402453E: luaL_newstate (lauxlib.c:1109)
+            n0: 640 0x400765D: main (lua.c:673)
+       n1: 422 0x400A45B: auxgetstr (lapi.c:641)
+        n1: 422 0x400A45B: lua_getfield (lapi.c:691)
+         n0: 422 in 3 places, all below massif's threshold (1.00%)
+       n0: 140 in 1 place, below massif's threshold (1.00%)
+      n2: 511 0x4027CA2: luaX_newstring (llex.c:136)
+       n1: 475 0x4028A77: llex (llex.c:545)
+        n1: 475 0x4028E61: luaX_next (llex.c:572)
+         n0: 475 in 8 places, all below massif's threshold (1.00%)
+       n0: 36 in 1 place, below massif's threshold (1.00%)
+      n0: 150 in 4 places, all below massif's threshold (1.00%)
+    n2: 1264 0x400FA3D: luaF_newLclosure (lfunc.c:36)
+     n1: 1224 0x401E606: pushclosure (lvm.c:798)
+      n1: 1224 0x401E606: luaV_execute (lvm.c:1872)
+       n1: 1224 0x400EC95: ccall (ldo.c:637)
+        n1: 1224 0x400EC95: luaD_callnoyield (ldo.c:655)
+         n1: 1224 0x400D8EA: luaD_rawrunprotected (ldo.c:144)
+          n1: 1224 0x400F05D: luaD_pcall (ldo.c:957)
+           n1: 1224 0x400B047: lua_pcallk (lapi.c:1064)
+            n1: 1224 0x4007C30: docall (lua.c:161)
+             n1: 1224 0x4008746: handle_script (lua.c:265)
+              n1: 1224 0x4008746: pmain (lua.c:654)
+               n1: 1224 0x400E895: precallC (ldo.c:529)
+                n1: 1224 0x400E895: luaD_precall (ldo.c:595)
+                 n1: 1224 0x400EC7C: ccall (ldo.c:635)
+                  n1: 1224 0x400EC7C: luaD_callnoyield (ldo.c:655)
+                   n1: 1224 0x400D8EA: luaD_rawrunprotected (ldo.c:144)
+                    n1: 1224 0x400F05D: luaD_pcall (ldo.c:957)
+                     n1: 1224 0x400B047: lua_pcallk (lapi.c:1064)
+                      n0: 1224 0x40076B6: main (lua.c:682)
+     n0: 40 in 1 place, below massif's threshold (1.00%)
+    n2: 1120 0x4019CD2: luaH_new (ltable.c:627)
+     n1: 1008 0x400A700: lua_createtable (lapi.c:765)
+      n0: 1008 in 16 places, all below massif's threshold (1.00%)
+     n0: 112 in 3 places, all below massif's threshold (1.00%)
+    n1: 1040 0x400FB4B: newupval (lfunc.c:66)
+     n1: 1040 0x400FB4B: luaF_findupval (lfunc.c:98)
+      n1: 1040 0x401E6B6: pushclosure (lvm.c:803)
+       n1: 1040 0x401E6B6: luaV_execute (lvm.c:1872)
+        n1: 1040 0x400EC95: ccall (ldo.c:637)
+         n1: 1040 0x400EC95: luaD_callnoyield (ldo.c:655)
+          n1: 1040 0x400D8EA: luaD_rawrunprotected (ldo.c:144)
+           n1: 1040 0x400F05D: luaD_pcall (ldo.c:957)
+            n1: 1040 0x400B047: lua_pcallk (lapi.c:1064)
+             n1: 1040 0x4007C30: docall (lua.c:161)
+              n1: 1040 0x4008746: handle_script (lua.c:265)
+               n1: 1040 0x4008746: pmain (lua.c:654)
+                n1: 1040 0x400E895: precallC (ldo.c:529)
+                 n1: 1040 0x400E895: luaD_precall (ldo.c:595)
+                  n1: 1040 0x400EC7C: ccall (ldo.c:635)
+                   n1: 1040 0x400EC7C: luaD_callnoyield (ldo.c:655)
+                    n1: 1040 0x400D8EA: luaD_rawrunprotected (ldo.c:144)
+                     n1: 1040 0x400F05D: luaD_pcall (ldo.c:957)
+                      n1: 1040 0x400B047: lua_pcallk (lapi.c:1064)
+                       n0: 1040 0x40076B6: main (lua.c:682)
+    n2: 768 0x400FEC2: luaF_newproto (lfunc.c:241)
+     n1: 640 0x40168FF: addprototype (lparser.c:709)
+      n2: 640 0x40168FF: body (lparser.c:994)
+       n1: 512 0x4015A4A: funcstat (lparser.c:1788)
+        n1: 512 0x4015A4A: statement (lparser.c:1876)
+         n1: 512 0x40185EE: statlist (lparser.c:806)
+          n1: 512 0x40185EE: mainfunc (lparser.c:1936)
+           n1: 512 0x40185EE: luaY_parser (lparser.c:1960)
+            n1: 512 0x400D7E5: f_parser (ldo.c:1002)
+             n1: 512 0x400D8EA: luaD_rawrunprotected (ldo.c:144)
+              n1: 512 0x400F05D: luaD_pcall (ldo.c:957)
+               n1: 512 0x400F17D: luaD_protectedparser (ldo.c:1019)
+                n1: 512 0x400B141: lua_load (lapi.c:1094)
+                 n1: 512 0x4023332: luaL_loadfilex (lauxlib.c:815)
+                  n1: 512 0x4008693: handle_script (lua.c:262)
+                   n1: 512 0x4008693: pmain (lua.c:654)
+                    n1: 512 0x400E895: precallC (ldo.c:529)
+                     n1: 512 0x400E895: luaD_precall (ldo.c:595)
+                      n1: 512 0x400EC7C: ccall (ldo.c:635)
+                       n1: 512 0x400EC7C: luaD_callnoyield (ldo.c:655)
+                        n1: 512 0x400D8EA: luaD_rawrunprotected (ldo.c:144)
+                         n1: 512 0x400F05D: luaD_pcall (ldo.c:957)
+                          n1: 512 0x400B047: lua_pcallk (lapi.c:1064)
+                           n0: 512 0x40076B6: main (lua.c:682)
+       n0: 128 in 1 place, below massif's threshold (1.00%)
+     n0: 128 in 1 place, below massif's threshold (1.00%)
+    n0: 584 in 3 places, all below massif's threshold (1.00%)
+    n1: 496 0x40195FA: createstrobj (lstring.c:148)
+     n1: 496 0x40195FA: luaS_createlngstrobj (lstring.c:158)
+      n1: 496 0x40195FA: luaS_newlstr (lstring.c:229)
+       n0: 496 in 3 places, all below massif's threshold (1.00%)
+  n1: 7560 0x401A934: setnodevector (ltable.c:492)
+   n1: 7560 0x401A934: setnodevector (ltable.c:480)
+    n2: 7560 0x401A934: luaH_resize (ltable.c:560)
+     n7: 5256 0x400A74C: lua_createtable (lapi.c:769)
+      n1: 1536 0x402E569: luaopen_math (lmathlib.c:769)
+       n1: 1536 0x400E895: precallC (ldo.c:529)
+        n1: 1536 0x400E895: luaD_precall (ldo.c:595)
+         n1: 1536 0x400EC7C: ccall (ldo.c:635)
+          n1: 1536 0x400EC7C: luaD_callnoyield (ldo.c:655)
+           n1: 1536 0x400AF6A: lua_callk (lapi.c:1020)
+            n1: 1536 0x40242CB: luaL_requiref (lauxlib.c:991)
+             n1: 1536 0x4024613: luaL_openlibs (linit.c:61)
+              n1: 1536 0x4008240: pmain (lua.c:643)
+               n1: 1536 0x400E895: precallC (ldo.c:529)
+                n1: 1536 0x400E895: luaD_precall (ldo.c:595)
+                 n1: 1536 0x400EC7C: ccall (ldo.c:635)
+                  n1: 1536 0x400EC7C: luaD_callnoyield (ldo.c:655)
+                   n1: 1536 0x400D8EA: luaD_rawrunprotected (ldo.c:144)
+                    n1: 1536 0x400F05D: luaD_pcall (ldo.c:957)
+                     n1: 1536 0x400B047: lua_pcallk (lapi.c:1064)
+                      n0: 1536 0x40076B6: main (lua.c:682)
+      n0: 1032 in 8 places, all below massif's threshold (1.00%)
+      n1: 768 0x402B9D4: luaopen_debug (ldblib.c:480)
+       n1: 768 0x400E895: precallC (ldo.c:529)
+        n1: 768 0x400E895: luaD_precall (ldo.c:595)
+         n1: 768 0x400EC7C: ccall (ldo.c:635)
+          n1: 768 0x400EC7C: luaD_callnoyield (ldo.c:655)
+           n1: 768 0x400AF6A: lua_callk (lapi.c:1020)
+            n1: 768 0x40242CB: luaL_requiref (lauxlib.c:991)
+             n1: 768 0x4024613: luaL_openlibs (linit.c:61)
+              n1: 768 0x4008240: pmain (lua.c:643)
+               n1: 768 0x400E895: precallC (ldo.c:529)
+                n1: 768 0x400E895: luaD_precall (ldo.c:595)
+                 n1: 768 0x400EC7C: ccall (ldo.c:635)
+                  n1: 768 0x400EC7C: luaD_callnoyield (ldo.c:655)
+                   n1: 768 0x400D8EA: luaD_rawrunprotected (ldo.c:144)
+                    n1: 768 0x400F05D: luaD_pcall (ldo.c:957)
+                     n1: 768 0x400B047: lua_pcallk (lapi.c:1064)
+                      n0: 768 0x40076B6: main (lua.c:682)
+      n1: 768 0x40341C4: luaopen_string (lstrlib.c:1870)
+       n1: 768 0x400E895: precallC (ldo.c:529)
+        n1: 768 0x400E895: luaD_precall (ldo.c:595)
+         n1: 768 0x400EC7C: ccall (ldo.c:635)
+          n1: 768 0x400EC7C: luaD_callnoyield (ldo.c:655)
+           n1: 768 0x400AF6A: lua_callk (lapi.c:1020)
+            n1: 768 0x40242CB: luaL_requiref (lauxlib.c:991)
+             n1: 768 0x4024613: luaL_openlibs (linit.c:61)
+              n1: 768 0x4008240: pmain (lua.c:643)
+               n1: 768 0x400E895: precallC (ldo.c:529)
+                n1: 768 0x400E895: luaD_precall (ldo.c:595)
+                 n1: 768 0x400EC7C: ccall (ldo.c:635)
+                  n1: 768 0x400EC7C: luaD_callnoyield (ldo.c:655)
+                   n1: 768 0x400D8EA: luaD_rawrunprotected (ldo.c:144)
+                    n1: 768 0x400F05D: luaD_pcall (ldo.c:957)
+                     n1: 768 0x400B047: lua_pcallk (lapi.c:1064)
+                      n0: 768 0x40076B6: main (lua.c:682)
+      n1: 384 0x402D394: luaopen_io (liolib.c:833)
+       n1: 384 0x400E895: precallC (ldo.c:529)
+        n1: 384 0x400E895: luaD_precall (ldo.c:595)
+         n1: 384 0x400EC7C: ccall (ldo.c:635)
+          n1: 384 0x400EC7C: luaD_callnoyield (ldo.c:655)
+           n1: 384 0x400AF6A: lua_callk (lapi.c:1020)
+            n1: 384 0x40242CB: luaL_requiref (lauxlib.c:991)
+             n1: 384 0x4024613: luaL_openlibs (linit.c:61)
+              n1: 384 0x4008240: pmain (lua.c:643)
+               n1: 384 0x400E895: precallC (ldo.c:529)
+                n1: 384 0x400E895: luaD_precall (ldo.c:595)
+                 n1: 384 0x400EC7C: ccall (ldo.c:635)
+                  n1: 384 0x400EC7C: luaD_callnoyield (ldo.c:655)
+                   n1: 384 0x400D8EA: luaD_rawrunprotected (ldo.c:144)
+                    n1: 384 0x400F05D: luaD_pcall (ldo.c:957)
+                     n1: 384 0x400B047: lua_pcallk (lapi.c:1064)
+                      n0: 384 0x40076B6: main (lua.c:682)
+      n1: 384 0x4030204: luaopen_os (loslib.c:427)
+       n1: 384 0x400E895: precallC (ldo.c:529)
+        n1: 384 0x400E895: luaD_precall (ldo.c:595)
+         n1: 384 0x400EC7C: ccall (ldo.c:635)
+          n1: 384 0x400EC7C: luaD_callnoyield (ldo.c:655)
+           n1: 384 0x400AF6A: lua_callk (lapi.c:1020)
+            n1: 384 0x40242CB: luaL_requiref (lauxlib.c:991)
+             n1: 384 0x4024613: luaL_openlibs (linit.c:61)
+              n1: 384 0x4008240: pmain (lua.c:643)
+               n1: 384 0x400E895: precallC (ldo.c:529)
+                n1: 384 0x400E895: luaD_precall (ldo.c:595)
+                 n1: 384 0x400EC7C: ccall (ldo.c:635)
+                  n1: 384 0x400EC7C: luaD_callnoyield (ldo.c:655)
+                   n1: 384 0x400D8EA: luaD_rawrunprotected (ldo.c:144)
+                    n1: 384 0x400F05D: luaD_pcall (ldo.c:957)
+                     n1: 384 0x400B047: lua_pcallk (lapi.c:1064)
+                      n0: 384 0x40076B6: main (lua.c:682)
+      n1: 384 0x40341E4: createmetatable (lstrlib.c:1854)
+       n1: 384 0x40341E4: luaopen_string (lstrlib.c:1871)
+        n1: 384 0x400E895: precallC (ldo.c:529)
+         n1: 384 0x400E895: luaD_precall (ldo.c:595)
+          n1: 384 0x400EC7C: ccall (ldo.c:635)
+           n1: 384 0x400EC7C: luaD_callnoyield (ldo.c:655)
+            n1: 384 0x400AF6A: lua_callk (lapi.c:1020)
+             n1: 384 0x40242CB: luaL_requiref (lauxlib.c:991)
+              n1: 384 0x4024613: luaL_openlibs (linit.c:61)
+               n1: 384 0x4008240: pmain (lua.c:643)
+                n1: 384 0x400E895: precallC (ldo.c:529)
+                 n1: 384 0x400E895: luaD_precall (ldo.c:595)
+                  n1: 384 0x400EC7C: ccall (ldo.c:635)
+                   n1: 384 0x400EC7C: luaD_callnoyield (ldo.c:655)
+                    n1: 384 0x400D8EA: luaD_rawrunprotected (ldo.c:144)
+                     n1: 384 0x400F05D: luaD_pcall (ldo.c:957)
+                      n1: 384 0x400B047: lua_pcallk (lapi.c:1064)
+                       n0: 384 0x40076B6: main (lua.c:682)
+     n1: 2304 0x401A550: rehash (ltable.c:616)
+      n2: 2304 0x401A550: luaH_newkey (ltable.c:688)
+       n1: 2304 0x401D0F9: luaV_finishset (lvm.c:342)
+        n3: 2304 0x4008A97: auxsetstr (lapi.c:840)
+         n1: 1536 0x4024613: luaL_openlibs (linit.c:61)
+          n1: 1536 0x4008240: pmain (lua.c:643)
+           n1: 1536 0x400E895: precallC (ldo.c:529)
+            n1: 1536 0x400E895: luaD_precall (ldo.c:595)
+             n1: 1536 0x400EC7C: ccall (ldo.c:635)
+              n1: 1536 0x400EC7C: luaD_callnoyield (ldo.c:655)
+               n1: 1536 0x400D8EA: luaD_rawrunprotected (ldo.c:144)
+                n1: 1536 0x400F05D: luaD_pcall (ldo.c:957)
+                 n1: 1536 0x400B047: lua_pcallk (lapi.c:1064)
+                  n0: 1536 0x40076B6: main (lua.c:682)
+         n0: 384 in 3 places, all below massif's threshold (1.00%)
+         n1: 384 0x40242E8: luaL_requiref (lauxlib.c:993)
+          n1: 384 0x4024613: luaL_openlibs (linit.c:61)
+           n1: 384 0x4008240: pmain (lua.c:643)
+            n1: 384 0x400E895: precallC (ldo.c:529)
+             n1: 384 0x400E895: luaD_precall (ldo.c:595)
+              n1: 384 0x400EC7C: ccall (ldo.c:635)
+               n1: 384 0x400EC7C: luaD_callnoyield (ldo.c:655)
+                n1: 384 0x400D8EA: luaD_rawrunprotected (ldo.c:144)
+                 n1: 384 0x400F05D: luaD_pcall (ldo.c:957)
+                  n1: 384 0x400B047: lua_pcallk (lapi.c:1064)
+                   n0: 384 0x40076B6: main (lua.c:682)
+       n0: 0 in 2 places, all below massif's threshold (1.00%)
+  n0: 320 in 3 places, all below massif's threshold (1.00%)
+ n4: 4478 0x4012DDE: luaM_realloc_ (lmem.c:180)
+  n1: 2048 0x40191CA: luaS_resize (lstring.c:91)
+   n1: 2048 0x40193F6: growstrtab (lstring.c:182)
+    n1: 2048 0x40193F6: internshrstr (lstring.c:206)
+     n1: 2048 0x40196D2: luaS_new (lstring.c:254)
+      n1: 2048 0x400A45B: auxgetstr (lapi.c:641)
+       n1: 2048 0x400A45B: lua_getfield (lapi.c:691)
+        n1: 2048 0x4024246: luaL_requiref (lauxlib.c:986)
+         n1: 2048 0x4024613: luaL_openlibs (linit.c:61)
+          n1: 2048 0x4008240: pmain (lua.c:643)
+           n1: 2048 0x400E895: precallC (ldo.c:529)
+            n1: 2048 0x400E895: luaD_precall (ldo.c:595)
+             n1: 2048 0x400EC7C: ccall (ldo.c:635)
+              n1: 2048 0x400EC7C: luaD_callnoyield (ldo.c:655)
+               n1: 2048 0x400D8EA: luaD_rawrunprotected (ldo.c:144)
+                n1: 2048 0x400F05D: luaD_pcall (ldo.c:957)
+                 n1: 2048 0x400B047: lua_pcallk (lapi.c:1064)
+                  n0: 2048 0x40076B6: main (lua.c:682)
+  n1: 1358 0x4012E4A: luaM_saferealloc_ (lmem.c:194)
+   n3: 1358 0x4012E4A: luaM_shrinkvector_ (lmem.c:134)
+    n1: 504 0x40154DC: close_func (lparser.c:764)
+     n0: 504 in 2 places, all below massif's threshold (1.00%)
+    n0: 502 in 4 places, all below massif's threshold (1.00%)
+    n1: 352 0x401557D: close_func (lparser.c:770)
+     n1: 352 0x4016B04: body (lparser.c:1008)
+      n0: 352 in 2 places, all below massif's threshold (1.00%)
+  n2: 976 0x400D9C4: luaD_reallocstack (ldo.c:220)
+   n1: 976 0x400DC97: luaD_shrinkstack (ldo.c:307)
+    n1: 976 0x40117AF: traversethread (lgc.c:644)
+     n1: 976 0x40117AF: propagatemark (lgc.c:670)
+      n1: 976 0x4011B27: propagateall (lgc.c:679)
+       n1: 976 0x4011B27: atomic (lgc.c:1543)
+        n1: 976 0x4012847: youngcollection (lgc.c:1261)
+         n1: 976 0x4012847: genstep (lgc.c:1461)
+          n1: 976 0x4012847: luaC_step (lgc.c:1696)
+           n1: 976 0x4020332: luaV_execute (lvm.c:1873)
+            n1: 976 0x400EC95: ccall (ldo.c:637)
+             n1: 976 0x400EC95: luaD_callnoyield (ldo.c:655)
+              n1: 976 0x400D8EA: luaD_rawrunprotected (ldo.c:144)
+               n1: 976 0x400F05D: luaD_pcall (ldo.c:957)
+                n1: 976 0x400B047: lua_pcallk (lapi.c:1064)
+                 n1: 976 0x4007C30: docall (lua.c:161)
+                  n1: 976 0x4008746: handle_script (lua.c:265)
+                   n1: 976 0x4008746: pmain (lua.c:654)
+                    n1: 976 0x400E895: precallC (ldo.c:529)
+                     n1: 976 0x400E895: luaD_precall (ldo.c:595)
+                      n1: 976 0x400EC7C: ccall (ldo.c:635)
+                       n1: 976 0x400EC7C: luaD_callnoyield (ldo.c:655)
+                        n1: 976 0x400D8EA: luaD_rawrunprotected (ldo.c:144)
+                         n1: 976 0x400F05D: luaD_pcall (ldo.c:957)
+                          n1: 976 0x400B047: lua_pcallk (lapi.c:1064)
+                           n0: 976 0x40076B6: main (lua.c:682)
+   n0: 0 in 1 place, below massif's threshold (1.00%)
+  n0: 96 in 3 places, all below massif's threshold (1.00%)
+ n1: 1624 0x40188FF: lua_newstate (lstate.c:364)
+  n1: 1624 0x402453E: luaL_newstate (lauxlib.c:1109)
+   n0: 1624 0x400765D: main (lua.c:673)
+ n1: 1024 0x4A340BC: _IO_file_doallocate (filedoalloc.c:101)
+  n1: 1024 0x4A44105: _IO_doallocbuf (genops.c:373)
+   n2: 1024 0x4A44105: _IO_doallocbuf (genops.c:368)
+    n1: 1024 0x4A42078: _IO_file_overflow@@GLIBC_2.2.5 (fileops.c:746)
+     n1: 1024 0x4A42BAA: _IO_new_file_xsputn (fileops.c:1245)
+      n1: 1024 0x4A42BAA: _IO_file_xsputn@@GLIBC_2.2.5 (fileops.c:1198)
+       n1: 1024 0x4A35917: fwrite (iofwrite.c:39)
+        n1: 1024 0x402930F: luaB_print (lbaselib.c:32)
+         n1: 1024 0x400E895: precallC (ldo.c:529)
+          n1: 1024 0x400E895: luaD_precall (ldo.c:595)
+           n1: 1024 0x401E7E0: luaV_execute (lvm.c:1682)
+            n1: 1024 0x400EC95: ccall (ldo.c:637)
+             n1: 1024 0x400EC95: luaD_callnoyield (ldo.c:655)
+              n1: 1024 0x400D8EA: luaD_rawrunprotected (ldo.c:144)
+               n1: 1024 0x400F05D: luaD_pcall (ldo.c:957)
+                n1: 1024 0x400B047: lua_pcallk (lapi.c:1064)
+                 n1: 1024 0x4007C30: docall (lua.c:161)
+                  n1: 1024 0x4008746: handle_script (lua.c:265)
+                   n1: 1024 0x4008746: pmain (lua.c:654)
+                    n1: 1024 0x400E895: precallC (ldo.c:529)
+                     n1: 1024 0x400E895: luaD_precall (ldo.c:595)
+                      n1: 1024 0x400EC7C: ccall (ldo.c:635)
+                       n1: 1024 0x400EC7C: luaD_callnoyield (ldo.c:655)
+                        n1: 1024 0x400D8EA: luaD_rawrunprotected (ldo.c:144)
+                         n1: 1024 0x400F05D: luaD_pcall (ldo.c:957)
+                          n1: 1024 0x400B047: lua_pcallk (lapi.c:1064)
+                           n0: 1024 0x40076B6: main (lua.c:682)
+    n0: 0 in 1 place, below massif's threshold (1.00%)
+ n0: 0 in 1 place, below massif's threshold (1.00%)
+#-----------
+snapshot=75
+#-----------
+time=170539627328
+mem_heap_B=27615
+mem_heap_extra_B=7305
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=76
+#-----------
+time=170540232670
+mem_heap_B=27855
+mem_heap_extra_B=7401
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=77
+#-----------
+time=259440697196
+mem_heap_B=26892
+mem_heap_extra_B=6988
+mem_stacks_B=0
+heap_tree=empty
