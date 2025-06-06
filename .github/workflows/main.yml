@@ -5,19 +5,50 @@ on: [push]
 jobs:
   benchmark:
     runs-on: ubuntu-latest
+
+    # CRITICAL: Grant the workflow write permissions to the repository contents.
+    # Without this, the 'git push' step will fail.
+    permissions:
+      contents: write
+
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        # Use a Personal Access Token (PAT) if you have branch protection rules
+        # uses: actions/checkout@v4
+        # with:
+        #   token: ${{ secrets.PAT_TOKEN }}
+        uses: actions/checkout@v4
 
       - name: Build Compiler
         working-directory: ./12/lua-5.4.8
-        run: pwd && make
+        run: make
 
       - name: Run Benchmark
         run: ./12/lua-5.4.8/src/lua ./12/lua/fib.lua > benchmark_results.txt
 
-      - name: Store Benchmark Results
-        uses: actions/upload-artifact@v4
-        with:
-          name: raw-benchmark-log
-          path: benchmark_results.txt
+      - name: Commit and Push Results
+        run: |
+          # 1. Configure Git with a bot user name and email
+          git config --global user.name 'GitHub Actions Bot'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+
+          # 2. Create the destination directory if it doesn't exist
+          mkdir -p 12/benchmark_results
+
+          # 3. Create a unique filename with a timestamp
+          FILENAME="benchmark-$(date +'%Y-%m-%d-%H-%M-%S').txt"
+          
+          # 4. Move the result file to its final destination with the new name
+          mv benchmark_results.txt 12/benchmark_results/$FILENAME
+
+          # 5. Add the new file to the staging area
+          git add 12/benchmark_results/$FILENAME
+
+          # 6. Commit the changes, but only if there are changes to commit
+          # The [skip ci] in the message is crucial to prevent infinite loops.
+          if ! git diff --staged --quiet; then
+            git commit -m "chore: Add benchmark results for ${{ github.sha }}" -m "[skip ci]"
+            git push
+          else
+            echo "No new benchmark results to commit."
+          fi
