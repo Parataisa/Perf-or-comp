@@ -43,7 +43,7 @@ jobs:
           mv benchmark_results.txt 12/results/$FILENAME
 
           # 5. Add the new file to the staging area
-          git add 12/benchmark_results/$FILENAME
+          git add 12/results/$FILENAME
 
           # 6. Commit the changes, but only if there are changes to commit
           # The [skip ci] in the message is crucial to prevent infinite loops.
