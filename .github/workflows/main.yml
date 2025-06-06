@@ -29,6 +29,7 @@ jobs:
       - name: Commit and Push Results
         run: |
           # 1. Configure Git with a bot user name and email
+          git config set advice.addIgnoredFile false
           git config --global user.name 'GitHub Actions Bot'
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
 
