@@ -15,10 +15,10 @@ jobs:
        lua-version: "5.4"
   
    - name: Build Compiler
-     run: make
+     run: cd ./sheet12/lua-5.4.8 && make
   
    - name: Run Benchmark
-     run: ./src/lua my_benchmark.lua > benchmark_results.txt
+     run: ./sheet12/lua-5.4.8/lua sheet12/lua/fib.lua > benchmark_results.txt
      
    - uses: benchmark-action/github-action-benchmark@v1
    - name: Store Benchmark Results
