@@ -40,7 +40,7 @@ jobs:
           FILENAME="benchmark-$(date +'%Y-%m-%d-%H-%M-%S').txt"
           
           # 4. Move the result file to its final destination with the new name
-          mv benchmark_results.txt 12/benchmark_results/$FILENAME
+          mv benchmark_results.txt 12/results/$FILENAME
 
           # 5. Add the new file to the staging area
           git add 12/benchmark_results/$FILENAME
