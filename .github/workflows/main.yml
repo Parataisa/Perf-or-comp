@@ -3,26 +3,22 @@ name: Lua Benchmark
 on: [push]
 
 jobs:
- benchmark: 
-  runs-on: ubuntu-latest
-  steps:
-   - uses: actions/checkout@v3
-   - name: Checkout
-  
-   - name: Setup Lua
-   - uses: leafo/gh-actions-lua@v9
-     with:
-       lua-version: "5.4"
-  
-   - name: Build Compiler
-     run: cd ./sheet12/lua-5.4.8 && make
-  
-   - name: Run Benchmark
-     run: ./sheet12/lua-5.4.8/lua sheet12/lua/fib.lua > benchmark_results.txt
-     
-   - uses: benchmark-action/github-action-benchmark@v1
-   - name: Store Benchmark Results
-     with:
-       name: "Lua Benchmark"
-       tool: 'lua'
-       output-file-path: 'benchmark_results.txt'
+  benchmark:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Build Compiler
+        working-directory: ./sheet12/lua-5.4.8
+        run: make
+
+      - name: Run Benchmark
+        run: ./sheet12/lua-5.4.8/src/lua ./sheet12/lua/fib.lua > benchmark_results.txt
+
+      - name: Store Benchmark Results
+        uses: benchmark-action/github-action-benchmark@v1
+        with:
+          name: "Lua Benchmark"
+          tool: "lua"
+          output-file-path: "benchmark_results.txt"
