@@ -17,7 +17,7 @@ jobs:
         run: ./12/lua-5.4.8/src/lua ./12/lua/fib.lua > benchmark_results.txt
 
       - name: Store Benchmark Results
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: raw-benchmark-log
           output-file-path: "benchmark_results.txt"
