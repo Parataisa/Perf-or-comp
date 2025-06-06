@@ -10,8 +10,8 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Build Compiler
-        working-directory: sheet12/lua-5.4.8
-        run: make
+        working-directory: ./sheet12/lua-5.4.8
+        run: pwd && make
 
       - name: Run Benchmark
         run: ./sheet12/lua-5.4.8/src/lua sheet12/lua/fib.lua > benchmark_results.txt
