@@ -26,3 +26,7 @@ DS_Store
 .vscode
 __pycache__
 benchmark_results
+liblua.a
+lua
+luac
+*.data
