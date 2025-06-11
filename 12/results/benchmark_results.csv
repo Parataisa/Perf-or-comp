@@ -1,0 +1,4 @@
+Timestamp,Implementation,Repetitions,N,Average_Runtime(s),Result
+2025-06-11-14-18-16,fibonacci_naive,100,30,13.5052,832040
+2025-06-11-14-18-16,fibonacci_tail,10000000,30,12.6603,832040
+2025-06-11-14-18-16,fibonacci_iter,25000000,30,11.8828,832040
