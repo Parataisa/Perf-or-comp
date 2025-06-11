@@ -40,6 +40,7 @@
 #define LUA_USE_JUMPTABLE	1
 #define PREFETCH_READ(addr)  __builtin_prefetch(addr, 0, 3) // new
 #else
+#define PREFETCH_READ(addr)  ((void)0) // new
 #define LUA_USE_JUMPTABLE	0
 #endif
 #endif
@@ -906,6 +907,7 @@ void luaV_finishOp (lua_State *L) {
 ** Arithmetic operations with immediate operands. 'iop' is the integer
 ** operation, 'fop' is the float operation.
 */
+/*
 #define op_arithI(L,iop,fop) {  \
   StkId ra = RA(i); \
   TValue *v1 = vRB(i);  \
@@ -919,7 +921,21 @@ void luaV_finishOp (lua_State *L) {
     lua_Number fimm = cast_num(imm);  \
     pc++; setfltvalue(s2v(ra), fop(L, nb, fimm)); \
   }}
+*/
 
+/* Integer-only optimized version */
+#define op_arithI(L,iop,fop) {  \
+  StkId ra = RA(i); \
+  TValue *v1 = vRB(i);  \
+  int imm = GETARG_sC(i);  \
+  \
+  if (ttisinteger(v1)) {  \
+    lua_Integer iv1 = ivalue(v1);  \
+    lua_Integer result = iop(L, iv1, imm); \
+    pc++; \
+    setivalue(s2v(ra), result);  \
+  } \
+}
 
 /*
 ** Auxiliary function for arithmetic operations over floats and others
@@ -1189,6 +1205,10 @@ void luaV_execute (lua_State *L, CallInfo *ci) {
     /* invalidate top for instructions not expecting it */
     lua_assert(isIT(i) || (cast_void(L->top.p = base), 1));
     vmdispatch (GET_OPCODE(i)) {
+      vmcase(OP_ADDI) {
+        op_arithI(L, l_addi, luai_numadd);
+        vmbreak;
+      }
       vmcase(OP_MOVE) {
         StkId ra = RA(i);
         setobjs2s(L, ra, RB(i));
@@ -1399,10 +1419,6 @@ void luaV_execute (lua_State *L, CallInfo *ci) {
         }
         else
           Protect(luaV_finishget(L, rb, rc, ra, slot));
-        vmbreak;
-      }
-      vmcase(OP_ADDI) {
-        op_arithI(L, l_addi, luai_numadd);
         vmbreak;
       }
       vmcase(OP_ADDK) {

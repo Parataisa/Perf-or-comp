@@ -1,0 +1,5 @@
+100 x fibonacci_naive(30)     time:   6.6681 s  --  832040
+10000000 x fibonacci_tail(30) time:   6.6059 s  --  832040
+25000000 x fibonacci_iter(30) time:   5.3877 s  --  832040
+Moved Add function to the start of the switch statement
+Optimized Add function
