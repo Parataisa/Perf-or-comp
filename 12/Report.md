@@ -1,3 +1,7 @@
+A) Setup and Basic Execution
+
+Timestamp: 2025-06-11-14-18-16 is the baseline
+
 B) Profiling
 ------------
 See [profiling_report](./profiling/profiling_report.md)
@@ -11,9 +15,10 @@ C) Code Understanding
 * What does the option `LUA_USE_JUMPTABLE` do? Measure its performance impact on the benchmark.  
     - `LUA_USE_JUMPTABLE` -> use a jump table for the Lua VM instructions instead of a switch statement.
     - Performance impact: 
-        - With `LUA_USE_JUMPTABLE` enabled, the benchmark runs ...
-        - Without `LUA_USE_JUMPTABLE`, the benchmark runs ...
-
+        - With `LUA_USE_JUMPTABLE` enabled: [with_LUA_USE_JUMPTABLE](./results/benchmark-2025-06-11-14-33-24.txt)
+        - Without `LUA_USE_JUMPTABLE`: [without_LUA_USE_JUMPTABLE](./results/benchmark-2025-06-11-14-38-10.txt)
+    - Normaly you would expect a performance improvement with `LUA_USE_JUMPTABLE` enabled, but in this case it seems to have a negative impact on the benchmark performance(its very slime, less than a second) and could also be to standard deviation).
+    - One possible reason for this could be that the benchmark is not complex enough to benefit from the jump table optimization, or maybe the compiler already optimizes the switch statement well enough that the jump table does not provide a significant advantage.
 
 D) Optimization
 ---------------
