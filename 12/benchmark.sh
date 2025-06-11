@@ -51,13 +51,13 @@ for run in $(seq 1 $NUM_RUNS); do
     tail_line=$(echo "$output" | grep "fibonacci_tail")
     iter_line=$(echo "$output" | grep "fibonacci_iter")
     
-    naive_time=$(echo "$naive_line" | awk '{print $6}')
-    tail_time=$(echo "$tail_line" | awk '{print $6}')
-    iter_time=$(echo "$iter_line" | awk '{print $6}')
-    
-    naive_result=$(echo "$naive_line" | awk '{print $9}')
-    tail_result=$(echo "$tail_line" | awk '{print $9}')
-    iter_result=$(echo "$iter_line" | awk '{print $9}')
+    naive_time=$(echo "$naive_line" | awk '{print $4}')
+    tail_time=$(echo "$tail_line" | awk '{print $4}')
+    iter_time=$(echo "$iter_line" | awk '{print $4}')
+        
+    naive_result=$(echo "$naive_line" | awk '{print $7}')
+    tail_result=$(echo "$tail_line" | awk '{print $7}')
+    iter_result=$(echo "$iter_line" | awk '{print $7}')
     
     naive_times+=($naive_time)
     tail_times+=($tail_time)
