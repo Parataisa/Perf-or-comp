@@ -9,6 +9,14 @@ OUTPUT_FILE="$RESULTS_DIR/benchmark_results.csv"
 TIMESTAMP=$(date +"%Y-%m-%d-%H-%M-%S")
 BENCHMARK_OUTPUT="$RESULTS_DIR/benchmark-$TIMESTAMP.txt"
 
+echo "Running Lua script directly to see output format..."
+$LUA_INTERPRETER $SCRIPT_PATH > "$RESULTS_DIR/raw_lua_output.txt"
+echo "Raw output saved to $RESULTS_DIR/raw_lua_output.txt"
+
+echo "Raw output from Lua script:"
+cat "$RESULTS_DIR/raw_lua_output.txt"
+echo ""
+
 NUM_WARMUP=2
 NUM_RUNS=5
 
