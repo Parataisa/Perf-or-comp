@@ -1,6 +1,9 @@
 name: Lua Benchmark
 
-on: [push]
+on:
+  push:
+    paths:
+      - '12/lua-5.4.8/**'
 
 jobs:
   benchmark:
