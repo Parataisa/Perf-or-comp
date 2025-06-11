@@ -9,7 +9,6 @@ OUTPUT_FILE="$RESULTS_DIR/benchmark_results.csv"
 TIMESTAMP=$(date +"%Y-%m-%d-%H-%M-%S")
 BENCHMARK_OUTPUT="$RESULTS_DIR/benchmark-$TIMESTAMP.txt"
 
-# Create CSV header if it doesn't exist
 if [ ! -f "$OUTPUT_FILE" ]; then
     echo "Timestamp,Implementation,Repetitions,N,Average_Runtime(s),Result" > "$OUTPUT_FILE"
 fi
@@ -22,7 +21,6 @@ for warmup in $(seq 1 $NUM_WARMUP); do
     $LUA_INTERPRETER $SCRIPT_PATH > /dev/null 2>&1
 done
 
-# Arrays to collect values
 declare -a naive_times=()
 declare -a tail_times=()
 declare -a iter_times=()
@@ -34,17 +32,14 @@ echo "Performing measurement runs..."
 for run in $(seq 1 $NUM_RUNS); do
     echo "Run $run of $NUM_RUNS"
     
-    # Run the script and capture output
     output=$($LUA_INTERPRETER $SCRIPT_PATH)
     echo "$output" > "$BENCHMARK_OUTPUT"
     
-    # Process each line of output
     naive_line=$(echo "$output" | grep "fibonacci_naive")
     tail_line=$(echo "$output" | grep "fibonacci_tail")
     iter_line=$(echo "$output" | grep "fibonacci_iter")
     
     # Extract time using cut instead of awk for more reliable parsing
-    # Format: "100 x fibonacci_naive(30)     time:   7.2248 s  --  832040"
     naive_time=$(echo "$naive_line" | grep -o 'time:[ ]*[0-9.]*' | grep -o '[0-9.]*')
     tail_time=$(echo "$tail_line" | grep -o 'time:[ ]*[0-9.]*' | grep -o '[0-9.]*')
     iter_time=$(echo "$iter_line" | grep -o 'time:[ ]*[0-9.]*' | grep -o '[0-9.]*')
@@ -54,7 +49,6 @@ for run in $(seq 1 $NUM_RUNS); do
     tail_result=$(echo "$tail_line" | grep -o '\-\-[ ]*[0-9]*' | grep -o '[0-9]*')
     iter_result=$(echo "$iter_line" | grep -o '\-\-[ ]*[0-9]*' | grep -o '[0-9]*')
     
-    # Add to arrays
     naive_times+=($naive_time)
     tail_times+=($tail_time)
     iter_times+=($iter_time)
@@ -64,7 +58,6 @@ for run in $(seq 1 $NUM_RUNS); do
     echo "  iter:  $iter_time s → $iter_result"
 done
 
-# Calculate averages
 sum_naive=0
 sum_tail=0
 sum_iter=0
@@ -85,7 +78,6 @@ avg_naive=$(echo "scale=4; $sum_naive / $NUM_RUNS" | bc)
 avg_tail=$(echo "scale=4; $sum_tail / $NUM_RUNS" | bc)
 avg_iter=$(echo "scale=4; $sum_iter / $NUM_RUNS" | bc)
 
-# Output to CSV
 echo "$TIMESTAMP,fibonacci_naive,100,30,$avg_naive,$naive_result" >> "$OUTPUT_FILE"
 echo "$TIMESTAMP,fibonacci_tail,10000000,30,$avg_tail,$tail_result" >> "$OUTPUT_FILE"
 echo "$TIMESTAMP,fibonacci_iter,25000000,30,$avg_iter,$iter_result" >> "$OUTPUT_FILE"
