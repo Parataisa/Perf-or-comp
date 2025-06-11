@@ -34,9 +34,9 @@ jobs:
           git config --global user.name 'GitHub Actions Bot'
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
 
-          # Add result files
+          # Add result files with correct path
           git add 12/results/benchmark-*.txt
-          git add 12/benchmark_results.csv
+          git add 12/results/benchmark_results.csv
 
           # Commit and push if there are changes
           if ! git diff --staged --quiet; then

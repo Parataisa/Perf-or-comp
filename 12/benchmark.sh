@@ -9,10 +9,13 @@ OUTPUT_FILE="$RESULTS_DIR/benchmark_results.csv"
 TIMESTAMP=$(date +"%Y-%m-%d-%H-%M-%S")
 BENCHMARK_OUTPUT="$RESULTS_DIR/benchmark-$TIMESTAMP.txt"
 
-NUM_WARMUP=1
-NUM_RUNS=1
+NUM_WARMUP=2
+NUM_RUNS=5
 
-echo "Implementation,Repetitions,N,Average_Runtime(s),Result" > "$OUTPUT_FILE"
+if [ ! -f "$OUTPUT_FILE" ]; then
+    echo "Timestamp,Implementation,Repetitions,N,Average_Runtime(s),Result" > "$OUTPUT_FILE"
+fi
+
 echo "Starting Lua Fibonacci benchmark..."
 echo "Running $NUM_WARMUP warmup runs and $NUM_RUNS actual runs"
 
@@ -79,9 +82,9 @@ avg_naive=$(echo "scale=4; $sum_naive / $NUM_RUNS" | bc)
 avg_tail=$(echo "scale=4; $sum_tail / $NUM_RUNS" | bc)
 avg_iter=$(echo "scale=4; $sum_iter / $NUM_RUNS" | bc)
 
-echo "fibonacci_naive,100,30,$avg_naive,$naive_result" >> "$OUTPUT_FILE"
-echo "fibonacci_tail,10000000,30,$avg_tail,$tail_result" >> "$OUTPUT_FILE"
-echo "fibonacci_iter,25000000,30,$avg_iter,$iter_result" >> "$OUTPUT_FILE"
+echo "$TIMESTAMP,fibonacci_naive,100,30,$avg_naive,$naive_result" >> "$OUTPUT_FILE"
+echo "$TIMESTAMP,fibonacci_tail,10000000,30,$avg_tail,$tail_result" >> "$OUTPUT_FILE"
+echo "$TIMESTAMP,fibonacci_iter,25000000,30,$avg_iter,$iter_result" >> "$OUTPUT_FILE"
 
 echo -e "\nResults:"
 echo "  fibonacci_naive(30) - Avg time: ${avg_naive}s - Result: $naive_result"
