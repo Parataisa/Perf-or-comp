@@ -38,6 +38,7 @@
 #if !defined(LUA_USE_JUMPTABLE)
 #if defined(__GNUC__)
 #define LUA_USE_JUMPTABLE	1
+#define PREFETCH_READ(addr)  __builtin_prefetch(addr, 0, 3) // new
 #else
 #define LUA_USE_JUMPTABLE	0
 #endif
@@ -1169,6 +1170,12 @@ void luaV_execute (lua_State *L, CallInfo *ci) {
   if (l_unlikely(trap))
     trap = luaG_tracecall(L);
   base = ci->func.p + 1;
+
+  /* Prefetch initial instructions(new) */  
+  PREFETCH_READ(pc);
+  PREFETCH_READ(pc + 1);
+  PREFETCH_READ(pc + 2);
+
   /* main loop of interpreter */
   for (;;) {
     Instruction i;  /* instruction being executed */
