@@ -2,9 +2,9 @@
 
 LUA_INTERPRETER="./lua-5.4.8/src/lua"
 SCRIPT_PATH="./lua/fib.lua"
-OUTPUT_FILE="/results/benchmark_results.csv"
 RESULTS_DIR="results"
 mkdir -p "$RESULTS_DIR"
+OUTPUT_FILE="$RESULTS_DIR/benchmark_results.csv"
 
 TIMESTAMP=$(date +"%Y-%m-%d-%H-%M-%S")
 BENCHMARK_OUTPUT="$RESULTS_DIR/benchmark-$TIMESTAMP.txt"
