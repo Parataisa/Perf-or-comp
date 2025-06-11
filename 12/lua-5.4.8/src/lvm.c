@@ -1205,8 +1205,12 @@ void luaV_execute (lua_State *L, CallInfo *ci) {
     /* invalidate top for instructions not expecting it */
     lua_assert(isIT(i) || (cast_void(L->top.p = base), 1));
     vmdispatch (GET_OPCODE(i)) {
-      vmcase(OP_ADDI) {
-        op_arithI(L, l_addi, luai_numadd);
+      vmcase(OP_ADD) {
+        op_arith(L, l_addi, luai_numadd);
+        vmbreak;
+      }
+      vmcase(OP_SUB) {
+        op_arith(L, l_subi, luai_numsub);
         vmbreak;
       }
       vmcase(OP_MOVE) {
@@ -1421,6 +1425,10 @@ void luaV_execute (lua_State *L, CallInfo *ci) {
           Protect(luaV_finishget(L, rb, rc, ra, slot));
         vmbreak;
       }
+      vmcase(OP_ADDI) {
+        op_arithI(L, l_addi, luai_numadd);
+        vmbreak;
+      }
       vmcase(OP_ADDK) {
         op_arithK(L, l_addi, luai_numadd);
         vmbreak;
@@ -1481,14 +1489,6 @@ void luaV_execute (lua_State *L, CallInfo *ci) {
         if (tointegerns(rb, &ib)) {
           pc++; setivalue(s2v(ra), luaV_shiftl(ic, ib));
         }
-        vmbreak;
-      }
-      vmcase(OP_ADD) {
-        op_arith(L, l_addi, luai_numadd);
-        vmbreak;
-      }
-      vmcase(OP_SUB) {
-        op_arith(L, l_subi, luai_numsub);
         vmbreak;
       }
       vmcase(OP_MUL) {
