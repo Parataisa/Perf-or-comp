@@ -24,7 +24,6 @@ C) Code Understanding
     - **luaD_precall (5,58%)** - Function call setup and CallInfo management  
     - **luaH_getshortstr (2,37%)** - Hash table lookups for short string keys
     - **Memory operations (~2,18%)** - Allocation/deallocation overhead
-    - **Function call overhead (15,68% total)** - Significant bottleneck for optimization
 - Function calling overhead is significant:
     - Function calls (pretailcall + precall): ~15,68% of execution time
     - This suggests that optimizing function call mechanisms could yield performance improvements
