@@ -907,7 +907,6 @@ void luaV_finishOp (lua_State *L) {
 ** Arithmetic operations with immediate operands. 'iop' is the integer
 ** operation, 'fop' is the float operation.
 */
-/*
 #define op_arithI(L,iop,fop) {  \
   StkId ra = RA(i); \
   TValue *v1 = vRB(i);  \
@@ -923,7 +922,7 @@ void luaV_finishOp (lua_State *L) {
     lua_Number fimm = cast_num(imm);  \
     pc++; setfltvalue(s2v(ra), fop(L, nb, fimm)); \
   }}
-*/
+
 
 /*
 ** Auxiliary function for arithmetic operations over floats and others
