@@ -914,7 +914,9 @@ void luaV_finishOp (lua_State *L) {
   int imm = GETARG_sC(i);  \
   if (ttisinteger(v1)) {  \
     lua_Integer iv1 = ivalue(v1);  \
-    pc++; setivalue(s2v(ra), iop(L, iv1, imm));  \
+    lua_Integer result = iop(L, iv1, imm); \
+    pc++; \
+    setivalue(s2v(ra), result);  \
   }  \
   else if (ttisfloat(v1)) {  \
     lua_Number nb = fltvalue(v1);  \
@@ -922,20 +924,6 @@ void luaV_finishOp (lua_State *L) {
     pc++; setfltvalue(s2v(ra), fop(L, nb, fimm)); \
   }}
 */
-
-/* Integer-only optimized version */
-#define op_arithI(L,iop,fop) {  \
-  StkId ra = RA(i); \
-  TValue *v1 = vRB(i);  \
-  int imm = GETARG_sC(i);  \
-  \
-  if (ttisinteger(v1)) {  \
-    lua_Integer iv1 = ivalue(v1);  \
-    lua_Integer result = iop(L, iv1, imm); \
-    pc++; \
-    setivalue(s2v(ra), result);  \
-  } \
-}
 
 /*
 ** Auxiliary function for arithmetic operations over floats and others
