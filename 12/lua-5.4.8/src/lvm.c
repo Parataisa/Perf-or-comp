@@ -1336,6 +1336,28 @@ void luaV_execute (lua_State *L, CallInfo *ci) {
         }
       }
 
+      case OP_CLOSURE: {
+        StkId ra = RA(i);
+        Proto *p = cl->p->p[GETARG_Bx(i)];
+        halfProtect(pushclosure(L, p, cl->upvals, base, ra));
+        checkGC(L, ra + 1);
+        continue;
+      }
+
+      case OP_GETTABUP: {
+        StkId ra = RA(i);
+        const TValue *slot;
+        TValue *upval = cl->upvals[GETARG_B(i)]->v.p;
+        TValue *rc = KC(i);
+        TString *key = tsvalue(rc);  /* key must be a short string */
+        if (luaV_fastget(L, upval, key, slot, luaH_getshortstr)) {
+          setobj2s(L, ra, slot);
+        }
+        else
+          Protect(luaV_finishget(L, upval, rc, ra, slot));
+        continue;
+      }
+
       default:
         break;  // Let the full dispatch/switch or jumptable handle the rest
     }
@@ -1419,19 +1441,19 @@ void luaV_execute (lua_State *L, CallInfo *ci) {
         luaC_barrier(L, uv, s2v(ra));
         vmbreak;
       }
-      vmcase(OP_GETTABUP) {
-        StkId ra = RA(i);
-        const TValue *slot;
-        TValue *upval = cl->upvals[GETARG_B(i)]->v.p;
-        TValue *rc = KC(i);
-        TString *key = tsvalue(rc);  /* key must be a short string */
-        if (luaV_fastget(L, upval, key, slot, luaH_getshortstr)) {
-          setobj2s(L, ra, slot);
-        }
-        else
-          Protect(luaV_finishget(L, upval, rc, ra, slot));
-        vmbreak;
-      }
+//      vmcase(OP_GETTABUP) {
+//        StkId ra = RA(i);
+//        const TValue *slot;
+//        TValue *upval = cl->upvals[GETARG_B(i)]->v.p;
+//        TValue *rc = KC(i);
+//        TString *key = tsvalue(rc);  /* key must be a short string */
+//        if (luaV_fastget(L, upval, key, slot, luaH_getshortstr)) {
+//          setobj2s(L, ra, slot);
+//        }
+//        else
+//          Protect(luaV_finishget(L, upval, rc, ra, slot));
+//        vmbreak;
+//      }
       vmcase(OP_GETTABLE) {
         StkId ra = RA(i);
         const TValue *slot;
@@ -1750,11 +1772,11 @@ void luaV_execute (lua_State *L, CallInfo *ci) {
         checkGC(L, L->top.p); /* 'luaV_concat' ensures correct top */
         vmbreak;
       }
-      vmcase(OP_CLOSE) {
-        StkId ra = RA(i);
-        Protect(luaF_close(L, ra, LUA_OK, 1));
-        vmbreak;
-      }
+//      vmcase(OP_CLOSE) {
+//        StkId ra = RA(i);
+//        Protect(luaF_close(L, ra, LUA_OK, 1));
+//        vmbreak;
+//      }
       vmcase(OP_TBC) {
         StkId ra = RA(i);
         /* create new to-be-closed upvalue */
@@ -2031,13 +2053,13 @@ void luaV_execute (lua_State *L, CallInfo *ci) {
         }
         vmbreak;
       }
-      vmcase(OP_CLOSURE) {
-        StkId ra = RA(i);
-        Proto *p = cl->p->p[GETARG_Bx(i)];
-        halfProtect(pushclosure(L, p, cl->upvals, base, ra));
-        checkGC(L, ra + 1);
-        vmbreak;
-      }
+//      vmcase(OP_CLOSURE) {
+//        StkId ra = RA(i);
+//        Proto *p = cl->p->p[GETARG_Bx(i)];
+//        halfProtect(pushclosure(L, p, cl->upvals, base, ra));
+//        checkGC(L, ra + 1);
+//        vmbreak;
+//      }
       vmcase(OP_VARARG) {
         StkId ra = RA(i);
         int n = GETARG_C(i) - 1;  /* required results */
