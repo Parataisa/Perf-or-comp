@@ -1198,11 +1198,15 @@ void luaV_execute (lua_State *L, CallInfo *ci) {
 
     if (op == OP_ADD) {
         op_arith(L, l_addi, luai_numadd);
+        continue;
     }
-    else {
+
     vmdispatch (op) {
-      vmcase(OP_ADD) {
-      }
+//      vmcase(OP_ADD) {  
+//          op_arith(L, l_addi, luai_numadd);
+//          vmbreak;
+//      }      
+
       vmcase(OP_SUB) {
         op_arith(L, l_subi, luai_numsub);
         vmbreak;
@@ -1913,7 +1917,6 @@ void luaV_execute (lua_State *L, CallInfo *ci) {
         vmbreak;
       }
     }
-  }
   }
 }
 
