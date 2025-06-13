@@ -48,6 +48,8 @@
 
 #define LUA_USE_JUMPTABLE 0
 
+unsigned long long instruction_count[NUM_OPCODES] = {0};
+
 
 /* limit for table tag-method chains (to avoid infinite loops) */
 #define MAXTAGLOOP	2000
@@ -1195,11 +1197,40 @@ void luaV_execute (lua_State *L, CallInfo *ci) {
     /* invalidate top for instructions not expecting it */
     lua_assert(isIT(i) || (cast_void(L->top.p = base), 1));
     OpCode op = GET_OPCODE(i);
-
-    if (op == OP_ADD) {
+    instruction_count[op]++;
+    if l_likely(op == OP_MOVE) {
+      StkId ra = RA(i);
+      setobjs2s(L, ra, RB(i));
+      continue;
+    }
+    else if l_likely(op == OP_ADD) {
         op_arith(L, l_addi, luai_numadd);
         continue;
     }
+    else if (op == OP_FORLOOP) {
+        StkId ra = RA(i);
+        if (ttisinteger(s2v(ra + 2))) {  /* integer loop? */
+          lua_Unsigned count = l_castS2U(ivalue(s2v(ra + 1)));
+          if (count > 0) {  /* still more iterations? */
+            lua_Integer step = ivalue(s2v(ra + 2));
+            lua_Integer idx = ivalue(s2v(ra));  /* internal index */
+            chgivalue(s2v(ra + 1), count - 1);  /* update counter */
+            idx = intop(+, idx, step);  /* add step to index */
+            chgivalue(s2v(ra), idx);  /* update internal index */
+            setivalue(s2v(ra + 3), idx);  /* and control variable */
+            pc -= GETARG_Bx(i);  /* jump back */
+          }
+        }
+        else if (floatforloop(ra))  /* float loop */
+          pc -= GETARG_Bx(i);  /* jump back */
+        updatetrap(ci);  /* allows a signal to break the loop */
+        continue;
+    }
+    else if (op == OP_ADDI) {
+      op_arithI(L, l_addi, luai_numadd);
+      continue;
+    }
+
 
     vmdispatch (op) {
 //      vmcase(OP_ADD) {  
@@ -1211,11 +1242,11 @@ void luaV_execute (lua_State *L, CallInfo *ci) {
         op_arith(L, l_subi, luai_numsub);
         vmbreak;
       }
-      vmcase(OP_MOVE) {
-        StkId ra = RA(i);
-        setobjs2s(L, ra, RB(i));
-        vmbreak;
-      }
+//      vmcase(OP_MOVE) {
+//        StkId ra = RA(i);
+//        setobjs2s(L, ra, RB(i));
+//        vmbreak;
+//      }
       vmcase(OP_LOADI) {
         StkId ra = RA(i);
         lua_Integer b = GETARG_sBx(i);
@@ -1423,10 +1454,10 @@ void luaV_execute (lua_State *L, CallInfo *ci) {
           Protect(luaV_finishget(L, rb, rc, ra, slot));
         vmbreak;
       }
-      vmcase(OP_ADDI) {
-        op_arithI(L, l_addi, luai_numadd);
-        vmbreak;
-      }
+      //vmcase(OP_ADDI) {
+      //  op_arithI(L, l_addi, luai_numadd);
+      //  vmbreak;
+      //}
       vmcase(OP_ADDK) {
         op_arithK(L, l_addi, luai_numadd);
         vmbreak;
@@ -1805,25 +1836,25 @@ void luaV_execute (lua_State *L, CallInfo *ci) {
           goto returning;  /* continue running caller in this frame */
         }
       }
-      vmcase(OP_FORLOOP) {
-        StkId ra = RA(i);
-        if (ttisinteger(s2v(ra + 2))) {  /* integer loop? */
-          lua_Unsigned count = l_castS2U(ivalue(s2v(ra + 1)));
-          if (count > 0) {  /* still more iterations? */
-            lua_Integer step = ivalue(s2v(ra + 2));
-            lua_Integer idx = ivalue(s2v(ra));  /* internal index */
-            chgivalue(s2v(ra + 1), count - 1);  /* update counter */
-            idx = intop(+, idx, step);  /* add step to index */
-            chgivalue(s2v(ra), idx);  /* update internal index */
-            setivalue(s2v(ra + 3), idx);  /* and control variable */
-            pc -= GETARG_Bx(i);  /* jump back */
-          }
-        }
-        else if (floatforloop(ra))  /* float loop */
-          pc -= GETARG_Bx(i);  /* jump back */
-        updatetrap(ci);  /* allows a signal to break the loop */
-        vmbreak;
-      }
+//      vmcase(OP_FORLOOP) {
+//        StkId ra = RA(i);
+//        if (ttisinteger(s2v(ra + 2))) {  /* integer loop? */
+//          lua_Unsigned count = l_castS2U(ivalue(s2v(ra + 1)));
+//          if (count > 0) {  /* still more iterations? */
+//            lua_Integer step = ivalue(s2v(ra + 2));
+//            lua_Integer idx = ivalue(s2v(ra));  /* internal index */
+//            chgivalue(s2v(ra + 1), count - 1);  /* update counter */
+//            idx = intop(+, idx, step);  /* add step to index */
+//            chgivalue(s2v(ra), idx);  /* update internal index */
+//            setivalue(s2v(ra + 3), idx);  /* and control variable */
+//            pc -= GETARG_Bx(i);  /* jump back */
+//          }
+//        }
+//        else if (floatforloop(ra))  /* float loop */
+//          pc -= GETARG_Bx(i);  /* jump back */
+//        updatetrap(ci);  /* allows a signal to break the loop */
+//        vmbreak;
+//      }
       vmcase(OP_FORPREP) {
         StkId ra = RA(i);
         savestate(L, ci);  /* in case of errors */
