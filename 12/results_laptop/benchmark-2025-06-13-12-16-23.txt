@@ -1,0 +1,4 @@
+100 x fibonacci_naive(30)     time:   4.5039 s  --  832040
+10000000 x fibonacci_tail(30) time:   4.2961 s  --  832040
+25000000 x fibonacci_iter(30) time:   4.3526 s  --  832040
+rpmalloc

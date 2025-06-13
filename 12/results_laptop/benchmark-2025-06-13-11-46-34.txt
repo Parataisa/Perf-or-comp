@@ -1,0 +1,4 @@
+100 x fibonacci_naive(30)     time:   4.8287 s  --  832040
+10000000 x fibonacci_tail(30) time:   4.5240 s  --  832040
+25000000 x fibonacci_iter(30) time:   3.9525 s  --  832040
+gcc

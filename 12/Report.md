@@ -43,6 +43,11 @@ C) Code Understanding
 D) Optimization
 ---------------
 
+- Used Methode so far:
+  -  gcc -> clang(no significant difference, clang was worse)
+  -  O2 -> O3 (no significant difference)
+  -  Malloc -> rpmalloc,mimalloc(no significant difference)
+
 Optimize the Lua interpreter to more efficiently execute the benchmark.  
 Valid strategies include:
 

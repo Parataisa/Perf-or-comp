@@ -1,0 +1,4 @@
+100 x fibonacci_naive(30)     time:   5.2191 s  --  832040
+10000000 x fibonacci_tail(30) time:   4.4421 s  --  832040
+25000000 x fibonacci_iter(30) time:   4.0170 s  --  832040
+-O2 -fomit-frame-pointer -march=native 
