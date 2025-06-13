@@ -960,7 +960,7 @@ void luaV_finishOp (lua_State *L) {
 */
 #define op_arith_aux(L,v1,v2,iop,fop) {  \
   StkId ra = RA(i); \
-  if (ttisinteger(v1) && ttisinteger(v2)) {  \
+  if l_likely(ttisinteger(v1) && ttisinteger(v2)) {  \
     lua_Integer i1 = ivalue(v1); lua_Integer i2 = ivalue(v2);  \
     pc++; setivalue(s2v(ra), iop(L, i1, i2));  \
   }  \

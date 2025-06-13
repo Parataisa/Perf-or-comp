@@ -1,0 +1,4 @@
+100 x fibonacci_naive(30)     time:   0.9248 s  --  832040
+10000000 x fibonacci_tail(30) time:   1.2878 s  --  832040
+25000000 x fibonacci_iter(30) time:   0.4484 s  --  832040
+... well luajit ...

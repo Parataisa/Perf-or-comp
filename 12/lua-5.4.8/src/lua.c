@@ -668,6 +668,22 @@ static int pmain (lua_State *L) {
 
 
 int main (int argc, char **argv) {
+  // Check if the first argument is "luajit"
+  if (argc > 1 && argv[1] && strcmp(argv[1], "luajit") == 0) {
+    char* luajit_args[argc];
+    int i;
+    
+    luajit_args[0] = "luajit";
+    for (i = 2; i < argc; i++) {
+      luajit_args[i-1] = argv[i];
+    }
+    luajit_args[argc-1] = NULL;
+    
+    execvp("luajit", luajit_args);
+    
+    perror("Failed to execute luajit");
+    return EXIT_FAILURE;
+  }
   int status, result;
   lua_State *L = luaL_newstate();  /* create state */
   if (L == NULL) {
