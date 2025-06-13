@@ -46,6 +46,8 @@
 #endif
 
 
+#define LUA_USE_JUMPTABLE 0
+
 
 /* limit for table tag-method chains (to avoid infinite loops) */
 #define MAXTAGLOOP	2000
@@ -1155,6 +1157,7 @@ void luaV_finishOp (lua_State *L) {
 #define vmbreak		break
 
 
+
 void luaV_execute (lua_State *L, CallInfo *ci) {
   LClosure *cl;
   TValue *k;
@@ -1191,10 +1194,14 @@ void luaV_execute (lua_State *L, CallInfo *ci) {
     lua_assert(base <= L->top.p && L->top.p <= L->stack_last.p);
     /* invalidate top for instructions not expecting it */
     lua_assert(isIT(i) || (cast_void(L->top.p = base), 1));
-    vmdispatch (GET_OPCODE(i)) {
-      vmcase(OP_ADD) {
+    OpCode op = GET_OPCODE(i);
+
+    if (op == OP_ADD) {
         op_arith(L, l_addi, luai_numadd);
-        vmbreak;
+    }
+    else {
+    vmdispatch (op) {
+      vmcase(OP_ADD) {
       }
       vmcase(OP_SUB) {
         op_arith(L, l_subi, luai_numsub);
@@ -1906,6 +1913,7 @@ void luaV_execute (lua_State *L, CallInfo *ci) {
         vmbreak;
       }
     }
+  }
   }
 }
 
