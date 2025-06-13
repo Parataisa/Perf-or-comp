@@ -415,16 +415,9 @@ LUA_API lua_State *lua_newstate (lua_Alloc f, void *ud) {
   return L;
 }
 
-#include "lopcodes.h"
-extern unsigned long long instruction_count[NUM_OPCODES];  // declare the array from lvm.c
-#include <stdio.h>
 
 LUA_API void lua_close (lua_State *L) {
   lua_lock(L);
-  printf("\nInstruction Usage Stats:\n");
-  for (int i = 0; i < NUM_OPCODES; i++) {
-    printf("OP %d : %llu\n", i, instruction_count[i]);
-  }
   L = G(L)->mainthread;  /* only the main thread can be closed */
   close_state(L);
 }
