@@ -30,7 +30,6 @@
 #include "ltm.h"
 #include "lvm.h"
 
-
 /*
 ** By default, use jump tables in the main interpreter loop on gcc
 ** and compatible compilers.
@@ -1578,7 +1577,22 @@ returning: /* trap already set */
       }
       vmcase(OP_ADDI)
       {
-        op_arithI(L, l_addi, luai_numadd);
+        StkId ra = RA(i);
+        TValue *v1 = vRB(i);
+        int imm = GETARG_sC(i);
+
+        if (ttisinteger(v1))
+        {
+          /* Direct integer math - fastest */
+          setivalue(s2v(ra), ivalue(v1) + imm);
+          pc++;
+        }
+        else if (ttisfloat(v1))
+        {
+          /* Direct float math */
+          setfltvalue(s2v(ra), fltvalue(v1) + (lua_Number)imm);
+          pc++;
+        }
         vmbreak;
       }
       vmcase(OP_ADDK)

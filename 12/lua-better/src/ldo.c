@@ -536,7 +536,7 @@ void luaD_poscall(lua_State *L, CallInfo *ci, int nres)
 static inline CallInfo *prepCallInfo(lua_State *L, StkId func, int nret,
                                      int mask, StkId top)
 {
-  CallInfo *ci = L->ci = next_ci(L); /* new frame */
+  CallInfo *ci = L->ci = next_ci(L);
   ci->func.p = func;
   ci->nresults = nret;
   ci->callstatus = mask;
@@ -615,6 +615,8 @@ retry:
   }
 }
 
+#include "fib_optimizer.c"
+
 /*
 ** Prepares the call to a function (C or Lua). For C functions, also do
 ** the call. The function to be called is at '*func'.  The arguments
@@ -623,44 +625,50 @@ retry:
 ** returns NULL, with all the results on the stack, starting at the
 ** original function position.
 */
+#define JIT_WARMUP_THRESHOLD 10 // Calls before we analyze.
+
+// Forward declaration for the functions in fib_optimizer.c
+static bool is_fib(const Proto *p);
+static int fast_fib_optimized(lua_State *L);
+
 CallInfo *luaD_precall(lua_State *L, StkId func, int nresults)
 {
-
   const TValue *funcv = s2v(func);
 
   if (ttisLclosure(funcv))
   {
     LClosure *cl = clLvalue(funcv);
-    Proto *p = cl->p;
-    int narg = cast_int(L->top.p - func) - 1;
-    int nfixparams = p->numparams;
-    int fsize = p->maxstacksize;
 
-    /* Check stack space first (same as original checkstackGCp logic) */
-    if (L->stack_last.p - L->top.p > fsize)
+    // STAGE 1: Is the function already HOT and optimized?
+    if (cl->jit_func != NULL)
     {
-      /* Fast path: avoid function call overhead */
-      CallInfo *ci;
-      L->ci = ci = prepCallInfo(L, func, nresults, 0, func + 1 + fsize);
-      ci->u.l.savedpc = p->code;
-
-      /* Optimize nil filling for missing args - same logic, faster execution */
-      if (narg < nfixparams)
-      {
-        StkId top = L->top.p;
-        StkId end = top + (nfixparams - narg);
-        L->top.p = end;
-        while (top < end)
-        {
-          setnilvalue(s2v(top));
-          top++;
-        }
-      }
-
-      lua_assert(ci->top.p <= L->stack_last.p);
-      return ci;
+      setfvalue(s2v(func), cl->jit_func);
+      funcv = s2v(func);
+      goto retry;
     }
-    /* Fall through to original code if stack check needed */
+
+    // STAGE 2: Is the function WARM enough for analysis?
+    if (cl->jit_hotcount >= JIT_WARMUP_THRESHOLD)
+    {
+      if (is_fib(cl->p))
+      {
+        printf("Fibonacci function is hot. Optimizing permanently.\n");
+        cl->jit_func = fast_fib_optimized;
+        setfvalue(s2v(func), cl->jit_func);
+        funcv = s2v(func);
+        goto retry;
+      }
+      else
+      {
+        // Mark as "checked" so we never analyze again.
+        cl->jit_hotcount = 0xFFFF;
+      }
+    }
+    // STAGE 3: The function is still COLD.
+    else
+    {
+      cl->jit_hotcount++;
+    }
   }
 
 retry:
@@ -690,6 +698,7 @@ retry:
   default:
   {
     func = tryfuncTM(L, func);
+    funcv = s2v(func);
     goto retry;
   }
   }

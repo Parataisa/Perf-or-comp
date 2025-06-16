@@ -1,6 +1,6 @@
 #!/bin/bash
 
-LUA_INTERPRETER="./lua-5.4.8/src/lua"
+LUA_INTERPRETER="./lua-org/src/lua"
 SCRIPT_PATH="./lua/fib.lua"
 RESULTS_DIR="mac_fabio"
 mkdir -p "$RESULTS_DIR"
@@ -78,6 +78,7 @@ avg_naive=$(echo "scale=4; $sum_naive / $NUM_RUNS" | bc)
 avg_tail=$(echo "scale=4; $sum_tail / $NUM_RUNS" | bc)
 avg_iter=$(echo "scale=4; $sum_iter / $NUM_RUNS" | bc)
 
+echo "Used lua interpreter: $LUA_INTERPRETER"
 echo "$TIMESTAMP,fibonacci_naive,100,30,$avg_naive,$naive_result" >> "$OUTPUT_FILE"
 echo "$TIMESTAMP,fibonacci_tail,10000000,30,$avg_tail,$tail_result" >> "$OUTPUT_FILE"
 echo "$TIMESTAMP,fibonacci_iter,25000000,30,$avg_iter,$iter_result" >> "$OUTPUT_FILE"
