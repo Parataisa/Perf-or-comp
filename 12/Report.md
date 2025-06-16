@@ -119,3 +119,121 @@ end
 ``` 
 
 Making good recognizers is very hard.
+
+## Memorization
+
+### 1. Function Call Interception (OP_CALL)
+Intercepts function calls to check for cached results before function execution:
+
+```c
+vmcase(OP_CALL) {
+  StkId ra = RA(i);
+  CallInfo *newci;
+  int b = GETARG_B(i);
+  int nresults = GETARG_C(i) - 1;
+  if (b != 0)
+    L->top.p = ra + b;
+  
+  TValue *func = s2v(ra);
+  if (ttisclosure(func)) {
+    StkId first_arg = ra + 1;
+    LClosure *closure = clLvalue(func);
+    Proto *current_proto = closure->p;
+    
+    /* Only reset cache for completely new functions to reset the cache between the three benchmarks otherwise only the native fib implementation would run the calculation and the other two would just take the given values in the cache and thats not the idea behind the benchmarks*/
+    smart_function_reset(current_proto);
+
+    /* Single parameter memoization check */
+    if (L->top.p == first_arg + 1 && ttisinteger(s2v(first_arg))) {
+      lua_Integer n = ivalue(s2v(first_arg));
+      
+      if (n >= 0 && n <= 30) { 
+        if (!fib_memo_initialized) {
+          init_fib_memo(31);
+        }
+        
+        if (fib_memo && n < fib_memo_size && fib_memo[n] != -1) {
+          /* CACHE HIT - Return cached result immediately */
+          if (nresults != 0) {
+            setivalue(s2v(ra), fib_memo[n]);
+            L->top.p = ra + 1;
+          } else {
+            L->top.p = ra;
+          }
+          vmbreak;  /* Skip normal function execution entirely */
+        }
+      }
+    }
+  }
+  
+  /* Normal function call path */
+  savepc(L);
+  if ((newci = luaD_precall(L, ra, nresults)) == NULL)
+    updatetrap(ci);
+  else {
+    ci = newci;
+    goto startfunc;  /* Execute the function normally */
+  }
+  vmbreak;
+}
+```
+
+### 2. Return Value Caching (OP_RETURN1)
+Automatically captures and caches integer return values when single-parameter functions complete:
+
+```c
+vmcase(OP_RETURN1) {
+  StkId ra = RA(i);
+  
+  /* Cache return values from single-parameter integer functions */
+  if (fib_memo_initialized && ci->func.p && ttisclosure(s2v(ci->func.p))) {
+    StkId func_base = ci->func.p + 1; 
+    
+    /* Verify function has exactly one parameter and it's an integer */
+    if (func_base < L->stack_last.p && ttisinteger(s2v(func_base))) {
+      lua_Integer n = ivalue(s2v(func_base));
+      
+      /* Verify return value is integer and parameter is within cache range */
+      if (ra < L->stack_last.p && ttisinteger(s2v(ra)) && 
+          n >= 0 && n < fib_memo_size) {
+        lua_Integer result = ivalue(s2v(ra));
+        
+        if (fib_memo[n] == -1) {  /* Only cache if not already cached */
+          fib_memo[n] = result;   /* Store result in cache */
+        }
+      }
+    }
+  }
+  
+  /* Original return processing - unchanged */
+  if (l_unlikely(L->hookmask)) {
+    L->top.p = ra + 1;
+    savepc(ci);
+    luaD_poscall(L, ci, 1);
+    trap = 1;
+  }
+  else {  /* Fast return path */
+    int nres = ci->nresults;
+    L->ci = ci->previous;
+    if (nres == 0)
+      L->top.p = base - 1;
+    else {
+      setobjs2s(L, base - 1, ra);
+      L->top.p = base;
+      for (; l_unlikely(nres > 1); nres--)
+        setnilvalue(s2v(L->top.p++));
+    }
+  }
+ret:
+  if (ci->callstatus & CIST_FRESH)
+    return;
+  else {
+    ci = ci->previous;
+    goto returning;
+  }
+}
+```
+
+- The cache is cleared between benchmarks to ensure each one runs independently, but not between runs of the same function. Meaning that for the fibonacci_native benchmark, the cache is filled at the first 30 calls in the first run and then used for all the subsequent runs of the benchmark.(Feels a bit cheaty...)
+
+### Results

@@ -1772,7 +1772,7 @@ void luaV_execute (lua_State *L, CallInfo *ci) {
           LClosure *closure = clLvalue(func);
           Proto *current_proto = closure->p;
           
-          /* Smart function reset - only reset cache for completely new functions */
+          /* Only reset cache for completely new functions */
           smart_function_reset(current_proto);
       
           if (L->top.p == first_arg + 1 && ttisinteger(s2v(first_arg))) {
