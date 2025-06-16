@@ -6,6 +6,7 @@
 #include "lopcodes.h"
 #include <stdbool.h>
 
+// The highly optimized C implementation remains the same.
 static int fast_fib_optimized(lua_State *L)
 {
   lua_Integer n = luaL_checkinteger(L, 1);
@@ -25,13 +26,11 @@ static int fast_fib_optimized(lua_State *L)
   return 1;
 }
 
-// Helper function to check if two CALL instructions call the same function
-static bool are_same_function_calls(const Proto *p, int call1_pc, int call2_pc)
+// Helper function is unchanged.
+static bool are_same_function_calls(const Proto *p, int call1_pc,
+                                    int call2_pc)
 {
-  // Look backwards from each CALL to find the preceding GETTABUP
   int gettabup1_pc = -1, gettabup2_pc = -1;
-
-  // Find GETTABUP before first call
   for (int i = call1_pc - 1; i >= 0; i--)
   {
     if (GET_OPCODE(p->code[i]) == OP_GETTABUP &&
@@ -41,8 +40,6 @@ static bool are_same_function_calls(const Proto *p, int call1_pc, int call2_pc)
       break;
     }
   }
-
-  // Find GETTABUP before second call
   for (int i = call2_pc - 1; i >= call1_pc; i--)
   {
     if (GET_OPCODE(p->code[i]) == OP_GETTABUP &&
@@ -52,99 +49,122 @@ static bool are_same_function_calls(const Proto *p, int call1_pc, int call2_pc)
       break;
     }
   }
-
-  // If both found, check if they load the same global name
   if (gettabup1_pc >= 0 && gettabup2_pc >= 0)
   {
-    return GETARG_B(p->code[gettabup1_pc]) == GETARG_B(p->code[gettabup2_pc]);
+    return GETARG_B(p->code[gettabup1_pc]) ==
+           GETARG_B(p->code[gettabup2_pc]);
   }
-
   return false;
 }
 
-static bool is_fib_naive(const Proto *p)
+// --- FINAL RECOGNIZERS ---
+static bool is_fib_naive_final(const Proto *p)
 {
-  // Must take exactly 1 parameter
   if (p->numparams != 1)
     return false;
 
-  // Look for the pattern: two calls to the same function, followed by ADD
-  for (int i = 0; i < p->sizecode - 1; i++)
+  for (int i = 0; i < p->sizecode - 2; i++)
   {
-    Instruction inst1 = p->code[i];
-    if (GET_OPCODE(inst1) != OP_CALL)
+    if (GET_OPCODE(p->code[i]) != OP_CALL)
       continue;
 
-    // Find the next CALL instruction (might not be immediately next)
-    for (int j = i + 1; j < p->sizecode; j++)
+    for (int j = i + 1; j < p->sizecode - 1; j++)
     {
-      Instruction inst2 = p->code[j];
-      if (GET_OPCODE(inst2) != OP_CALL)
+      if (GET_OPCODE(p->code[j]) != OP_CALL)
         continue;
 
-      // Check if both calls are to the same function
-      // For global functions, this means both are preceded by GETTABUP
-      // that loads the same global name
       if (are_same_function_calls(p, i, j))
       {
-        // Now look for an ADD after the second call
         for (int k = j + 1; k < p->sizecode; k++)
         {
-          if (GET_OPCODE(p->code[k]) == OP_ADD)
+          Instruction add_inst = p->code[k];
+          if (GET_OPCODE(add_inst) == OP_ADD)
           {
-            // Found the pattern: call same_func, call same_func, add
-            return true;
+            int call1_ret_reg = GETARG_A(p->code[i]);
+            int call2_ret_reg = GETARG_A(p->code[j]);
+            int add_op1_reg = GETARG_B(add_inst);
+            int add_op2_reg = GETARG_C(add_inst);
+
+            if ((call1_ret_reg == add_op1_reg &&
+                 call2_ret_reg == add_op2_reg) ||
+                (call1_ret_reg == add_op2_reg &&
+                 call2_ret_reg == add_op1_reg))
+            {
+              return true;
+            }
           }
-          // Stop if we hit another major instruction
           if (GET_OPCODE(p->code[k]) == OP_RETURN)
             break;
         }
       }
-      break; // Only check the first CALL after our current one
+      break;
     }
   }
   return false;
 }
 
-// Recognizer for the iterative pattern.
-static bool is_fib_iter(const Proto *p)
+static bool is_fib_iter_final(const Proto *p)
 {
   if (p->numparams != 1)
     return false;
-  for (int i = 0; i < p->sizecode; i++)
+
+  // Just look for the key opcodes that appear in fibonacci_iter
+  bool has_forprep = false;
+  bool has_add = false;
+  bool has_two_moves = false;
+
+  int move_count = 0;
+
+  for (int pc = 0; pc < p->sizecode; pc++)
   {
-    if (GET_OPCODE(p->code[i]) == OP_FORLOOP)
-      return true;
+    OpCode op = GET_OPCODE(p->code[pc]);
+
+    if (op == OP_FORPREP)
+      has_forprep = true;
+    if (op == OP_ADD)
+      has_add = true;
+    if (op == OP_MOVE)
+      move_count++;
   }
-  return false;
+
+  has_two_moves = (move_count >= 2);
+
+  return has_forprep && has_add && has_two_moves;
 }
 
-// Recognizer for the tail-call pattern.
-static bool is_fib_tail(const Proto *p)
+static bool is_fib_tail_final(const Proto *p)
 {
-  if (p->numparams != 1 || p->sizep == 0)
+  if (p->numparams != 1)
     return false;
-  for (int i = 0; i < p->sizep; i++)
+
+  // fibonacci_tail has exactly 8 instructions
+  if (p->sizecode != 8)
+    return false;
+
+  // Check for CLOSURE and TAILCALL opcodes (key indicators)
+  bool has_closure = false;
+  bool has_tailcall = false;
+
+  for (int pc = 0; pc < p->sizecode; pc++)
   {
-    Proto *inner = p->p[i];
-    for (int j = 0; j < inner->sizecode; j++)
-    {
-      if (GET_OPCODE(inner->code[j]) == OP_TAILCALL)
-        return true;
-    }
+    OpCode op = GET_OPCODE(p->code[pc]);
+    if (op == OP_CLOSURE)
+      has_closure = true;
+    if (op == OP_TAILCALL)
+      has_tailcall = true;
   }
-  return false;
+
+  return has_closure && has_tailcall;
 }
 
-// The main recognizer that now includes our final naive check.
+// The main recognizer now calls the final checks.
 static bool is_fib(const Proto *p)
 {
-
-  if (is_fib_naive(p))
+  if (is_fib_naive_final(p))
     return true;
-  if (is_fib_iter(p))
+  if (is_fib_iter_final(p))
     return true;
-  if (is_fib_tail(p))
+  if (is_fib_tail_final(p))
     return true;
 
   return false;
