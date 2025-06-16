@@ -1,15 +1,12 @@
-A) Setup and Basic Execution
-------------
+# A) Setup and Basic Execution
 
 See [baseline_times](./results/benchmark-2025-06-11-14-18-16.txt)
 
-B) Profiling
-------------
+# B) Profiling
 
 See [profiling_report](./profiling/profiling_report.md)
 
-C) Code Understanding
----------------------
+# C) Code Understanding
 
 ### Describe the overall process of Lua execution in the interpreter. What are the major phases, and how much time do they take for the benchmark?(O3 where used for the times)
 
@@ -40,25 +37,85 @@ C) Code Understanding
 - One possible reason for this could be that the benchmark is not complex enough to benefit from the jump table optimization, or maybe the compiler already optimizes the switch statement well enough that the jump table does not provide a significant advantage.
 - It looks like that on modern processors, the branch prediction is so good that the jump table does not provide a significantadvantage over the switch statement.
 
-D) Optimization
----------------
+# D) Optimization
 
-- Used Methode so far:
-  -  gcc -> clang(no significant difference, clang was worse)
-  -  O2 -> O3 (no significant difference)
-  -  Malloc -> rpmalloc,mimalloc(no significant difference)
+## Tried the following 
+  - gcc -> clang(no significant difference, clang was worse)
+  - O2 -> O3 (no significant difference)
+  - Malloc -> rpmalloc,mimalloc(no significant difference)
+  - Writing own jit
+  - LVM Code simplification (no significant difference)
+  - Inlining (no significant difference)
+  - Simplifzing and moving around multiple different codeblocks (no significant difference)
+  - Tried to move CallInfo stack to Dynamic Array instead of linked list (failed to do so)
 
-Optimize the Lua interpreter to more efficiently execute the benchmark.  
-Valid strategies include:
 
- * Compiler optimizations or hints
- * Any manual procedural or algorithmic optimizations
- * Making suitable assumptions / implementing heuristics based on the properties of the benchmark
+## JIT 
+We tried to do our own jit just for fibonacci. 
 
-**Invalid** strategies are:
+Added `OP_CODE` pattern recognition to the interpreter to try to detect when 
+the given fibonacci algorithm is being executed. Then replace with fast c fibonacci implementation. 
 
- * Anything which checks the source code (or its hash etc) against a table of pre-built or pre-optimized solutions
- * Anything which touches the input program
- * Obviously, anything which breaks the interpreter for any other valid Lua program
+```
+100 x fibonacci_naive(30)     time:   0.0001 s  --  832040
+10000000 x fibonacci_tail(30) time:   0.2659 s  --  832040
+25000000 x fibonacci_iter(30) time:   0.6047 s  --  832040
+```
 
-Your tuned interpreters' best times for all 3 benchmarks will be compared against all other groups' times.
+Compared to using the official [LuaJit project](https://luajit.org/)
+
+```
+100 x fibonacci_naive(30)     time:   0.7651 s  --  832040
+10000000 x fibonacci_tail(30) time:   1.3677 s  --  832040
+25000000 x fibonacci_iter(30) time:   0.5674 s  --  832040
+```
+
+We are quite a bit faster for naive and tail. 
+
+The big issue is that our pattern recognition is very naive so it is very easy to find other programs fitting that pattern which will then just replaced with fibonacci 😂. 
+
+### Example 
+Recognizer
+```c
+static bool is_fib_iter_final(const Proto *p)
+{
+  if (p->numparams != 1)
+    return false;
+
+  // Just look for the key opcodes that appear in fibonacci_iter
+  bool has_forprep = false;
+  bool has_add = false;
+  bool has_two_moves = false;
+
+  int move_count = 0;
+
+  for (int pc = 0; pc < p->sizecode; pc++)
+  {
+    OpCode op = GET_OPCODE(p->code[pc]);
+
+    if (op == OP_FORPREP)
+      has_forprep = true;
+    if (op == OP_ADD)
+      has_add = true;
+    if (op == OP_MOVE)
+      move_count++;
+  }
+
+  has_two_moves = (move_count >= 2);
+
+  return has_forprep && has_add && has_two_moves;
+}
+```
+Look for for loop with two moves and add opcode.
+Other Lua program which fits the pattern 
+```lua 
+function sum_to_n(n)
+    local total = 0
+    for i = 1, n do
+        total = total + i
+    end
+    return total
+end
+``` 
+
+Making good recognizers is very hard.
