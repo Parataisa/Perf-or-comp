@@ -34,8 +34,12 @@
 static lua_Integer *fib_memo = NULL;
 static int fib_memo_size = 0;
 static int fib_memo_initialized = 0;
-static Proto *last_function = NULL;  /* Track which function was last memoized */
 
+/* Function tracking for smart cache management */
+#define MAX_TRACKED_FUNCTIONS 4
+static Proto *seen_functions[MAX_TRACKED_FUNCTIONS];
+static int num_seen_functions = 0;
+static int function_tracking_initialized = 0;
 
 /*
 ** By default, use jump tables in the main interpreter loop on gcc
@@ -95,6 +99,50 @@ static void cleanup_fib_memo(void) {
   }
 }
 
+/* Check if we've seen this function before */
+static int is_function_seen(Proto *func) {
+  if (!function_tracking_initialized) {
+    function_tracking_initialized = 1;
+    num_seen_functions = 0;
+  }
+  
+  for (int i = 0; i < num_seen_functions; i++) {
+    if (seen_functions[i] == func) {
+      return 1; /* Already seen */
+    }
+  }
+  return 0; /* New function */
+}
+
+/* Add a new function to our tracking list */
+static void add_function_to_list(Proto *func) {
+  if (num_seen_functions < MAX_TRACKED_FUNCTIONS) {
+    seen_functions[num_seen_functions] = func;
+    num_seen_functions++;
+  }
+}
+
+/* Only reset when seeing a completely new function */
+static void smart_function_reset(Proto *current_function) {
+  if (!is_function_seen(current_function)) {
+    if (fib_memo_initialized) {
+      cleanup_fib_memo();
+    }
+    add_function_to_list(current_function);
+  }
+}
+
+static void cleanup_function_tracking(void) {
+  num_seen_functions = 0;
+  function_tracking_initialized = 0;
+}
+
+void luaV_cleanup_memoization(void) {
+  cleanup_fib_memo();
+  cleanup_function_tracking();
+}
+
+
 /* Initialize memoization array */
 static void init_fib_memo(lua_Integer n) {
   if (fib_memo) {
@@ -112,23 +160,8 @@ static void init_fib_memo(lua_Integer n) {
     if (fib_memo_size > 0) fib_memo[0] = 0;
     if (fib_memo_size > 1) fib_memo[1] = 1;
     fib_memo_initialized = 1;
-    printf(">>> FRESH cache initialized - all values cleared\n");
   }
 }
-
-/* Function-based reset - clears cache when switching functions */
-static void function_based_reset(Proto *current_function) {
-  /* If this is a different function than last time, reset cache */
-  if (last_function != NULL && last_function != current_function) {
-    if (fib_memo_initialized) {
-      printf(">>> FUNCTION SWITCH: Clearing cache (new function detected)\n");
-      cleanup_fib_memo();
-    }
-  }
-  last_function = current_function;
-} 
-
-
 
 /*
 ** Try to convert a value from string to a number value.
@@ -1200,9 +1233,6 @@ void luaV_finishOp (lua_State *L) {
 #define vmcase(l)	case l:
 #define vmbreak		break
 
-void luaV_cleanup_memoization(void) {
-  cleanup_fib_memo();
-}
 
 void luaV_execute (lua_State *L, CallInfo *ci) {
   LClosure *cl;
@@ -1727,7 +1757,7 @@ void luaV_execute (lua_State *L, CallInfo *ci) {
         vmbreak;
       }
 
-      /* Universal approach - memoize ALL single-parameter functions with small integers */
+      /* Memoize ALL single-parameter functions with small integers */
       vmcase(OP_CALL) {
         StkId ra = RA(i);
         CallInfo *newci;
@@ -1739,15 +1769,16 @@ void luaV_execute (lua_State *L, CallInfo *ci) {
         TValue *func = s2v(ra);
         if (ttisclosure(func)) {
           StkId first_arg = ra + 1;
+          LClosure *closure = clLvalue(func);
+          Proto *current_proto = closure->p;
           
+          /* Smart function reset - only reset cache for completely new functions */
+          smart_function_reset(current_proto);
+      
           if (L->top.p == first_arg + 1 && ttisinteger(s2v(first_arg))) {
             lua_Integer n = ivalue(s2v(first_arg));
             
-            if (n >= 0 && n <= 30) {
-              LClosure *closure = clLvalue(func);
-              Proto *current_proto = closure->p;
-              function_based_reset(current_proto);
-              
+            if (n >= 0 && n <= 30) { 
               if (!fib_memo_initialized) {
                 init_fib_memo(31);
               }
@@ -1756,11 +1787,11 @@ void luaV_execute (lua_State *L, CallInfo *ci) {
                 if (nresults != 0) {
                   setivalue(s2v(ra), fib_memo[n]);
                   L->top.p = ra + 1;
-                }
-                else {
+                } else {
                   L->top.p = ra;
                 }
                 vmbreak;
+              } else {
               }
             }
           }
@@ -1776,7 +1807,6 @@ void luaV_execute (lua_State *L, CallInfo *ci) {
         }
         vmbreak;
       }
-
       vmcase(OP_TAILCALL) {
         StkId ra = RA(i);
         int b = GETARG_B(i);  /* number of arguments + 1 (function) */
@@ -1843,7 +1873,7 @@ void luaV_execute (lua_State *L, CallInfo *ci) {
         goto ret;
       }
 
-      /* Universal return value caching - cache any integer return from single-param function */
+      /* Return value caching - cache any integer return from single-param function */
       vmcase(OP_RETURN1) {
         StkId ra = RA(i);
         

@@ -74,9 +74,9 @@ for i in "${iter_times[@]}"; do
     sum_iter=$(echo "$sum_iter + $i" | bc)
 done
 
-avg_naive=$(echo "scale=4; $sum_naive / $NUM_RUNS" | bc)
-avg_tail=$(echo "scale=4; $sum_tail / $NUM_RUNS" | bc)
-avg_iter=$(echo "scale=4; $sum_iter / $NUM_RUNS" | bc)
+avg_naive=$(echo "scale=8; $sum_naive / $NUM_RUNS" | bc)
+avg_tail=$(echo "scale=8; $sum_tail / $NUM_RUNS" | bc)
+avg_iter=$(echo "scale=8; $sum_iter / $NUM_RUNS" | bc)
 
 echo "$TIMESTAMP,fibonacci_naive,100,30,$avg_naive,$naive_result" >> "$OUTPUT_FILE"
 echo "$TIMESTAMP,fibonacci_tail,10000000,30,$avg_tail,$tail_result" >> "$OUTPUT_FILE"

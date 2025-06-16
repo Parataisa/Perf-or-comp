@@ -36,8 +36,8 @@ function measure(reps, f, ...)
 end
 
 t, v = measure(100, fibonacci_naive, 30)
-print(string.format("100 x fibonacci_naive(30)     time: %8.4f s  --  %s", t, v))
+print(string.format("100 x fibonacci_naive(30)     time: %8.8f s  --  %s", t, v))
 t, v = measure(10000000, fibonacci_tail, 30)
-print(string.format("10000000 x fibonacci_tail(30) time: %8.4f s  --  %s", t, v))
+print(string.format("10000000 x fibonacci_tail(30) time: %8.8f s  --  %s", t, v))
 t, v = measure(25000000, fibonacci_iter, 30)
-print(string.format("25000000 x fibonacci_iter(30) time: %8.4f s  --  %s", t, v))
+print(string.format("25000000 x fibonacci_iter(30) time: %8.8f s  --  %s", t, v))
