@@ -2,7 +2,7 @@
 
 LUA_INTERPRETER="./lua-5.4.8/src/lua"
 SCRIPT_PATH="./lua/fib.lua"
-RESULTS_DIR="results_github_actions"
+RESULTS_DIR="mac_fabio"
 mkdir -p "$RESULTS_DIR"
 OUTPUT_FILE="$RESULTS_DIR/benchmark_results.csv"
 
