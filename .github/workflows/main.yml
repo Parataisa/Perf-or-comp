@@ -4,6 +4,10 @@ on:
   push:
     paths:
       - '12/lua-5.4.8/**'
+      - '12/lua-5.4.8-memorization/**'
+      - '12/lua-own-jit/**'
+      - '12/lua-jit/**'
+      - '12/benchmark.sh'
 
 jobs:
   benchmark:
