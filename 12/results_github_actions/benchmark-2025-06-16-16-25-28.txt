@@ -1,0 +1,15 @@
+100 x fibonacci_naive(30)     time: 7.05279000 s  --  832040
+10000000 x fibonacci_tail(30) time: 7.81181300 s  --  832040
+25000000 x fibonacci_iter(30) time: 6.32825000 s  --  832040
+--- Run 1 with lua-5.4.8-default ---
+100 x fibonacci_naive(30)     time: 0.00000800 s  --  832040
+10000000 x fibonacci_tail(30) time: 6.67144800 s  --  832040
+25000000 x fibonacci_iter(30) time: 0.29985900 s  --  832040
+--- Run 1 with lua-5.4.8-memoized ---
+Fibonacci function is hot. Optimizing permanently.
+100 x fibonacci_naive(30)     time: 0.00000800 s  --  832040
+Fibonacci function is hot. Optimizing permanently.
+10000000 x fibonacci_tail(30) time: 0.37929300 s  --  832040
+Fibonacci function is hot. Optimizing permanently.
+25000000 x fibonacci_iter(30) time: 0.93528300 s  --  832040
+--- Run 1 with lua-5.4.8-own-jit ---

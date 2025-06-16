@@ -673,16 +673,17 @@ int main (int argc, char **argv) {
     char* luajit_args[argc];
     int i;
     
-    luajit_args[0] = "luajit";
+    char* luajit_path = "./lua-jit/luajit/src/luajit";
+    luajit_args[0] = luajit_path;
+    
     for (i = 2; i < argc; i++) {
       luajit_args[i-1] = argv[i];
     }
     luajit_args[argc-1] = NULL;
     
-    execvp("luajit", luajit_args);
-    
-    perror("Failed to execute luajit");
-    return EXIT_FAILURE;
+    execvp(luajit_path, luajit_args);
+
+    return EXIT_SUCCESS;
   }
   int status, result;
   lua_State *L = luaL_newstate();  /* create state */
