@@ -625,11 +625,8 @@ retry:
 ** returns NULL, with all the results on the stack, starting at the
 ** original function position.
 */
-#define JIT_WARMUP_THRESHOLD 10 // Calls before we analyze.
 
-// Forward declaration for the functions in fib_optimizer.c
-static bool is_fib(const Proto *p);
-static int fast_fib_optimized(lua_State *L);
+#define JIT_WARMUP_THRESHOLD 10
 
 CallInfo *luaD_precall(lua_State *L, StkId func, int nresults)
 {

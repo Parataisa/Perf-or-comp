@@ -6,7 +6,6 @@
 #include "lopcodes.h"
 #include <stdbool.h>
 
-// The C function we are JIT-compiling to.
 static int fast_fib_optimized(lua_State *L)
 {
   lua_Integer n = luaL_checkinteger(L, 1);
@@ -26,62 +25,85 @@ static int fast_fib_optimized(lua_State *L)
   return 1;
 }
 
-// --- FINAL, MULTI-HEURISTIC RECOGNIZERS ---
-
-// Helper to check for the existence of an integer in the constant table.
-static bool has_integer_constant(const Proto *p, lua_Integer n)
+// Helper function to check if two CALL instructions call the same function
+static bool are_same_function_calls(const Proto *p, int call1_pc, int call2_pc)
 {
-  for (int i = 0; i < p->sizek; i++)
+  // Look backwards from each CALL to find the preceding GETTABUP
+  int gettabup1_pc = -1, gettabup2_pc = -1;
+
+  // Find GETTABUP before first call
+  for (int i = call1_pc - 1; i >= 0; i--)
   {
-    const TValue *k = &p->k[i];
-    if (ttisinteger(k) && ivalue(k) == n)
+    if (GET_OPCODE(p->code[i]) == OP_GETTABUP &&
+        GETARG_A(p->code[i]) == GETARG_A(p->code[call1_pc]))
     {
-      return true;
+      gettabup1_pc = i;
+      break;
     }
   }
+
+  // Find GETTABUP before second call
+  for (int i = call2_pc - 1; i >= call1_pc; i--)
+  {
+    if (GET_OPCODE(p->code[i]) == OP_GETTABUP &&
+        GETARG_A(p->code[i]) == GETARG_A(p->code[call2_pc]))
+    {
+      gettabup2_pc = i;
+      break;
+    }
+  }
+
+  // If both found, check if they load the same global name
+  if (gettabup1_pc >= 0 && gettabup2_pc >= 0)
+  {
+    return GETARG_B(p->code[gettabup1_pc]) == GETARG_B(p->code[gettabup2_pc]);
+  }
+
   return false;
 }
 
-// The final, robust recognizer for the naive recursive pattern.
-static bool is_fib_naive_final(const Proto *p)
+static bool is_fib_naive(const Proto *p)
 {
-  // Heuristic 1: Signature check. Must take exactly 1 argument.
+  // Must take exactly 1 parameter
   if (p->numparams != 1)
     return false;
 
-  // Heuristic 2: Constant check. Must have constants 1 and 2 for n-1, n-2.
-  if (!has_integer_constant(p, 1) || !has_integer_constant(p, 2))
-    return false;
-
-  // Heuristic 3 & 4: Opcode and Recursion count.
-  int recursive_calls = 0;
-  int subs = 0;
-  bool has_add = false;
-
-  for (int i = 0; i < p->sizecode; i++)
+  // Look for the pattern: two calls to the same function, followed by ADD
+  for (int i = 0; i < p->sizecode - 1; i++)
   {
-    Instruction inst = p->code[i];
-    OpCode op = GET_OPCODE(inst);
+    Instruction inst1 = p->code[i];
+    if (GET_OPCODE(inst1) != OP_CALL)
+      continue;
 
-    if (op == OP_CALL)
+    // Find the next CALL instruction (might not be immediately next)
+    for (int j = i + 1; j < p->sizecode; j++)
     {
-      if (GETARG_A(inst) == 0)
-        recursive_calls++;
-    }
-    else if (op == OP_ADD)
-    {
-      has_add = true;
-    }
-    // *** THE CRITICAL FIX IS HERE ***
-    // We must check for both register-register SUB and register-constant SUBK.
-    else if (op == OP_SUB || op == OP_SUBK)
-    {
-      subs++;
+      Instruction inst2 = p->code[j];
+      if (GET_OPCODE(inst2) != OP_CALL)
+        continue;
+
+      // Check if both calls are to the same function
+      // For global functions, this means both are preceded by GETTABUP
+      // that loads the same global name
+      if (are_same_function_calls(p, i, j))
+      {
+        // Now look for an ADD after the second call
+        for (int k = j + 1; k < p->sizecode; k++)
+        {
+          if (GET_OPCODE(p->code[k]) == OP_ADD)
+          {
+            // Found the pattern: call same_func, call same_func, add
+            return true;
+          }
+          // Stop if we hit another major instruction
+          if (GET_OPCODE(p->code[k]) == OP_RETURN)
+            break;
+        }
+      }
+      break; // Only check the first CALL after our current one
     }
   }
-
-  // Final check: Must meet all opcode count criteria.
-  return (recursive_calls >= 2 && subs >= 2 && has_add);
+  return false;
 }
 
 // Recognizer for the iterative pattern.
@@ -117,7 +139,8 @@ static bool is_fib_tail(const Proto *p)
 // The main recognizer that now includes our final naive check.
 static bool is_fib(const Proto *p)
 {
-  if (is_fib_naive_final(p))
+
+  if (is_fib_naive(p))
     return true;
   if (is_fib_iter(p))
     return true;
