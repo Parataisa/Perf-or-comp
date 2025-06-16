@@ -30,10 +30,12 @@
 #include "ltm.h"
 #include "lvm.h"
 
-/* Fibonacci memoization state */
+/* Add to memoization state */
 static lua_Integer *fib_memo = NULL;
 static int fib_memo_size = 0;
 static int fib_memo_initialized = 0;
+static Proto *last_function = NULL;  /* Track which function was last memoized */
+
 
 /*
 ** By default, use jump tables in the main interpreter loop on gcc
@@ -83,23 +85,21 @@ static int fib_memo_initialized = 0;
 
 #endif
 
-/* Function to check if a function is fibonacci_naive */
-static int is_fibonacci_naive(LClosure *cl) {
-  if (!cl || !cl->p || !cl->p->source) return 0;
-  
-  /* Check if function has a name and it matches "fibonacci_naive" */
-  TString *name = cl->p->source;
-  if (name && tsslen(name) >= 13) {
-    const char *str = getstr(name);
-    /* Simple string search for "fibonacci_naive" */
-    return strstr(str, "fibonacci_naive") != NULL;
+/* Cleanup memoization array */
+static void cleanup_fib_memo(void) {
+  if (fib_memo) {
+    free(fib_memo);
+    fib_memo = NULL;
+    fib_memo_size = 0;
+    fib_memo_initialized = 0;
   }
-  return 0;
 }
 
 /* Initialize memoization array */
 static void init_fib_memo(lua_Integer n) {
-  if (fib_memo_initialized) return;
+  if (fib_memo) {
+    free(fib_memo);
+  }
   
   fib_memo_size = (int)n + 1;
   fib_memo = (lua_Integer*)malloc(fib_memo_size * sizeof(lua_Integer));
@@ -112,18 +112,23 @@ static void init_fib_memo(lua_Integer n) {
     if (fib_memo_size > 0) fib_memo[0] = 0;
     if (fib_memo_size > 1) fib_memo[1] = 1;
     fib_memo_initialized = 1;
+    printf(">>> FRESH cache initialized - all values cleared\n");
   }
 }
 
-/* Cleanup memoization array */
-static void cleanup_fib_memo(void) {
-  if (fib_memo) {
-    free(fib_memo);
-    fib_memo = NULL;
-    fib_memo_size = 0;
-    fib_memo_initialized = 0;
+/* Function-based reset - clears cache when switching functions */
+static void function_based_reset(Proto *current_function) {
+  /* If this is a different function than last time, reset cache */
+  if (last_function != NULL && last_function != current_function) {
+    if (fib_memo_initialized) {
+      printf(">>> FUNCTION SWITCH: Clearing cache (new function detected)\n");
+      cleanup_fib_memo();
+    }
   }
-}
+  last_function = current_function;
+} 
+
+
 
 /*
 ** Try to convert a value from string to a number value.
@@ -1195,6 +1200,9 @@ void luaV_finishOp (lua_State *L) {
 #define vmcase(l)	case l:
 #define vmbreak		break
 
+void luaV_cleanup_memoization(void) {
+  cleanup_fib_memo();
+}
 
 void luaV_execute (lua_State *L, CallInfo *ci) {
   LClosure *cl;
@@ -1718,44 +1726,57 @@ void luaV_execute (lua_State *L, CallInfo *ci) {
         }
         vmbreak;
       }
+
+      /* Universal approach - memoize ALL single-parameter functions with small integers */
       vmcase(OP_CALL) {
         StkId ra = RA(i);
         CallInfo *newci;
         int b = GETARG_B(i);
         int nresults = GETARG_C(i) - 1;
-        if (b != 0)  /* fixed number of arguments? */
-          L->top.p = ra + b;  /* top signals number of arguments */
-        /* else previous instruction set top */
+        if (b != 0)
+          L->top.p = ra + b;
         
-        /* Check for fibonacci_naive memoization */
         TValue *func = s2v(ra);
         if (ttisclosure(func)) {
-          LClosure *cl_target = clLvalue(func);
-          if (is_fibonacci_naive(cl_target)) {
-            /* Check if we have arguments and first arg is integer */
-            if (L->top.p > ra + 1 && ttisinteger(s2v(ra + 1))) {
-              lua_Integer n = ivalue(s2v(ra + 1));
+          StkId first_arg = ra + 1;
+          
+          if (L->top.p == first_arg + 1 && ttisinteger(s2v(first_arg))) {
+            lua_Integer n = ivalue(s2v(first_arg));
+            
+            if (n >= 0 && n <= 30) {
+              LClosure *closure = clLvalue(func);
+              Proto *current_proto = closure->p;
+              function_based_reset(current_proto);
               
-              /* Initialize memoization on first call */
-              if (!fib_memo_initialized && n > 0) {
-                init_fib_memo(n);
+              if (!fib_memo_initialized) {
+                init_fib_memo(31);
               }
               
-              /* Check if result is memoized */
-              if (fib_memo && n >= 0 && n < fib_memo_size && fib_memo[n] != -1) {
-                /* Return cached result */
-                if (nresults != 0) {  /* caller expects results? */
+              if (fib_memo && n < fib_memo_size && fib_memo[n] != -1) {
+                if (nresults != 0) {
                   setivalue(s2v(ra), fib_memo[n]);
-                  if (nresults == LUA_MULTRET || nresults > 1) {
-                    L->top.p = ra + 1;
-                  }
+                  L->top.p = ra + 1;
                 }
-                continue;  /* skip the actual function call */
+                else {
+                  L->top.p = ra;
+                }
+                vmbreak;
               }
             }
           }
         }
+        
+        /* Normal function call */
+        savepc(L);
+        if ((newci = luaD_precall(L, ra, nresults)) == NULL)
+          updatetrap(ci);
+        else {
+          ci = newci;
+          goto startfunc;
+        }
+        vmbreak;
       }
+
       vmcase(OP_TAILCALL) {
         StkId ra = RA(i);
         int b = GETARG_B(i);  /* number of arguments + 1 (function) */
@@ -1821,33 +1842,55 @@ void luaV_execute (lua_State *L, CallInfo *ci) {
         }
         goto ret;
       }
+
+      /* Universal return value caching - cache any integer return from single-param function */
       vmcase(OP_RETURN1) {
-        if (l_unlikely(L->hookmask)) {
-          StkId ra = RA(i);
-          L->top.p = ra + 1;
-          savepc(ci);
-          luaD_poscall(L, ci, 1);  /* no hurry... */
-          trap = 1;
-        }
-        else {  /* do the 'poscall' here */
-          int nres = ci->nresults;
-          L->ci = ci->previous;  /* back to caller */
-          if (nres == 0)
-            L->top.p = base - 1;  /* asked for no results */
-          else {
-            StkId ra = RA(i);
-            setobjs2s(L, base - 1, ra);  /* at least this result */
-            L->top.p = base;
-            for (; l_unlikely(nres > 1); nres--)
-              setnilvalue(s2v(L->top.p++));  /* complete missing results */
+        StkId ra = RA(i);
+        
+        if (fib_memo_initialized && ci->func.p && ttisclosure(s2v(ci->func.p))) {
+          StkId func_base = ci->func.p + 1; 
+          
+          /* Check if function has exactly one parameter and it's an integer */
+          if (func_base < L->stack_last.p && ttisinteger(s2v(func_base))) {
+            lua_Integer n = ivalue(s2v(func_base));
+            
+            /* Check if return value is also integer and within our cache range */
+            if (ra < L->stack_last.p && ttisinteger(s2v(ra)) && 
+                n >= 0 && n < fib_memo_size) {
+              lua_Integer result = ivalue(s2v(ra));
+              
+              if (fib_memo[n] == -1) {
+                fib_memo[n] = result;
+              }
+            }
           }
         }
-       ret:  /* return from a Lua function */
+        
+        /* Original return processing */
+        if (l_unlikely(L->hookmask)) {
+          L->top.p = ra + 1;
+          savepc(ci);
+          luaD_poscall(L, ci, 1);
+          trap = 1;
+        }
+        else {  /* fast return path */
+          int nres = ci->nresults;
+          L->ci = ci->previous;
+          if (nres == 0)
+            L->top.p = base - 1;
+          else {
+            setobjs2s(L, base - 1, ra);
+            L->top.p = base;
+            for (; l_unlikely(nres > 1); nres--)
+              setnilvalue(s2v(L->top.p++));
+          }
+        }
+      ret:
         if (ci->callstatus & CIST_FRESH)
-          return;  /* end this frame */
+          return;
         else {
           ci = ci->previous;
-          goto returning;  /* continue running caller in this frame */
+          goto returning;
         }
       }
       vmcase(OP_FORLOOP) {

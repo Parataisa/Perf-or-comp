@@ -74,6 +74,7 @@ typedef enum {
 
 #define luaV_rawequalobj(t1,t2)		luaV_equalobj(NULL,t1,t2)
 
+LUAI_FUNC void luaV_cleanup_memoization(void);
 
 /*
 ** fast track for 'gettable': if 't' is a table and 't[k]' is present,

@@ -16,6 +16,7 @@
 #include <signal.h>
 
 #include "lua.h"
+#include "lvm.h"
 
 #include "lauxlib.h"
 #include "lualib.h"
@@ -681,6 +682,7 @@ int main (int argc, char **argv) {
   status = lua_pcall(L, 2, 1, 0);  /* do the call */
   result = lua_toboolean(L, -1);  /* get result */
   report(L, status);
+  luaV_cleanup_memoization();
   lua_close(L);
   return (result && status == LUA_OK) ? EXIT_SUCCESS : EXIT_FAILURE;
 }
