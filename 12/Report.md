@@ -50,7 +50,7 @@ See [profiling_report](./profiling/profiling_report.md)
   - Tried to move CallInfo stack to Dynamic Array instead of linked list (failed to do so)
 
 
-## JIT 
+## JIT (Breaks rule 1)
 We tried to do our own jit just for fibonacci. 
 
 Added `OP_CODE` pattern recognition to the interpreter to try to detect when 
@@ -120,7 +120,7 @@ end
 
 Making good recognizers is very hard.
 
-## Memorization
+## Memorization (Breaks rule 3)
 
 ### 1. Function Call Interception (OP_CALL)
 Intercepts function calls to check for cached results before function execution:

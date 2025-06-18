@@ -952,11 +952,11 @@ void luaV_finishOp (lua_State *L) {
 
 
 /*
-** Arithmetic operations over integers and floats.
+** Arithmetic operations over integers and floats. Added likely
 */
 #define op_arith_aux(L,v1,v2,iop,fop) {  \
   StkId ra = RA(i); \
-  if (ttisinteger(v1) && ttisinteger(v2)) {  \
+  if (l_likely((ttisinteger(v1) && ttisinteger(v2)))) {  \
     lua_Integer i1 = ivalue(v1); lua_Integer i2 = ivalue(v2);  \
     pc++; setivalue(s2v(ra), iop(L, i1, i2));  \
   }  \
@@ -1678,11 +1678,11 @@ void luaV_execute (lua_State *L, CallInfo *ci) {
         CallInfo *newci;
         int b = GETARG_B(i);
         int nresults = GETARG_C(i) - 1;
-        if (b != 0)  /* fixed number of arguments? */
+        if (l_likely(b != 0))  /* fixed number of arguments? */
           L->top.p = ra + b;  /* top signals number of arguments */
         /* else previous instruction set top */
         savepc(L);  /* in case of errors */
-        if ((newci = luaD_precall(L, ra, nresults)) == NULL)
+        if (l_likely(((newci = luaD_precall(L, ra, nresults)) == NULL)))
           updatetrap(ci);  /* C call; nothing else to be done */
         else {  /* Lua call: run function in this same C frame */
           ci = newci;

@@ -7,9 +7,17 @@
 PLAT= guess
 
 CC= gcc -std=gnu99
-CFLAGS= -O2 -Wall -Wextra -DLUA_COMPAT_5_3 $(SYSCFLAGS) $(MYCFLAGS)
-LDFLAGS= $(SYSLDFLAGS) $(MYLDFLAGS)
+CFLAGS= -O3 -march=native -mtune=native -flto -finline-functions -funroll-loops -fomit-frame-pointer -DNDEBUG -Wall -Wextra -DLUA_COMPAT_5_3 $(SYSCFLAGS) $(MYCFLAGS)
+LDFLAGS= $(SYSLDFLAGS) $(MYLDFLAGS) -flto
 LIBS= -lm $(SYSLIBS) $(MYLIBS)
+
+# -march=native: Optimize for current CPU architecture  
+# -mtune=native: Tune for current CPU
+# -flto: Link-time optimization (whole program optimization)
+# -funroll-loops: Unroll loops for better performance
+# -finline-functions: Aggressively inline functions
+# -fomit-frame-pointer: Don't maintain frame pointers (more registers)
+# -DNDEBUG: Disable debug assertions
 
 AR= ar rcu
 RANLIB= ranlib
