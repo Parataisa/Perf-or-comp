@@ -1,4 +1,0 @@
-100 x fibonacci_naive(30)     time:   7.3710 s  --  832040
-10000000 x fibonacci_tail(30) time:   6.6529 s  --  832040
-25000000 x fibonacci_iter(30) time:   5.8012 s  --  832040
-Added PREFETCH_READ
