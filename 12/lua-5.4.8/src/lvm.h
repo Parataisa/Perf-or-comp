@@ -130,7 +130,7 @@ LUAI_FUNC void luaV_finishget (lua_State *L, const TValue *t, TValue *key,
 LUAI_FUNC void luaV_finishset (lua_State *L, const TValue *t, TValue *key,
                                TValue *val, const TValue *slot);
 LUAI_FUNC void luaV_finishOp (lua_State *L);
-LUAI_FUNC void luaV_execute (lua_State *L, CallInfo *ci) __attribute__((hot));
+LUAI_FUNC void luaV_execute (lua_State *L, CallInfo *ci);
 LUAI_FUNC void luaV_concat (lua_State *L, int total);
 LUAI_FUNC lua_Integer luaV_idiv (lua_State *L, lua_Integer x, lua_Integer y);
 LUAI_FUNC lua_Integer luaV_mod (lua_State *L, lua_Integer x, lua_Integer y);
