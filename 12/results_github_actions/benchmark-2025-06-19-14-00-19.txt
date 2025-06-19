@@ -1,0 +1,95 @@
+100 x fibonacci_naive(30)     time: 7.38387200 s  --  832040
+10000000 x fibonacci_tail(30) time: 6.91933900 s  --  832040
+25000000 x fibonacci_iter(30) time: 7.86130500 s  --  832040
+--- Run 1 with lua-5.4.8-default ---
+100 x fibonacci_naive(30)     time: 7.37467700 s  --  832040
+10000000 x fibonacci_tail(30) time: 7.09386600 s  --  832040
+25000000 x fibonacci_iter(30) time: 7.83759100 s  --  832040
+--- Run 2 with lua-5.4.8-default ---
+100 x fibonacci_naive(30)     time: 7.97425200 s  --  832040
+10000000 x fibonacci_tail(30) time: 6.91059100 s  --  832040
+25000000 x fibonacci_iter(30) time: 7.81796200 s  --  832040
+--- Run 3 with lua-5.4.8-default ---
+100 x fibonacci_naive(30)     time: 8.64348400 s  --  832040
+10000000 x fibonacci_tail(30) time: 7.17319600 s  --  832040
+25000000 x fibonacci_iter(30) time: 7.87079300 s  --  832040
+--- Run 4 with lua-5.4.8-default ---
+100 x fibonacci_naive(30)     time: 7.99410000 s  --  832040
+10000000 x fibonacci_tail(30) time: 7.42225800 s  --  832040
+25000000 x fibonacci_iter(30) time: 7.73000100 s  --  832040
+--- Run 5 with lua-5.4.8-default ---
+100 x fibonacci_naive(30)     time: 0.00000900 s  --  832040
+10000000 x fibonacci_tail(30) time: 6.81029700 s  --  832040
+25000000 x fibonacci_iter(30) time: 0.41194700 s  --  832040
+--- Run 1 with lua-5.4.8-memoized ---
+100 x fibonacci_naive(30)     time: 0.00000900 s  --  832040
+10000000 x fibonacci_tail(30) time: 6.96001500 s  --  832040
+25000000 x fibonacci_iter(30) time: 0.40745900 s  --  832040
+--- Run 2 with lua-5.4.8-memoized ---
+100 x fibonacci_naive(30)     time: 0.00000800 s  --  832040
+10000000 x fibonacci_tail(30) time: 6.69683700 s  --  832040
+25000000 x fibonacci_iter(30) time: 0.40433100 s  --  832040
+--- Run 3 with lua-5.4.8-memoized ---
+100 x fibonacci_naive(30)     time: 0.00000800 s  --  832040
+10000000 x fibonacci_tail(30) time: 6.88169700 s  --  832040
+25000000 x fibonacci_iter(30) time: 0.39735100 s  --  832040
+--- Run 4 with lua-5.4.8-memoized ---
+100 x fibonacci_naive(30)     time: 0.00000900 s  --  832040
+10000000 x fibonacci_tail(30) time: 6.70212400 s  --  832040
+25000000 x fibonacci_iter(30) time: 0.40392300 s  --  832040
+--- Run 5 with lua-5.4.8-memoized ---
+Fibonacci function is hot. Optimizing permanently.
+100 x fibonacci_naive(30)     time: 0.00001000 s  --  832040
+Fibonacci function is hot. Optimizing permanently.
+10000000 x fibonacci_tail(30) time: 0.37999700 s  --  832040
+Fibonacci function is hot. Optimizing permanently.
+25000000 x fibonacci_iter(30) time: 0.94916800 s  --  832040
+--- Run 1 with lua-5.4.8-own-jit ---
+Fibonacci function is hot. Optimizing permanently.
+100 x fibonacci_naive(30)     time: 0.00001000 s  --  832040
+Fibonacci function is hot. Optimizing permanently.
+10000000 x fibonacci_tail(30) time: 0.37954800 s  --  832040
+Fibonacci function is hot. Optimizing permanently.
+25000000 x fibonacci_iter(30) time: 0.94895900 s  --  832040
+--- Run 2 with lua-5.4.8-own-jit ---
+Fibonacci function is hot. Optimizing permanently.
+100 x fibonacci_naive(30)     time: 0.00001000 s  --  832040
+Fibonacci function is hot. Optimizing permanently.
+10000000 x fibonacci_tail(30) time: 0.38104700 s  --  832040
+Fibonacci function is hot. Optimizing permanently.
+25000000 x fibonacci_iter(30) time: 0.95389000 s  --  832040
+--- Run 3 with lua-5.4.8-own-jit ---
+Fibonacci function is hot. Optimizing permanently.
+100 x fibonacci_naive(30)     time: 0.00000900 s  --  832040
+Fibonacci function is hot. Optimizing permanently.
+10000000 x fibonacci_tail(30) time: 0.38022800 s  --  832040
+Fibonacci function is hot. Optimizing permanently.
+25000000 x fibonacci_iter(30) time: 0.94986500 s  --  832040
+--- Run 4 with lua-5.4.8-own-jit ---
+Fibonacci function is hot. Optimizing permanently.
+100 x fibonacci_naive(30)     time: 0.00001000 s  --  832040
+Fibonacci function is hot. Optimizing permanently.
+10000000 x fibonacci_tail(30) time: 0.36778200 s  --  832040
+Fibonacci function is hot. Optimizing permanently.
+25000000 x fibonacci_iter(30) time: 0.94932500 s  --  832040
+--- Run 5 with lua-5.4.8-own-jit ---
+100 x fibonacci_naive(30)     time: 1.33245500 s  --  832040
+10000000 x fibonacci_tail(30) time: 1.88558600 s  --  832040
+25000000 x fibonacci_iter(30) time: 0.69620300 s  --  832040
+--- Run 1 with luajit ---
+100 x fibonacci_naive(30)     time: 1.33903100 s  --  832040
+10000000 x fibonacci_tail(30) time: 1.88241900 s  --  832040
+25000000 x fibonacci_iter(30) time: 0.69259200 s  --  832040
+--- Run 2 with luajit ---
+100 x fibonacci_naive(30)     time: 1.44220100 s  --  832040
+10000000 x fibonacci_tail(30) time: 1.89061300 s  --  832040
+25000000 x fibonacci_iter(30) time: 0.91117900 s  --  832040
+--- Run 3 with luajit ---
+100 x fibonacci_naive(30)     time: 1.36968700 s  --  832040
+10000000 x fibonacci_tail(30) time: 1.95468100 s  --  832040
+25000000 x fibonacci_iter(30) time: 0.69570100 s  --  832040
+--- Run 4 with luajit ---
+100 x fibonacci_naive(30)     time: 1.34759000 s  --  832040
+10000000 x fibonacci_tail(30) time: 1.88452300 s  --  832040
+25000000 x fibonacci_iter(30) time: 0.69490400 s  --  832040
+--- Run 5 with luajit ---
