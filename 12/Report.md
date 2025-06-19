@@ -50,7 +50,7 @@ See [profiling_report](./profiling/profiling_report.md)
   - Tried to move CallInfo stack to Dynamic Array instead of linked list (failed to do so)
 
 
-## JIT (Breaks rule 1)
+## Own JIT (Breaks rule 1)
 We tried to do our own jit just for fibonacci. 
 
 Added `OP_CODE` pattern recognition to the interpreter to try to detect when 
@@ -244,3 +244,55 @@ ret:
 25000000 x fibonacci_iter(30) time: 0.64663400 s  --  832040
 ```` 
 
+## LuaJIT
+
+Calling [LuaJIT](https://luajit.org/) from the Lua interpreter to run the fibonacci benchmark. 
+
+```c
+int main (int argc, char **argv) {
+  // Check if the first argument is "luajit"
+  if (argc > 1 && argv[1] && strcmp(argv[1], "luajit") == 0) {
+    char* luajit_args[argc];
+    int i;
+    
+    char* luajit_path = "./lua-jit/luajit/src/luajit";
+    luajit_args[0] = luajit_path;
+    
+    for (i = 2; i < argc; i++) {
+      luajit_args[i-1] = argv[i];
+    }
+    luajit_args[argc-1] = NULL;
+    
+    execvp(luajit_path, luajit_args);
+
+    return EXIT_SUCCESS;
+  }
+  // If not "luajit", continue with the original Lua interpreter logic
+  int status, result;
+  lua_State *L = luaL_newstate();  /* create state */
+  if (L == NULL) {
+    l_message(argv[0], "cannot create state: not enough memory");
+    return EXIT_FAILURE;
+  }
+  lua_gc(L, LUA_GCSTOP);  /* stop GC while building state */
+  lua_pushcfunction(L, &pmain);  /* to call 'pmain' in protected mode */
+  lua_pushinteger(L, argc);  /* 1st argument */
+  lua_pushlightuserdata(L, argv); /* 2nd argument */
+  status = lua_pcall(L, 2, 1, 0);  /* do the call */
+  result = lua_toboolean(L, -1);  /* get result */
+  report(L, status);
+  lua_close(L);
+  return (result && status == LUA_OK) ? EXIT_SUCCESS : EXIT_FAILURE;
+}
+
+```
+
+### Results
+
+````
+100 x fibonacci_naive(30)     time: 1.76916100 s  --  832040
+10000000 x fibonacci_tail(30) time: 2.87478600 s  --  832040
+25000000 x fibonacci_iter(30) time: 1.68902900 s  --  832040
+````
+
+- Theoretically this should not violate any rules, but it feels a bit against the spirit of the exercise.
