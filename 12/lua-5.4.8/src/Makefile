@@ -7,8 +7,8 @@
 PLAT= guess
 
 CC= gcc -std=gnu99
-CFLAGS= -O3 -march=native -mtune=native -flto -finline-functions -funroll-loops -fomit-frame-pointer -DNDEBUG -Wall -Wextra -DLUA_COMPAT_5_3 $(SYSCFLAGS) $(MYCFLAGS)
-LDFLAGS= $(SYSLDFLAGS) $(MYLDFLAGS) -flto
+CFLAGS= -O3 -march=native -mtune=native -finline-functions -funroll-loops -fomit-frame-pointer -DNDEBUG -Wall -Wextra -DLUA_COMPAT_5_3 $(SYSCFLAGS) $(MYCFLAGS)
+LDFLAGS= $(SYSLDFLAGS) $(MYLDFLAGS)
 LIBS= -lm $(SYSLIBS) $(MYLIBS)
 
 # -march=native: Optimize for current CPU architecture  
