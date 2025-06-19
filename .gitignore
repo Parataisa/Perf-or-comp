@@ -30,3 +30,4 @@ liblua.a
 lua
 luac
 *.data
+slurm_jobs
