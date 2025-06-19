@@ -237,3 +237,10 @@ ret:
 - The cache is cleared between benchmarks to ensure each one runs independently, but not between runs of the same function. Meaning that for the fibonacci_native benchmark, the cache is filled at the first 30 calls in the first run and then used for all the subsequent runs of the benchmark.(Feels a bit cheaty...)
 
 ### Results
+
+````
+100 x fibonacci_naive(30)     time: 0.00001400 s  --  832040
+10000000 x fibonacci_tail(30) time: 12.52523900 s  --  832040
+25000000 x fibonacci_iter(30) time: 0.64663400 s  --  832040
+```` 
+
